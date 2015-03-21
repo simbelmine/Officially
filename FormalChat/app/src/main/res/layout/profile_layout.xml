@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="5">
+    <LinearLayout
+        android:background="#FF00AA"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="3" >
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager_profile"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="#FFAAFF"
+        >
+        </android.support.v4.view.ViewPager>
+    </LinearLayout>
+    <RelativeLayout
+        android:background="#00FFFF"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5">
+        <Button
+            android:id="@+id/edit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/edit_profile"/>
+        <Button
+            android:id="@+id/add_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/add_profile_img"
+        />
+    </RelativeLayout>
+    <LinearLayout
+        android:background="#00FFAA"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_weight="1.5" >
+    </LinearLayout>
+</LinearLayout>

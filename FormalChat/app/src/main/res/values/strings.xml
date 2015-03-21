@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">Formal Chat</string>
+    <string name="app_id">mBgaFjYuGcSRZpv64YmFb73bCc0iijRTJhbq6P0c</string>
+    <string name="client_key">MzXOhtTZuyMiM9S0ZNXXbMM9m8AgBJld1xbbbQhD</string>
+
+    <string name="take_photo">Take Photo</string>
+    <string name="attach_photo">Attach Photo</string>
+    <string name="please_complete_the_sign_up">Please complete the sign up form</string>
+    <string name="add_profile_img">Add</string>
+    <string name="edit_profile">Edit</string>
+
+    <string name="name_lbl">Name</string>
+    <string name="gender_lbl">Gender</string>
+    <string name="age_lbl">Age</string>
+    <string name="location_lbl">Location</string>
+    <string name="interested_in_lbl">Interested In</string>
+    <string name="looking_for_lbl">Looking For</string>
+    <string name="about_me_lbl">About Me</string>
+    <string name="relationship_lbl">Relationship Status</string>
+    <string name="body_type_lbl">Body Type</string>
+    <string name="height_lbl">Height</string>
+    <string name="ethnicity_lbl">Ethnicity</string>
+    <string name="interests_lbl">Interests</string>
+    <string name="choice_txt">Click to choose...</string>
+    <string name="multy_txt">Click to start writing...</string>
+    <string name="about_me_done">Done</string>
+    <string name="user_info_save">Save</string>
+
+    <string-array name="gender_values">
+        <item>Man</item>
+        <item>Woman</item>
+    </string-array>
+    <string name="interested_in_title">Interested In</string>
+    <string-array name="interested_in_values">
+        <item>Men</item>
+        <item>Women</item>
+        <item>Men and Women</item>
+    </string-array>
+    <string name="looking_for_title">Looking For</string>
+    <string-array name="looking_for_values">
+        <item>Friends</item>
+        <item>Flirting</item>
+        <item>Fun</item>
+        <item>Dating</item>
+        <item>Chat</item>
+        <item>Party</item>
+        <item>Relationship</item>
+    </string-array>
+    <string-array name="relationship_values">
+        <item>In a Relationship</item>
+        <item>Married</item>
+        <item>It\'s Complicated</item>
+        <item>In an Open Relationship</item>
+        <item>Separated</item>
+        <item>Divorced</item>
+        <item>In a Civil Union</item>
+    </string-array>
+    <string-array name="body_type_values">
+        <item>Slim</item>
+        <item>Petite</item>
+        <item>Slender</item>
+        <item>Normal</item>
+        <item>More toLove</item>
+        <item>Curvy</item>
+        <item>Swimmers Build</item>
+        <item>Muscular</item>
+        <item>Skinny</item>
+        <item>Tall</item>
+    </string-array>
+    <string-array name="ethnicity_values">
+        <item>None</item>
+        <item>Latina/Latino</item>
+        <item>Black/African</item>
+        <item>Native/Aboriginal</item>
+        <item>Asian</item>
+        <item>East Islander</item>
+        <item>White/Caucasian</item>
+        <item>Middle Eastern</item>
+        <item>Mixed/Multi</item>
+    </string-array>
+    <string-array name="interests_values">
+        <item>None</item>
+        <item>Movies</item>
+        <item>Books</item>
+        <item>TV</item>
+        <item>Music</item>
+        <item>Family</item>
+        <item>Pets</item>
+        <item>Drinking</item>
+        <item>Restaurants</item>
+        <item>Shopping</item>
+        <item>Watching Sports</item>
+        <item>Playing Sports</item>
+        <item>Bars</item>
+        <item>Dancing</item>
+        <item>Games</item>
+    </string-array>
+
+</resources>

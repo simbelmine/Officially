@@ -1,0 +1,526 @@
+package com.android.formalchat;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
+import android.content.Intent;
+import android.content.Loader;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.provider.ContactsContract;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.parse.FindCallback;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * A login screen that offers login via email/password.
+ */
+public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+
+    /**
+     * A dummy authentication store containing known user names and passwords.
+     * TODO: remove after connecting to a real authentication system.
+     */
+    private static final String[] DUMMY_CREDENTIALS = new String[]{
+            "foo@example.com:hello", "bar@example.com:world"
+    };
+    /**
+     * Keep track of the login task to ensure we can cancel it if requested.
+     */
+    private UserLoginTask mAuthTask = null;
+
+    // UI references.
+    public static final String PREFS_NAME = "FormalChatPrefs";
+    private AutoCompleteTextView mEmailView;
+    private EditText mPasswordView;
+    private View mProgressView;
+    private View mLoginFormView;
+    private Button mEmailSignInButton;
+    private Button mSignUpButton;
+    private ParseUser parseUser;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private Boolean exit;
+
+    private String TAG = "formalchat";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
+        editor = sharedPreferences.edit();
+
+        exit = false;
+
+        // Set up the login form.
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        populateAutoComplete();
+
+        mPasswordView = (EditText) findViewById(R.id.password);
+//        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+//                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+//                    attemptLogin();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+
+        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptLogin();
+            }
+        });
+
+        mSignUpButton = (Button) findViewById(R.id.email_log_in);
+        mSignUpButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signUp();
+            }
+        });
+
+        mLoginFormView = findViewById(R.id.login_form);
+        mProgressView = findViewById(R.id.login_progress);
+
+        startCorrectActivity();
+    }
+
+    private void startCorrectActivity() {
+        ParseUser pUser = ParseUser.getCurrentUser();
+////////////
+//            // *** If e-Mail autorisation is needed => Uncomment!
+///////////
+////                if(isEmailAutorized(pUser)) {
+////                    launchMainActivity();
+////                }
+        if (pUser != null) {
+            if(!isQuestionsDone()) {
+                launchMainQuestionsActivity();
+            }
+            else if(!isQuestionaryDone()) {
+                launchQuestionaryActivity();
+            }
+            else {
+                launchMainActivity();
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private boolean isQuestionaryDone() {
+        return sharedPreferences.getBoolean("questionary_done", false);
+    }
+
+    private boolean isQuestionsDone() {
+       return sharedPreferences.getBoolean("questions_done", false);
+    }
+
+    private void signUp() {
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+        String userName = email;
+        View focusView = getFocusView(email, password);
+
+        if (focusView != null) {
+            focusView.requestFocus();
+        } else {
+            saveDataToParse(userName, email, password);
+        }
+    }
+
+    private void saveDataToParse(String userName, String email, String password) {
+
+        // Force user to fill up the form
+        if (userName.equals("") && password.equals("")) {
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.please_complete_the_sign_up),
+                    Toast.LENGTH_LONG).show();
+        }
+        else {
+            parseUser = new ParseUser();
+            parseUser.setUsername(userName);
+            parseUser.setPassword(password);
+            parseUser.setEmail(email);
+
+            parseUser.signUpInBackground(new SignUpCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        // Hooray! Let them use the app now.
+                        Log.v(TAG, "Hooray! We saved it!!!");
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.sign_up_success),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        // Sign up didn't succeed. Look at the ParseException
+                        // to figure out what went wrong
+                        Log.v(TAG, "Nope :(    Error is: " + e);
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.error_sign_up), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                }
+            });
+        }
+    }
+
+    private void populateAutoComplete() {
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+
+    /**
+     * Attempts to sign in or register the account specified by the login form.
+     * If there are form errors (invalid email, missing fields, etc.), the
+     * errors are presented and no actual login attempt is made.
+     */
+    public void attemptLogin() {
+        if (mAuthTask != null) {
+            return;
+        }
+
+        // Reset errors.
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+
+        // Store values at the time of the login attempt.
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+        final String userName = email;
+
+        View focusView = null;
+        focusView = getFocusView(email, password);
+
+
+        ///////////////////////////////////////////////////
+        //////// **************************************////
+        ///////////////////////////////////////////////////
+
+        if (focusView != null) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+
+            parseUser.logInInBackground(userName, password, new LogInCallback() {
+                @Override
+                public void done(ParseUser parseUser, ParseException e) {
+                    if (parseUser != null) {
+                        Log.v(TAG, "emailVerified" + (parseUser.getBoolean("emailVerified")));
+                        if(isEmailAutorized(parseUser) || BuildConfig.DEBUG) {
+                            isAccountExistsInParse(userName);
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), getString(R.string.confirm_email), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.no_such_user), Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+//            mAuthTask = new UserLoginTask(email, password);
+//            mAuthTask.execute((Void) null);
+        }
+    }
+
+    private void isAccountExistsInParse(String userName) {
+        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
+        parseQuery.whereEqualTo("loginName", userName);
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                Log.e("formalchat", parseObjects.size() + "objects");
+                if(e == null) {
+                    if(parseObjects.size() != 0) {
+                        showProgress(true);
+                        setLogedInSharedPrefs();
+                        launchMainActivity();
+                    }
+                    else {
+                        showProgress(true);
+                        setLogedInSharedPrefs();
+                        launchMainQuestionsActivity();
+                    }
+                }
+                else {
+                    Log.e("formalchat", "Problem with finding: " + e.toString());
+                }
+            }
+        });
+    }
+
+    private void setLogedInSharedPrefs() {
+        editor.putBoolean("loggedIn", true);
+        editor.commit();
+    }
+
+    private View getFocusView(String email, String password) {
+        View focusView = null;
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_missing_password));
+            focusView = mPasswordView;
+        }
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+        }
+        return focusView;
+    }
+
+    private boolean isEmailAutorized(ParseUser pu) {
+            if(pu.getBoolean("emailVerified")) {
+                Log.v(TAG, "emailVerified" + (pu.getBoolean("emailVerified")));
+                return true;
+            }
+        return false;
+    }
+
+    private void launchMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchMainQuestionsActivity() {
+        Intent intent = new Intent(this, MainQuestionsActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchQuestionaryActivity() {
+        Intent intent = new Intent(this, QuestionaryActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchTutorialActivity() {
+        Intent intent = new Intent(this, TutorialPagerActivity.class);
+        startActivity(intent);
+    }
+
+    private boolean isEmailValid(String email) {
+        //TODO: Replace this with your own logic
+        return email.contains("@");
+    }
+
+    private boolean isPasswordValid(String password) {
+        //TODO: Replace this with your own logic
+        return password.length() > 5;
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(this,
+                // Retrieve data rows for the device user's 'profile' contact.
+                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
+
+                // Select only email addresses.
+                ContactsContract.Contacts.Data.MIMETYPE +
+                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
+                .CONTENT_ITEM_TYPE},
+
+                // Show primary email addresses first. Note that there won't be
+                // a primary email address if the user hasn't specified one.
+                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        List<String> emails = new ArrayList<String>();
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            emails.add(cursor.getString(ProfileQuery.ADDRESS));
+            cursor.moveToNext();
+        }
+
+        addEmailsToAutoComplete(emails);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+    }
+
+    private interface ProfileQuery {
+        String[] PROJECTION = {
+                ContactsContract.CommonDataKinds.Email.ADDRESS,
+                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
+        };
+
+        int ADDRESS = 0;
+        int IS_PRIMARY = 1;
+    }
+
+
+    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
+        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(LoginActivity.this,
+                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
+
+        mEmailView.setAdapter(adapter);
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final String mEmail;
+        private final String mPassword;
+
+        UserLoginTask(String email, String password) {
+            mEmail = email;
+            mPassword = password;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return false;
+            }
+
+            for (String credential : DUMMY_CREDENTIALS) {
+                String[] pieces = credential.split(":");
+                if (pieces[0].equals(mEmail)) {
+                    // Account exists, return true if the password matches.
+                    return pieces[1].equals(mPassword);
+                }
+            }
+
+            // TODO: register the new account here.
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            mAuthTask = null;
+            showProgress(false);
+
+            if (success) {
+                finish();
+            } else {
+                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.requestFocus();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(exit) {
+            finish();
+        }
+        else {
+            //The Handler here handles accidental back presses,
+            // it simply shows a Toast, and if there is another back press within 3 seconds,
+            // it closes the application.
+            Toast.makeText(this, getString(R.string.back_to_exit), Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000 );
+        }
+    }
+}
+
+
+

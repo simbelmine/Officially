@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <EditText
+        android:id="@+id/edit_aboutMe"
+        android:layout_width="@dimen/about_me_width"
+        android:layout_height="@dimen/about_me_height"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
+        android:maxLength="140"/>
+    <Button
+        android:id="@+id/done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/aboutMe_btn_margin"
+        android:layout_marginBottom="@dimen/aboutMe_btn_margin"
+        android:text="@string/about_me_done"
+        android:background="@drawable/rounded_btns"
+    />
+</LinearLayout>

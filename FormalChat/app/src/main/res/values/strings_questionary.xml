@@ -1,0 +1,56 @@
+<resources>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="question_one">How important is your match\'s religion?</string>
+        <string name="answer_one_one">Not at all important</string>
+        <string name="answer_one_two">Somewhat important</string>
+        <string name="answer_one_tree">Very important</string>
+    <string name="question_two">The most my match can smoke is...</string>
+        <string name="answer_two_one">Never</string>
+        <string name="answer_two_two">Socially</string>
+        <string name="answer_two_tree">Once a week</string>
+        <string name="answer_two_four">Few times a week</string>
+        <string name="answer_two_five">Daily</string>
+    <string name="question_tree">The most my match can drink is...</string>
+        <string name="answer_tree_one">Never</string>
+        <string name="answer_tree_two">On special ocasions</string>
+        <string name="answer_tree_tree">Once a week</string>
+        <string name="answer_tree_four">Few times a week</string>
+        <string name="answer_tree_five">Daily</string>
+    <string name="question_four">What\'s your ethnicity</string>
+        <string name="answer_four_one">White</string>
+        <string name="answer_four_two">Hispanic / Latino</string>
+        <string name="answer_four_tree">Black / African descent</string>
+        <string name="answer_four_four">Asian / Pcific Islander</string>
+        <string name="answer_four_five">East Indian</string>
+        <string name="answer_four_six">Chinese</string>
+        <string name="answer_four_seven">Native American</string>
+        <string name="answer_four_eight">Arabic / Middle East</string>
+    <string name="question_five">What best describes your religious beliefs or spirituality?</string>
+        <string name="answer_five_one">Christian</string>
+        <string name="answer_five_two">Jewish</string>
+        <string name="answer_five_tree">Muslim</string>
+        <string name="answer_five_four">Hindu</string>
+        <string name="answer_five_five">Buddhist</string>
+        <string name="answer_five_six">Sikh</string>
+        <string name="answer_five_seven">Shinto</string>
+        <string name="answer_five_eight">Other</string>
+    <string name="question_six">How often do you smoke?</string>
+        <string name="answer_six_one">Never</string>
+        <string name="answer_six_two">Socially</string>
+        <string name="answer_six_tree">Once a week</string>
+        <string name="answer_six_four">Few times a week</string>
+        <string name="answer_six_five">Daily</string>
+    <string name="question_seven">How often do you drink?</string>
+        <string name="answer_seven_one">Never</string>
+        <string name="answer_seven_two">On special ocasions</string>
+        <string name="answer_seven_tree">Once a week</string>
+        <string name="answer_seven_four">Few times a week</string>
+        <string name="answer_seven_five">Daily</string>
+
+
+    <string name="skip_text">Skip questionary</string>
+    <string name="alert_dialog">Don\'t forget that answering this questions you have better chance to find your best match!</string>
+    <string name="alert_ok">Ok</string>
+</resources>

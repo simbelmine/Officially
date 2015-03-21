@@ -1,0 +1,20 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="QuestionsDialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transp_black</item>
+    </style>
+
+    <style name="QuestionStyle">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/pink</item>
+        <item name="android:typeface">serif</item>
+    </style>
+
+</resources>

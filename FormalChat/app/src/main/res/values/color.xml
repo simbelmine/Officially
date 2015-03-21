@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="transp_black">#60000000</color>
+    <color name="transp_white">#00FFFFFF</color>
+    <color name="transp_white_60">#60FFFFFF</color>
+    <color name="transp">#80FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#DADAE6</color>
+    <color name="dark_gray">#707070</color>
+    <color name="light_blue">#CCFFFF</color>
+    <color name="pink">#FFAAFF</color>
+    <color name="green">#33CC00</color>
+    <color name="green_transp">#6033CC00</color>
+    <color name="purple">#990099</color>
+</resources>
