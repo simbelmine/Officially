@@ -14,6 +14,7 @@ import android.widget.TextView;
  */
 public class QuestionFragmentOne extends Fragment {
     private static final String PREFS_NAME = "FormalChatPrefs";
+    private static final int question = 1;
     private QuestionaryPagerAdapter questionaryPagerAdapter;
     private SharedPreferences sharedPreferences;
     private String answer;
@@ -52,17 +53,7 @@ public class QuestionFragmentOne extends Fragment {
             @Override
             public void onClick(View v) {
                 answer = "1";
-                if(!clicked) {
-                    questionaryPagerAdapter.updateQuestionary(1, answer);
-                    answerOne.setBackgroundResource(R.color.gray);
-                    setAnswerToSharedPrefs(answer);
-                    clicked = true;
-                }
-                else {
-                    putCorrectAnswerColor(getAnswerFromSharedPrefs(), R.color.light_blue);
-                    answerOne.setBackgroundResource(R.color.gray);
-                    setAnswerToSharedPrefs(answer);
-                }
+                onClickAnswer(answerOne, answer);
             }
         });
 
@@ -70,17 +61,7 @@ public class QuestionFragmentOne extends Fragment {
             @Override
             public void onClick(View v) {
                 answer = "2";
-                if(!clicked) {
-                    questionaryPagerAdapter.updateQuestionary(1, answer);
-                    answerTwo.setBackgroundResource(R.color.gray);
-                    setAnswerToSharedPrefs(answer);
-                    clicked = true;
-                }
-                else {
-                    putCorrectAnswerColor(getAnswerFromSharedPrefs(), R.color.light_blue);
-                    answerTwo.setBackgroundResource(R.color.gray);
-                    setAnswerToSharedPrefs(answer);
-                }
+                onClickAnswer(answerTwo, answer);
             }
         });
 
@@ -88,21 +69,32 @@ public class QuestionFragmentOne extends Fragment {
             @Override
             public void onClick(View v) {
                 answer = "3";
-                if(!clicked) {
-                    questionaryPagerAdapter.updateQuestionary(1, answer);
-                    answerTree.setBackgroundResource(R.color.gray);
-                    setAnswerToSharedPrefs(answer);
-                    clicked = true;
-                }
-                else {
-                    putCorrectAnswerColor(getAnswerFromSharedPrefs(), R.color.light_blue);
-                    answerTree.setBackgroundResource(R.color.gray);
-                    setAnswerToSharedPrefs(answer);
-                }
+                onClickAnswer(answerTree, answer);
             }
         });
 
         return rootView;
+    }
+
+    private void onClickAnswer(TextView answerTextView, String answer) {
+        saveAnswerToParse(answer);
+        changeColorOnClick(answerTextView);
+        setAnswerToSharedPrefs(answer);
+    }
+
+    private void changeColorOnClick(TextView answerTextView) {
+        if(!clicked) {
+            answerTextView.setBackgroundResource(R.color.gray);
+            clicked = true;
+        }
+        else {
+            putCorrectAnswerColor(getAnswerFromSharedPrefs(), R.color.light_blue);
+            answerTextView.setBackgroundResource(R.color.gray);
+        }
+    }
+
+    private void saveAnswerToParse(String answer) {
+        questionaryPagerAdapter.updateQuestionary(question, answer);
     }
 
     private void setAnswerToSharedPrefs(String answer) {
