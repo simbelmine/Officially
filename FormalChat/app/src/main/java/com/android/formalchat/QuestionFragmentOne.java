@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,6 @@ import android.widget.TextView;
  */
 public class QuestionFragmentOne extends Fragment {
     private static final String PREFS_NAME = "FormalChatPrefs";
-    private static final int question = 1;
     private QuestionaryPagerAdapter questionaryPagerAdapter;
     private SharedPreferences sharedPreferences;
     private String answer;
@@ -23,10 +24,32 @@ public class QuestionFragmentOne extends Fragment {
     private TextView answerTwo;
     private TextView answerTree;
     private boolean clicked;
+    private int question;
+    private ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.question_one, container, false);
+        question = 0;
+        viewPager = (ViewPager) container;
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                question = position;
+                Log.v("formalchat", "####### question pos = " + question);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
         questionaryPagerAdapter = new QuestionaryPagerAdapter(getFragmentManager(), getActivity().getApplicationContext(), getActivity());
         sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, 0);
         clicked = false;
@@ -80,6 +103,11 @@ public class QuestionFragmentOne extends Fragment {
         saveAnswerToParse(answer);
         changeColorOnClick(answerTextView);
         setAnswerToSharedPrefs(answer);
+        goToNextQuestion();
+    }
+
+    private void goToNextQuestion() {
+        viewPager.setCurrentItem(question+1);
     }
 
     private void changeColorOnClick(TextView answerTextView) {
