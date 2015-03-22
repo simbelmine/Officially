@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -46,43 +45,26 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new QuestionFragmentOne();
+                return new QuestionFragmentMatchReligion();
             case 1:
-                return new QuestionFragmentTwo();
+                return new QuestionFragmentMatchSmoking();
             case 2:
-                return new QuestionFragmentTree();
+                return new QuestionFragmentMatchDrink();
             case 3:
-                return new QuestionFragmentFour();
+                return new QuestionFragmentYourEthnicity();
             case 4:
-                return new QuestionFragmentFive();
+                return new QuestionFragmentYourReligion();
             case 5:
-                return new QuestionFragmentSix();
+                return new QuestionFragmentYourSmoking();
             case 6:
-                return new QuestionFragmentSeven();
+                return new QuestionFragmentYourDrinking();
         }
         return null;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case 0:
-                return "Question One";
-            case 1:
-                return "Question Two";
-            case 2:
-                return "Question Three";
-            case 3:
-                return "Question Four";
-            case 4:
-                return "Question Five";
-            case 5:
-                return "Question Six";
-            case 6:
-                return "Question Seven";
-        }
-
-        return null;
+        return "Question " + (position + 1) + " of " + getCount();
     }
 
     public void updateQuestionary(final int answer, final String value) {
