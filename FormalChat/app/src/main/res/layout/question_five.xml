@@ -19,81 +19,21 @@
         android:layout_marginRight="@dimen/question_margin_right"
         android:gravity="center">
         <TextView
+            android:id="@+id/question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="@dimen/question_padding_top"
-            android:text="@string/question_five"
+            android:text="@string/q_your_religion"
+            android:tag="@string/tag_your_religion"
             style="@style/QuestionStyle"/>
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/your_religion_lyout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         >
-        <TextView
-            android:id="@+id/answer_five_one"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_five_one"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_five_two"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_five_two"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_five_tree"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_five_tree"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_five_four"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_five_four"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_five_five"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_five_five"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_five_six"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_five_six"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_five_seven"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_five_seven"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_five_eight"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:text="@string/answer_five_eight"
-            android:background="@color/light_blue"/>
     </LinearLayout>
 </LinearLayout>

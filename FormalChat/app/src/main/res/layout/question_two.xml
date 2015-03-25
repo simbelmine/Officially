@@ -18,57 +18,21 @@
         android:layout_marginRight="@dimen/question_margin_right"
         android:gravity="center">
         <TextView
+            android:id="@+id/question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="@dimen/question_padding_top"
-            android:text="@string/question_two"
+            android:text="@string/q_match_smoking"
+            android:tag="@string/tag_match_smoking"
             style="@style/QuestionStyle"/>
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/match_smoking_lyout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         >
-        <TextView
-            android:id="@+id/answer_two_one"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_two_one"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_two_two"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_two_two"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_two_tree"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_two_tree"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_two_four"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/answer_margin_bottom"
-            android:text="@string/answer_two_four"
-            android:background="@color/light_blue"/>
-        <TextView
-            android:id="@+id/answer_two_five"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/answer_height"
-            android:gravity="center"
-            android:text="@string/answer_two_five"
-            android:background="@color/light_blue"/>
     </LinearLayout>
 </LinearLayout>

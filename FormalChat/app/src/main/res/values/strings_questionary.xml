@@ -1,53 +1,93 @@
 <resources>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+<!--Question 1-->
+    <string name="tag_match_religion">matchReligion</string>
+    <string name="q_match_religion">How important is your match\'s religion?</string>
 
-    <string name="question_one">How important is your match\'s religion?</string>
-        <string name="answer_one_one">Not at all important</string>
-        <string name="answer_one_two">Somewhat important</string>
-        <string name="answer_one_tree">Very important</string>
-    <string name="question_two">The most my match can smoke is...</string>
-        <string name="answer_two_one">Never</string>
-        <string name="answer_two_two">Socially</string>
-        <string name="answer_two_tree">Once a week</string>
-        <string name="answer_two_four">Few times a week</string>
-        <string name="answer_two_five">Daily</string>
-    <string name="question_tree">The most my match can drink is...</string>
-        <string name="answer_tree_one">Never</string>
-        <string name="answer_tree_two">On special ocasions</string>
-        <string name="answer_tree_tree">Once a week</string>
-        <string name="answer_tree_four">Few times a week</string>
-        <string name="answer_tree_five">Daily</string>
-    <string name="question_four">What\'s your ethnicity</string>
-        <string name="answer_four_one">White</string>
-        <string name="answer_four_two">Hispanic / Latino</string>
-        <string name="answer_four_tree">Black / African descent</string>
-        <string name="answer_four_four">Asian / Pcific Islander</string>
-        <string name="answer_four_five">East Indian</string>
-        <string name="answer_four_six">Chinese</string>
-        <string name="answer_four_seven">Native American</string>
-        <string name="answer_four_eight">Arabic / Middle East</string>
-    <string name="question_five">What best describes your religious beliefs or spirituality?</string>
-        <string name="answer_five_one">Christian</string>
-        <string name="answer_five_two">Jewish</string>
-        <string name="answer_five_tree">Muslim</string>
-        <string name="answer_five_four">Hindu</string>
-        <string name="answer_five_five">Buddhist</string>
-        <string name="answer_five_six">Sikh</string>
-        <string name="answer_five_seven">Shinto</string>
-        <string name="answer_five_eight">Other</string>
-    <string name="question_six">How often do you smoke?</string>
-        <string name="answer_six_one">Never</string>
-        <string name="answer_six_two">Socially</string>
-        <string name="answer_six_tree">Once a week</string>
-        <string name="answer_six_four">Few times a week</string>
-        <string name="answer_six_five">Daily</string>
-    <string name="question_seven">How often do you drink?</string>
-        <string name="answer_seven_one">Never</string>
-        <string name="answer_seven_two">On special ocasions</string>
-        <string name="answer_seven_tree">Once a week</string>
-        <string name="answer_seven_four">Few times a week</string>
-        <string name="answer_seven_five">Daily</string>
+    <string-array name="a_match_religion">
+        <item>Not at all important</item>
+        <item>Somewhat important</item>
+        <item>Very important</item>
+    </string-array>
+
+<!--Question 2 -->
+    <string name="tag_match_smoking">matchSmoking</string>
+    <string name="q_match_smoking">The most my match can smoke is...</string>
+
+    <string-array name="a_match_smoking">
+        <item>Never</item>
+        <item>Socially</item>
+        <item>Once a week</item>
+        <item>Few times a week</item>
+        <item>Daily</item>
+    </string-array>
+
+<!--Question 3    -->
+    <string name="tag_match_drinking">matchDrinking</string>
+    <string name="q_match_drinking">The most my match can drink is...</string>
+
+    <string-array name="a_match_drinking">
+        <item>Never</item>
+        <item>On special ocasions</item>
+        <item>Once a week</item>
+        <item>Few times a week</item>
+        <item>Daily</item>
+    </string-array>
+
+<!--Question 4-->
+    <string name="tag_your_ethnicity">yourEthnicity</string>
+    <string name="q_your_ethnicity">What\'s your ethnicity</string>
+
+    <string-array name="a_your_ethnicity">
+        <item>White</item>
+        <item>Hispanic / Latino</item>
+        <item>Black / African descent</item>
+        <item>Asian / Pcific Islander</item>
+        <item>East Indian</item>
+        <item>Chinese</item>
+        <item>Native American</item>
+        <item>Arabic / Middle East</item>
+    </string-array>
+
+<!--Question 5    -->
+    <string name="tag_your_religion">yourReligion</string>
+    <string name="q_your_religion">What best describes your religious beliefs or spirituality?</string>
+
+    <string-array name="a_your_religion">
+        <item>Christian</item>
+        <item>Jewish</item>
+        <item>Muslim</item>
+        <item>Hindu</item>
+        <item>Buddhist</item>
+        <item>Sikh</item>
+        <item>Shinto</item>
+        <item>Other</item>
+    </string-array>
+
+<!--Question 6    -->
+    <string name="tag_your_smoking">yourSmoking</string>
+    <string name="q_your_smoking">How often do you smoke?</string>
+
+    <string-array name="a_your_smoking">
+        <item>Never</item>
+        <item>Socially</item>
+        <item>Once a week</item>
+        <item>Few times a week</item>
+        <item>Daily</item>
+    </string-array>
+
+<!--Question 7-->
+    <string name="tag_your_drinking">yourDrinking</string>
+    <string name="q_your_drinking">How often do you drink?</string>
+
+    <string-array name="a_your_drinking">
+        <item>Never</item>
+        <item>On special occasions</item>
+        <item>Once a week</item>
+        <item>Few times a week</item>
+        <item>Daily</item>
+    </string-array>
 
 
     <string name="skip_text">Skip questionary</string>

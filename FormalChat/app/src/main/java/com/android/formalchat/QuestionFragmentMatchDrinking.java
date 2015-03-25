@@ -4,18 +4,18 @@ import android.view.View;
 
 /**
  * Created by Sve on 3/12/15.
- * Question 6 of 7
+ * Question 3 of 7
  */
-public class QuestionFragmentYourSmoking extends QuestionFragment {
+public class QuestionFragmentMatchDrinking extends QuestionFragment {
 
     @Override
     protected int putLayoutId() {
-        return R.layout.question_six;
+        return R.layout.question_tree;
     }
 
     @Override
     protected int putAnswersLayout() {
-        return R.id.your_smoking_lyout;
+        return R.id.match_drinking_lyout;
     }
 
     @Override

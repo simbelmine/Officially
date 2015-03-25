@@ -1,111 +1,24 @@
 package com.android.formalchat;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 /**
  * Created by Sve on 3/12/15.
+ * Question 2 of 7
  */
 public class QuestionFragmentMatchSmoking extends QuestionFragment {
-    private TextView skip;
-    private TextView answerOne;
-    private TextView answerTwo;
-    private TextView answerTree;
-    private TextView answerFour;
-    private TextView answerFive;
-
     @Override
     protected int putLayoutId() {
         return R.layout.question_two;
     }
 
     @Override
-    protected void initButtons(View rootView) {
-        skip = (TextView) rootView.findViewById(R.id.skip_txt);
-        answerOne = (TextView) rootView.findViewById(R.id.answer_two_one);
-        answerTwo = (TextView) rootView.findViewById(R.id.answer_two_two);
-        answerTree = (TextView) rootView.findViewById(R.id.answer_two_tree);
-        answerFour = (TextView) rootView.findViewById(R.id.answer_two_four);
-        answerFive = (TextView) rootView.findViewById(R.id.answer_two_five);
-
-        skip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                questionaryPagerAdapter.skipQuestionary();
-            }
-        });
-
-        answerOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                answer = "1";
-                onClickAnswer(answerOne, answer);
-            }
-        });
-
-        answerTwo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                answer = "2";
-                onClickAnswer(answerTwo, answer);
-            }
-        });
-
-        answerTree.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                answer = "3";
-                onClickAnswer(answerTree, answer);
-            }
-        });
-
-        answerFour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                answer = "4";
-                onClickAnswer(answerFour, answer);
-            }
-        });
-
-        answerFive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                answer = "5";
-                onClickAnswer(answerFive, answer);
-            }
-        });
+    protected int putAnswersLayout() {
+        return R.id.match_smoking_lyout;
     }
 
-    protected void putCorrectAnswerColor(String answerFromPrefs, int color) {
-        switch(answerFromPrefs) {
-            case "1":
-                answerOne.setBackgroundColor(getResources().getColor(color));
-                break;
-            case "2":
-                answerTwo.setBackgroundColor(getResources().getColor(color));
-                break;
-            case "3":
-                answerTree.setBackgroundColor(getResources().getColor(color));
-                break;
-            case "4":
-                answerFour.setBackgroundColor(getResources().getColor(color));
-                break;
-            case "5":
-                answerFive.setBackgroundColor(getResources().getColor(color));
-                break;
-        }
+    @Override
+    protected String getSharedPreferencesQuestionId(View rootView) {
+        return rootView.findViewById(R.id.question).getTag().toString();
     }
-
-    protected String getSharedPreferencesQuestionId() {
-        return "matchSmoking";
-    }
-
 }

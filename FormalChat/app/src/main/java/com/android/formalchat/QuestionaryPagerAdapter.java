@@ -49,7 +49,7 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return new QuestionFragmentMatchSmoking();
             case 2:
-                return new QuestionFragmentMatchDrink();
+                return new QuestionFragmentMatchDrinking();
             case 3:
                 return new QuestionFragmentYourEthnicity();
             case 4:
@@ -67,7 +67,7 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter {
         return "Question " + (position + 1) + " of " + getCount();
     }
 
-    public void updateQuestionary(final int answer, final String value) {
+    public void updateQuestionary_(final String question, final int answer) {
         final ParseUser parseUser = ParseUser.getCurrentUser();
         final String userName = parseUser.getUsername();
 
@@ -77,50 +77,21 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if(e == null) {
-                    saveAnswers(answer, (UserQuestionary) parseObject, value);
+                    saveAnswer((UserQuestionary) parseObject, question, answer);
                 }
                 else {
-                    Log.v("formalchat", e.getMessage());
                     UserQuestionary questionary = new UserQuestionary();
                     questionary.setLoginName(userName);
                     questionary.saveInBackground();
-                    saveAnswers(answer, questionary, value);
+                    saveAnswer(questionary, question, answer);
                 }
             }
         });
     }
 
-    private void saveAnswers(int answer, UserQuestionary questionary, String value) {
-        switch (answer) {
-            case 1:
-                questionary.setQuestionOne(value);
-                questionary.saveInBackground();
-                break;
-            case 2:
-                questionary.setQuestionTwo(value);
-                questionary.saveInBackground();
-                break;
-            case 3:
-                questionary.setQuestionTree(value);
-                questionary.saveInBackground();
-                break;
-            case 4:
-                questionary.setQuestionFour(value);
-                questionary.saveInBackground();
-                break;
-            case 5:
-                questionary.setQuestionFive(value);
-                questionary.saveInBackground();
-                break;
-            case 6:
-                questionary.setQuestionSix(value);
-                questionary.saveInBackground();
-                break;
-            case 7:
-                questionary.setQuestionSeven(value);
-                questionary.saveInBackground();
-                break;
-        }
+    private void saveAnswer(UserQuestionary questionary, String question, int answer) {
+        questionary.put(question, answer);
+        questionary.saveInBackground();
     }
 
     public void checkAllAnswersDone(final Button doneBtn) {
@@ -139,14 +110,14 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter {
                                 po.getString("questionTree") != null && po.getString("questionFour") != null &&
                                 po.getString("questionFive") != null && po.getString("questionSix") != null &&
                                 po.getString("questionSeven") != null) {
-                            doneBtn.setVisibility(View.VISIBLE);
-                            doneBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+//                            doneBtn.setVisibility(View.VISIBLE);
+//                            doneBtn.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
                                     setDoneQuestionary();
                                     startMainActivity();
-                                }
-                            });
+//                                }
+//                            });
                         } else {
                             Toast.makeText(context, "Please answer all Questions", Toast.LENGTH_SHORT).show();
                         }
