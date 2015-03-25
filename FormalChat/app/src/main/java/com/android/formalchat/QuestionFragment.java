@@ -62,7 +62,7 @@ public abstract class QuestionFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, 0);
         clicked = false;
 
-        answers = Arrays.asList(getResources().getStringArray(R.array.a_match_religion));
+        answers = putAnswersList();
         layout = (LinearLayout) rootView.findViewById(putAnswersLayout());
 
         init();
@@ -73,6 +73,7 @@ public abstract class QuestionFragment extends Fragment {
 
     protected abstract int putLayoutId();
     protected abstract int putAnswersLayout();
+    protected abstract List<String> putAnswersList();
 
     protected void init() {
         TextView textView;
