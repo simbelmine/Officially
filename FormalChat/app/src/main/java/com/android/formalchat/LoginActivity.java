@@ -77,7 +77,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         editor = sharedPreferences.edit();
-
         exit = false;
 
         // Set up the login form.

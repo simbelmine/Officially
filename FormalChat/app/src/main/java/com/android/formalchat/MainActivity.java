@@ -1,10 +1,13 @@
 package com.android.formalchat;
 
-import android.app.Activity;
+import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,20 +18,28 @@ import com.parse.ParseUser;
 /**
  * Created by Sve on 1/28/15.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends DrawerActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
+    public static final int NONE = 101;
     private TextView userName;
     private ParseUser currentUser;
     private Button logOutButton;
     private Button profileButton;
     private Boolean exit;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View contentView = inflater.inflate(R.layout.activity_main, null, false);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.addView(contentView, 0);
         exit = false;
+
+        setTitle();
+
 
         userName = (TextView) findViewById(R.id.user_name);
         currentUser = ParseUser.getCurrentUser();
@@ -56,6 +67,16 @@ public class MainActivity extends Activity {
                 launchProfileActivity();
             }
         });
+    }
+
+    private void setTitle() {
+        int title_position = getIntent().getIntExtra("title_position", NONE);
+        if(title_position != NONE) {
+            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+        }
+        else {
+            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[0]);
+        }
     }
 
     private void launchLoginActivity() {

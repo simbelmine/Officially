@@ -8,10 +8,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -31,14 +32,16 @@ import java.util.List;
 /**
  * Created by Sve on 2/4/15.
  */
-public class ProfileActivity extends FragmentActivity {
+public class ProfileActivity extends DrawerActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
+    public static final int NONE = 101;
     private ProfilePagerAdapter profilePagerAdapter;
     private ViewPager viewPager;
     private Button addImgBtn;
     private Button editBtn;
     private ImageView imgProfile;
     private ProfileAddImageDialog addImgWithDialog;
+    private DrawerLayout drawerLayout;
 
     private ArrayList<Drawable> drawablesList;
     private ArrayList<String> pathsList;
@@ -46,9 +49,15 @@ public class ProfileActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_layout);
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View contentView = inflater.inflate(R.layout.profile_layout, null, false);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.addView(contentView, 0);
         drawablesList = new ArrayList<>();
         pathsList = new ArrayList<>();
+
+        setTitle();
 
 //        profilePagerAdapter = new ProfilePagerAdapter(drawablesList, this);
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
@@ -78,6 +87,11 @@ public class ProfileActivity extends FragmentActivity {
         });
     }
 
+    private void setTitle() {
+        int title_position = getIntent().getIntExtra("title_position", NONE);
+        getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+    }
+
     private void startUserInfoActivity() {
         Intent intent = new Intent(this, UserInfoActivity.class);
         startActivity(intent);
@@ -90,7 +104,7 @@ public class ProfileActivity extends FragmentActivity {
         if(isNeededToRefresh()) {
             setNewSharedPrefs();
             recreate();
-         }
+        }
 
         if(isNetworkAvailable()) {
             loadImagesFromParseRemote();

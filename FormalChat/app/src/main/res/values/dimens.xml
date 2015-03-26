@@ -10,6 +10,7 @@
     <dimen name="answer_margin_bottom">10dp</dimen>
     <dimen name="skip__txt_margin_top">5dp</dimen>
 
+    <!--Main Questions-->
     <dimen name="check_hight">30dp</dimen>
     <dimen name="margin_left_check">30dp</dimen>
     <dimen name="padding_left_check">10dp</dimen>
@@ -26,4 +27,8 @@
     <dimen name="aboutMe_btn_margin">10dp</dimen>
     <dimen name="about_me_height">300dp</dimen>
     <dimen name="about_me_width">300dp</dimen>
+
+    <!--Drawer-->
+    <dimen name="l_drawer_width">240dp</dimen>
+    <dimen name="l_drawer_divider_height">0dp</dimen>
 </resources>
