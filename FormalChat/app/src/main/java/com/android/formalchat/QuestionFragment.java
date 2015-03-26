@@ -85,9 +85,6 @@ public abstract class QuestionFragment extends Fragment {
             }
         }
 
-
-
-
         skip = (TextView) rootView.findViewById(R.id.skip_txt);
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +105,7 @@ public abstract class QuestionFragment extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                questionaryPagerAdapter.checkAllAnswersDone(doneBtn);
+                questionaryPagerAdapter.checkAllAnswersDone();
             }
         });
         btn.setLayoutParams(params);
@@ -137,7 +134,6 @@ public abstract class QuestionFragment extends Fragment {
     }
 
     private boolean isLastQuestion() {
-       Log.v("formalchat", String.valueOf(question) + " == " + String.valueOf(questionaryPagerAdapter.getCount()-1));
         if(question >= questionaryPagerAdapter.getCount()-1) {
             return true;
         }

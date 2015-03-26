@@ -28,6 +28,6 @@ public class QuestionFragmentYourReligion extends QuestionFragment {
 
     @Override
     protected String getSharedPreferencesQuestionId(View rootView) {
-        return null;
+        return rootView.findViewById(R.id.question).getTag().toString();
     }
 }

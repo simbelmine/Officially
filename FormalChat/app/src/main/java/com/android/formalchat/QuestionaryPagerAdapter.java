@@ -20,13 +20,16 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Sve on 3/12/15.
  */
 public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter {
     private static final String PREFS_NAME = "FormalChatPrefs";
+    private static final String PREFS_NAME_ANSWERS = "FormalChatQuestionAnswers";
     private Context context;
     private Activity activity;
 
@@ -94,7 +97,7 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter {
         questionary.saveInBackground();
     }
 
-    public void checkAllAnswersDone(final Button doneBtn) {
+    public void checkAllAnswersDone() {
         ParseUser user = ParseUser.getCurrentUser();
         String userName = user.getUsername();
 
@@ -106,25 +109,41 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter {
                 if(e == null) {
                     if(parseObjects.size() > 0) {
                         ParseObject po = parseObjects.get(0);
-                        if (po.getString("questionOne") != null && po.getString("questionTwo") != null &&
-                                po.getString("questionTree") != null && po.getString("questionFour") != null &&
-                                po.getString("questionFive") != null && po.getString("questionSix") != null &&
-                                po.getString("questionSeven") != null) {
-//                            doneBtn.setVisibility(View.VISIBLE);
-//                            doneBtn.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-                                    setDoneQuestionary();
-                                    startMainActivity();
-//                                }
-//                            });
-                        } else {
-                            Toast.makeText(context, "Please answer all Questions", Toast.LENGTH_SHORT).show();
+                        List<String> answersList = getAnswersFromPrefs();
+                        int counter = 0;
+
+                        if(answersList!= null) {
+                            for (String answer : answersList) {
+                                if(po.get(answer) != null) {
+                                    counter++;
+                                }
+                            }
+
+                            if(counter == getCount()) {
+                                setDoneQuestionary();
+                                startMainActivity();
+                            }
+                            else {
+                                Toast.makeText(context, "Please answer all Questions", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else {
+                            Log.v("formalchat", "answerList from SharedPrefs is empty");
                         }
                     }
                 }
             }
         });
+    }
+
+    private List<String> getAnswersFromPrefs() {
+        List<String> answers = new ArrayList<>();
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(PREFS_NAME_ANSWERS, 0);
+        Map<String, ?> answersMap = sharedPreferences.getAll();
+        for(Map.Entry<String, ?> entry : answersMap.entrySet()) {
+            answers.add(entry.getKey());
+        }
+        return answers;
     }
 
     private void setDoneQuestionary() {
