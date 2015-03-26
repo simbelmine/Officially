@@ -89,7 +89,9 @@ public class ProfileActivity extends DrawerActivity {
 
     private void setTitle() {
         int title_position = getIntent().getIntExtra("title_position", NONE);
-        getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+        if(title_position != NONE) {
+            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+        }
     }
 
     private void startUserInfoActivity() {

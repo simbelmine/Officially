@@ -14,14 +14,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 /**
  * Created by Sve on 3/26/15.
  */
 public class DrawerActivity extends FragmentActivity {
     public static final int NONE = 101;
+    private RoundedImageView profilePic;
+    private TextView profileName;
     private DrawerLayout drawerLayout;
     private RelativeLayout leftDrawerLayout;
     private ListView leftDrawerList;
@@ -29,6 +38,7 @@ public class DrawerActivity extends FragmentActivity {
     private ActionBarDrawerToggle drawerToggle;
     private CharSequence title;
     private CharSequence drawerTitle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +50,39 @@ public class DrawerActivity extends FragmentActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         leftDrawerLayout = (RelativeLayout) findViewById(R.id.left_drawer);
         leftDrawerList = (ListView) findViewById(R.id.left_list_drawer);
+        profilePic = (RoundedImageView) findViewById(R.id.profile_img);
+        profileName = (TextView) findViewById(R.id.profile_name);
         initDrawableToggle();
         initActionBar();
+        setPicOnClickListenre();
+        setProfileName();
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
         drawerLayout.setDrawerListener(drawerToggle);
         leftDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, listElements));
         setListOnClickItemListener();
+    }
+
+    private void setPicOnClickListenre() {
+        profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchActivity(ProfileActivity.class, NONE);
+            }
+        });
+    }
+
+    private void setProfileName() {
+        final ParseUser user = ParseUser.getCurrentUser();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("UserInfo");
+        query.whereEqualTo("loginName", user.getUsername());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                ParseObject userInfo = parseObjects.get(0);
+                profileName.setText(userInfo.get("name").toString());
+            }
+        });
     }
 
     private void initActionBar() {
