@@ -10,15 +10,42 @@
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <!-- The navigation drawer -->
-    <ListView
+
+    <RelativeLayout
         android:id="@+id/left_drawer"
         android:layout_width="@dimen/l_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="@color/transp"
-        android:dividerHeight="@dimen/l_drawer_divider_height"
-        android:background="@color/white"
-        />
+        android:orientation="vertical"
+        android:gravity="center">
+        <RelativeLayout
+            android:id="@+id/images_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/l_img_width"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/l_img_width"
+                android:layout_centerInParent="true"
+                android:background="@drawable/background"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_launcher"
+                />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/left_list_drawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/images_layout"
+            android:layout_gravity="start"
+            android:choiceMode="singleChoice"
+            android:divider="@color/transp"
+            android:dividerHeight="@dimen/l_drawer_divider_height"
+            android:background="@color/white" />
+    </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

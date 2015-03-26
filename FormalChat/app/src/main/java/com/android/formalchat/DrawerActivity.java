@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.parse.ParseUser;
 
@@ -22,6 +23,7 @@ import com.parse.ParseUser;
 public class DrawerActivity extends FragmentActivity {
     public static final int NONE = 101;
     private DrawerLayout drawerLayout;
+    private RelativeLayout leftDrawerLayout;
     private ListView leftDrawerList;
     private String[] listElements;
     private ActionBarDrawerToggle drawerToggle;
@@ -36,7 +38,8 @@ public class DrawerActivity extends FragmentActivity {
         title = drawerTitle = getTitle();
         listElements = getResources().getStringArray(R.array.menu_list);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        leftDrawerList = (ListView) findViewById(R.id.left_drawer);
+        leftDrawerLayout = (RelativeLayout) findViewById(R.id.left_drawer);
+        leftDrawerList = (ListView) findViewById(R.id.left_list_drawer);
         initDrawableToggle();
         initActionBar();
 
@@ -55,7 +58,7 @@ public class DrawerActivity extends FragmentActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean drawerOpen = drawerLayout.isDrawerOpen(leftDrawerList);
+        boolean drawerOpen = drawerLayout.isDrawerOpen(leftDrawerLayout);
         //menu.findItem(R.id.search_button).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -144,7 +147,7 @@ public class DrawerActivity extends FragmentActivity {
     private void onItemSelected(int position) {
         leftDrawerList.setItemChecked(position, true);
         setTitle(listElements[position]);
-        drawerLayout.closeDrawer(leftDrawerList);
+        drawerLayout.closeDrawer(leftDrawerLayout);
     }
 
     private void logOut() {
