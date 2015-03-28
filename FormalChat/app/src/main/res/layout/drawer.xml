@@ -53,6 +53,7 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/images_layout"
             android:layout_gravity="start"
+            android:paddingTop="@dimen/l_padding_top"
             android:choiceMode="singleChoice"
             android:divider="@color/transp"
             android:dividerHeight="@dimen/l_drawer_divider_height"

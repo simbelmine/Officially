@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#000000</color>
     <color name="transp_black">#60000000</color>
+    <color name="transp_black_55">#55000000</color>
     <color name="transp_white">#00FFFFFF</color>
     <color name="transp_white_60">#60FFFFFF</color>
     <color name="transp">#80FFFFFF</color>

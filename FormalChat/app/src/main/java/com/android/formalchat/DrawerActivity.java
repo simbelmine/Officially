@@ -59,7 +59,8 @@ public class DrawerActivity extends FragmentActivity {
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
         drawerLayout.setDrawerListener(drawerToggle);
-        leftDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, listElements));
+        //leftDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, listElements));
+        leftDrawerList.setAdapter(new DrawerListAdapter(this));
         setListOnClickItemListener();
     }
 
@@ -186,7 +187,7 @@ public class DrawerActivity extends FragmentActivity {
         drawerLayout.closeDrawer(leftDrawerLayout);
     }
 
-    private void logOut() {
+    public void logOut() {
         ParseUser.logOut();
         launchActivity(LoginActivity.class, NONE);
     }

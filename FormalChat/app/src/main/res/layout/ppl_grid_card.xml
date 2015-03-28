@@ -14,13 +14,13 @@
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
+        android:paddingLeft="@dimen/grid_item_txt_l_r_padding"
+        android:paddingRight="@dimen/grid_item_txt_l_r_padding"
+        android:paddingTop="@dimen/grid_item_txt_t_b_padding"
+        android:paddingBottom="@dimen/grid_item_txt_t_b_padding"
         android:layout_gravity="bottom"
         android:textColor="@color/white"
-        android:background="#55000000"
+        android:background="@color/transp_black_55"
         android:text="User's Name"
         />
 </FrameLayout>

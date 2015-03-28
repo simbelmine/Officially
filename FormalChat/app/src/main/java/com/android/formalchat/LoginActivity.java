@@ -73,7 +73,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.login_activity);
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         editor = sharedPreferences.edit();

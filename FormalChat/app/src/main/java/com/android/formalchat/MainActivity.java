@@ -37,7 +37,7 @@ public class MainActivity extends DrawerActivity {
         super.onCreate(savedInstanceState);
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.activity_main, null, false);
+        View contentView = inflater.inflate(R.layout.main_activity, null, false);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
         exit = false;
