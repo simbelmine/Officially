@@ -1,6 +1,5 @@
 package com.android.formalchat;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +8,9 @@ import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +22,15 @@ import com.parse.ParseUser;
 public class MainActivity extends DrawerActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
+    private SharedPreferences sharedPreferences;
     private TextView userName;
     private ParseUser currentUser;
-    private Button logOutButton;
-    private Button profileButton;
     private Boolean exit;
     private DrawerLayout drawerLayout;
+    private GridView people_GridView;
+    private ImageButton grid_list_btn;
+    private boolean isGrid;
+    private ListView people_ListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +41,10 @@ public class MainActivity extends DrawerActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
         exit = false;
+        isGrid = true;
 
         setTitle();
-
+        initSharedPreferences();
 
         userName = (TextView) findViewById(R.id.user_name);
         currentUser = ParseUser.getCurrentUser();
@@ -51,22 +56,65 @@ public class MainActivity extends DrawerActivity {
             launchLoginActivity();
         }
 
-        logOutButton = (Button) findViewById(R.id.log_out);
-        logOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseUser.logOut();
-                launchLoginActivity();
-            }
-        });
+        people_GridView = (GridView) findViewById(R.id.people_gridview);
+        people_ListView = (ListView) findViewById(R.id.people_listview);
 
-        profileButton = (Button) findViewById(R.id.to_tutorial);
-        profileButton.setOnClickListener(new View.OnClickListener() {
+        grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
+        initGridListBtn();
+        setOnClickListeners();
+    }
+
+    private void initSharedPreferences() {
+        sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
+    }
+
+    private void initGridListBtn() {
+        if(sharedPreferences.getBoolean("isGrid", false)) {
+            grid_list_btn.setImageResource(R.drawable.grid);
+            setPplGridView();
+        }
+        else {
+            grid_list_btn.setImageResource(R.drawable.list);
+            setPplListView();
+        }
+    }
+
+    private void setOnClickListeners() {
+        grid_list_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchProfileActivity();
+                if(isGrid) {
+                    isGrid = false;
+                    grid_list_btn.setImageResource(R.drawable.list);
+                    setGridListStatus();
+                    setPplListView();
+                }
+                else {
+                    isGrid = true;
+                    grid_list_btn.setImageResource(R.drawable.grid);
+                    setGridListStatus();
+                    setPplGridView();
+                }
             }
         });
+    }
+
+    private void setPplListView() {
+        people_ListView.setAdapter(new PeopleListViewAdapter(getApplicationContext()));
+        people_GridView.setVisibility(View.GONE);
+        people_ListView.setVisibility(View.VISIBLE);
+    }
+
+    private void setPplGridView() {
+        people_GridView.setAdapter(new PeopleGridViewAdapter(getApplicationContext()));
+        people_ListView.setVisibility(View.GONE);
+        people_GridView.setVisibility(View.VISIBLE );
+    }
+
+    private void setGridListStatus() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isGrid", isGrid);
+        editor.commit();
     }
 
     private void setTitle() {
@@ -81,11 +129,6 @@ public class MainActivity extends DrawerActivity {
 
     private void launchLoginActivity() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    private void launchProfileActivity() {
-        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
         startActivity(intent);
     }
 
@@ -112,7 +155,6 @@ public class MainActivity extends DrawerActivity {
     }
 
     private boolean isLoggedIn() {
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         if(sharedPreferences.getBoolean("loggedIn", false)) {
             return true;
         }

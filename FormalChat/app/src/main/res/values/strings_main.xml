@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="search_for">
+        <item>Men and Women</item>
+        <item>Men</item>
+        <item>Women</item>
+    </string-array>
+</resources>
