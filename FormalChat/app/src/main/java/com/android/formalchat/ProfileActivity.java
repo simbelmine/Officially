@@ -35,6 +35,7 @@ import java.util.List;
 public class ProfileActivity extends DrawerActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
+    private SharedPreferences sharedPreferences;
     private ProfilePagerAdapter profilePagerAdapter;
     private ViewPager viewPager;
     private Button addImgBtn;
@@ -42,6 +43,7 @@ public class ProfileActivity extends DrawerActivity {
     private ImageView imgProfile;
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
+    private String profileImgPath;
 
     private ArrayList<Drawable> drawablesList;
     private ArrayList<String> pathsList;
@@ -56,6 +58,7 @@ public class ProfileActivity extends DrawerActivity {
         drawerLayout.addView(contentView, 0);
         drawablesList = new ArrayList<>();
         pathsList = new ArrayList<>();
+        sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
 
         setTitle();
 
@@ -85,6 +88,8 @@ public class ProfileActivity extends DrawerActivity {
                 startUserInfoActivity();
             }
         });
+
+        getProfileImgPath();
     }
 
     private void setTitle() {
@@ -118,16 +123,13 @@ public class ProfileActivity extends DrawerActivity {
     }
 
     private void setNewSharedPrefs() {
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("refreshOnDelete", false);
+        editor.putBoolean("refresh", false);
         editor.commit();
     }
 
     private boolean isNeededToRefresh() {
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
-        boolean b = sharedPreferences.getBoolean("refreshOnDelete", false);
-        return b;
+        return sharedPreferences.getBoolean("refresh", false);
     }
 
     private void getImagesFromLocalStorage() {
@@ -164,15 +166,17 @@ public class ProfileActivity extends DrawerActivity {
             @Override
             public void done(List<ParseObject> imagesList, ParseException e) {
                 if (e == null) {
-                    Log.d("score", "Retrieved " + imagesList.size() + " images");
 
                     ArrayList<String> imagePaths = new ArrayList<>();
                     for (ParseObject po : imagesList) {
                         ParseFile imageFile = (ParseFile) po.get("photo");
-                        Log.v("formalchat", "photo name = " + imageFile.getName() + " " + imageFile.getUrl());
+                        //  Log.v("formalchat", "photo name = " + imageFile.getName() + " " + imageFile.getUrl());
                         imagePaths.add(((ParseFile)po.get("photo")).getUrl());
                     }
 
+                    if(profileImgPath != null) {
+                        imagePaths = getProfileImg(imagePaths);
+                    }
                     if (profilePagerAdapter != null) {
                         profilePagerAdapter.updateImages(imagePaths);
                     } else {
@@ -181,10 +185,33 @@ public class ProfileActivity extends DrawerActivity {
                     }
 
                 } else {
-                    Log.d("score", "Error: " + e.getMessage());
+                    Log.d("formalchat", "Error: " + e.getMessage());
                 }
             }
         });
+    }
+
+    private ArrayList<String> getProfileImg(ArrayList<String> imagePaths) {
+        ArrayList<String> imagePathsNew = new ArrayList<>();
+        imagePathsNew.add(profileImgPath);
+        imagePathsNew.addAll(getNewPathList(imagePaths, profileImgPath));
+
+        return imagePathsNew;
+    }
+
+    private ArrayList<String> getNewPathList(ArrayList<String> imagePaths, String profileImgPath) {
+        for(int path = 0; path < imagePaths.size(); path++) {
+            if(profileImgPath.equals(imagePaths.get(path))) {
+                imagePaths.remove(path);
+            }
+        }
+        return imagePaths;
+    }
+
+    private void getProfileImgPath() {
+        ParseUser user = ParseUser.getCurrentUser();
+        profileImgPath = user.getString("profileImgPath");
+                        Log.v("formalchat", "ProfileImgPath = " + profileImgPath);
     }
 
     private String getUserName() {

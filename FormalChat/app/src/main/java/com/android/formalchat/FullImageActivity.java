@@ -18,6 +18,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -28,6 +29,8 @@ import java.util.List;
  */
 public class FullImageActivity extends Activity {
     private static final String PREFS_NAME = "FormalChatPrefs";
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     private ImageView fullScreenView;
     private RelativeLayout topImgLayout;
     private ImageButton backBtn;
@@ -38,10 +41,13 @@ public class FullImageActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.full_screen_layout);
+
+        sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
+        editor = sharedPreferences.edit();
         Intent i = getIntent();
         url = i.getExtras().getString("url");
+        Log.v("fomralchat", "# url = " + url);
 
         fullScreenView = (ImageView) findViewById(R.id.full_screen_img);
         Picasso.with(this)
@@ -86,10 +92,14 @@ public class FullImageActivity extends Activity {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getOrder()) {
-                            case 0:
-                                //Put Metod to delete from Local and from Parse
-                                deleteImageFromParse();
+                        switch (item.getItemId()) {
+                            case R.id.delete:
+                                deleteImage();
+                                return true;
+                            case R.id.set_as:
+                                setImageAsProfile();
+                                setFlagToSharedPrefs();
+                                finish();
                                 return true;
                             default:
                                 return false;
@@ -101,9 +111,15 @@ public class FullImageActivity extends Activity {
         });
     }
 
-    private void deleteImageFromParse() {
+    private void setImageAsProfile() {
+        ParseUser user = ParseUser.getCurrentUser();
+        user.put("profileImgPath", url);
+        user.saveInBackground();
+    }
+
+    private void deleteImage() {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
-        parseQuery.whereEqualTo("photo", getImageNameFromUri());
+        parseQuery.whereEqualTo("photo", getParseImgNameFromUri());
 
         parseQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -138,13 +154,11 @@ public class FullImageActivity extends Activity {
     }
 
     private void setFlagToSharedPrefs() {
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("refreshOnDelete", true);
+        editor.putBoolean("refresh", true);
         editor.commit();
     }
 
-    private String getImageNameFromUri() {
+    private String getParseImgNameFromUri() {
         return url.substring(url.lastIndexOf("/")+1);
     }
 

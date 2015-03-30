@@ -49,9 +49,6 @@ public class ProfilePagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(final ViewGroup container, final int position) {
-
-        Log.v("formalchat", "instantiate item: " + position);
-
         View itemView = layoutInflater.inflate(R.layout.viewpager_item, container, false);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.image);
         final ProgressBar progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
