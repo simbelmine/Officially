@@ -18,9 +18,11 @@ import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class DrawerActivity extends FragmentActivity {
     private ActionBarDrawerToggle drawerToggle;
     private CharSequence title;
     private CharSequence drawerTitle;
+    private ParseUser user;
 
 
     @Override
@@ -45,6 +48,7 @@ public class DrawerActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer);
 
+        user = ParseUser.getCurrentUser();
         title = drawerTitle = getTitle();
         listElements = getResources().getStringArray(R.array.menu_list);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -54,6 +58,7 @@ public class DrawerActivity extends FragmentActivity {
         profileName = (TextView) findViewById(R.id.profile_name);
         initDrawableToggle();
         initActionBar();
+        setPic();
         setPicOnClickListenre();
         setProfileName();
 
@@ -62,6 +67,31 @@ public class DrawerActivity extends FragmentActivity {
         //leftDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, listElements));
         leftDrawerList.setAdapter(new DrawerListAdapter(this));
         setListOnClickItemListener();
+    }
+
+    private void setPic() {
+        final String profilePicPath = getUserProfilePic();
+        if(profilePicPath != null) {
+            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+            parseQuery.whereEqualTo("userName", user.getUsername());
+            parseQuery.whereEqualTo("photo", getNameFromPath(profilePicPath));
+            parseQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, ParseException e) {
+                    if(e == null) {
+                        Picasso.with(getApplicationContext()).load(profilePicPath).into(profilePic);
+                    }
+                }
+            });
+        }
+    }
+
+    private String getNameFromPath(String profilePicPath) {
+        return profilePicPath.substring(profilePicPath.lastIndexOf("/")+1);
+    }
+
+    private String getUserProfilePic() {
+        return user.getString("profileImgPath");
     }
 
     private void setPicOnClickListenre() {
