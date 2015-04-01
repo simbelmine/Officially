@@ -69,6 +69,8 @@
         <activity android:name=".DialogActivityInterests"
             android:theme="@style/QuestionsDialogTheme"
             />
+        <activity android:name=".CropActivity" android:theme="@style/QuestionsDialogTheme"/>
+        <activity android:name=".CropImageActivity" android:theme="@style/QuestionsDialogTheme"/>
     </application>
 
 </manifest>

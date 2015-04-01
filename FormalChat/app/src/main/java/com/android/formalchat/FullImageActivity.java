@@ -1,8 +1,11 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -22,6 +25,7 @@ import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +33,7 @@ import java.util.List;
  */
 public class FullImageActivity extends Activity {
     private static final String PREFS_NAME = "FormalChatPrefs";
+    private static final int CROP_FROM_CAMERA = 123;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private ImageView fullScreenView;
@@ -97,9 +102,12 @@ public class FullImageActivity extends Activity {
                                 deleteImage();
                                 return true;
                             case R.id.set_as:
-                                setImageAsProfile();
-                                setFlagToSharedPrefs();
-                                finish();
+                                 startCropActivity();
+
+
+//                                setImageAsProfile();
+//                                setFlagToSharedPrefs();
+//                                finish();
                                 return true;
                             default:
                                 return false;
@@ -109,6 +117,12 @@ public class FullImageActivity extends Activity {
                 popupMenu.show();
             }
         });
+    }
+
+    private void startCropActivity() {
+        Intent intent = new Intent(FullImageActivity.this, CropActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void setImageAsProfile() {
