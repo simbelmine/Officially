@@ -15,12 +15,6 @@
         android:src="@drawable/profile_pic_"
  />
 
-    <!--<com.android.formalchat.DragedRectangleView-->
-        <!--android:id="@+id/dragRect"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--/>-->
-
     <View
         android:id="@+id/dragRect"
         android:layout_width="100dp"
