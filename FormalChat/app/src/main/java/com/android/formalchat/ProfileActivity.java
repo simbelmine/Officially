@@ -16,7 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -32,7 +34,7 @@ import java.util.List;
 /**
  * Created by Sve on 2/4/15.
  */
-public class ProfileActivity extends DrawerActivity {
+public class ProfileActivity extends DrawerActivity implements View.OnClickListener {
     private static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
     private SharedPreferences sharedPreferences;
@@ -44,6 +46,9 @@ public class ProfileActivity extends DrawerActivity {
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
     private String profileImgPath;
+    private LinearLayout exclamationLayout;
+    private Button btn;
+    private VideoView video;
 
     private ArrayList<Drawable> drawablesList;
     private ArrayList<String> pathsList;
@@ -61,34 +66,8 @@ public class ProfileActivity extends DrawerActivity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
 
         setTitle();
-
-//        profilePagerAdapter = new ProfilePagerAdapter(drawablesList, this);
-        viewPager = (ViewPager) findViewById(R.id.pager_profile);
-//        viewPager.setAdapter(profilePagerAdapter);
-
-        addImgBtn = (Button) findViewById(R.id.add_btn);
-        addImgBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isNetworkAvailable()){
-                    addImgWithDialog = new ProfileAddImageDialog();
-                    FragmentManager manager = getSupportFragmentManager();
-                    addImgWithDialog.show(manager, "add_img_dialog");
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        editBtn = (Button) findViewById(R.id.edit_btn);
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startUserInfoActivity();
-            }
-        });
-
+        init();
+        addViewListeners();
         getProfileImgPath();
     }
 
@@ -99,9 +78,33 @@ public class ProfileActivity extends DrawerActivity {
         }
     }
 
-    private void startUserInfoActivity() {
-        Intent intent = new Intent(this, UserInfoActivity.class);
-        startActivity(intent);
+    private void init() {
+        viewPager = (ViewPager) findViewById(R.id.pager_profile);
+        addImgBtn = (Button) findViewById(R.id.add_btn);
+        editBtn = (Button) findViewById(R.id.edit_btn);
+        exclamationLayout = (LinearLayout) findViewById(R.id.exclamation_layout);
+        if(!isVideoExists()) {
+            exclamationLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            exclamationLayout.setVisibility(View.INVISIBLE);
+        }
+        btn = (Button) findViewById(R.id.btn);
+    }
+
+    private boolean isVideoExists() {
+        ParseUser user = ParseUser.getCurrentUser();
+        if(user.containsKey("video")) {
+            return true;
+        }
+        return false;
+    }
+
+    private void addViewListeners() {
+        addImgBtn.setOnClickListener(this);
+        editBtn.setOnClickListener(this);
+        exclamationLayout.setOnClickListener(this);
+        btn.setOnClickListener(this);
     }
 
     @Override
@@ -121,6 +124,37 @@ public class ProfileActivity extends DrawerActivity {
             getImagesFromLocalStorage();
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.add_btn:
+                if(isNetworkAvailable()){
+                    addImgWithDialog = new ProfileAddImageDialog();
+                    FragmentManager manager = getSupportFragmentManager();
+                    addImgWithDialog.show(manager, "add_img_dialog");
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.edit_btn:
+                startActivity(UserInfoActivity.class);
+                break;
+            case R.id.exclamation_layout:
+                startActivity(VideoRecordActivity.class);
+                break;
+            case R.id.btn:
+                startActivity(VideoShowActivity.class);
+        }
+
+    }
+
+    private void startActivity(Class classToLoad) {
+        Intent intent = new Intent(this, classToLoad);
+        startActivity(intent);
+    }
+
 
     private void setNewSharedPrefs() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -169,8 +203,6 @@ public class ProfileActivity extends DrawerActivity {
 
                     ArrayList<String> imagePaths = new ArrayList<>();
                     for (ParseObject po : imagesList) {
-                        ParseFile imageFile = (ParseFile) po.get("photo");
-                        //  Log.v("formalchat", "photo name = " + imageFile.getName() + " " + imageFile.getUrl());
                         imagePaths.add(((ParseFile)po.get("photo")).getUrl());
                     }
 
@@ -211,7 +243,6 @@ public class ProfileActivity extends DrawerActivity {
     private void getProfileImgPath() {
         ParseUser user = ParseUser.getCurrentUser();
         profileImgPath = user.getString("profileImgPath");
-                        Log.v("formalchat", "ProfileImgPath = " + profileImgPath);
     }
 
     private String getUserName() {

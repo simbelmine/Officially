@@ -1,22 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    >
+<LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="5">
-    <LinearLayout
+    android:weightSum="5"
+    >
+    <RelativeLayout
         android:background="#FF00AA"
         android:layout_height="0dp"
         android:layout_width="match_parent"
-        android:layout_weight="3" >
+        android:layout_weight="3"
+        android:orientation="vertical"
+        >
+
         <android.support.v4.view.ViewPager
             android:id="@+id/pager_profile"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:background="#FFAAFF"
-        >
+            >
         </android.support.v4.view.ViewPager>
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/exclamation_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/transp_black"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical"
+            android:visibility="invisible"
+            >
+            <ImageView
+                android:id="@+id/exclamation_img"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/exclamation"/>
+            <TextView
+                android:id="@+id/exclamation_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Send video to become visible to others"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </RelativeLayout>
     <RelativeLayout
         android:background="#00FFFF"
         android:layout_width="match_parent"
@@ -42,14 +76,21 @@
             android:textAllCaps="true"
             android:textSize="@dimen/font_size"
             android:text="@string/add_profile_img"
-        />
+            />
     </RelativeLayout>
+
     <LinearLayout
-        android:background="#00FFAA"
         android:layout_height="0dp"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_weight="1.5" >
+        android:background="#00FFAA"
+        android:layout_weight="1.5"
+       >
+        <Button
+            android:id="@+id/btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>
+    </ScrollView>

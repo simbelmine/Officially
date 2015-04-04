@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="start_video_txt">Start recording</string>
+    <string name="welcome_video"><big>Welcome!</big>\n\nTo start, just say:\n\n\"Hi, my name is <font fgcolor='green'><i>Your Name</i></font>.\nToday is <font fgcolor='green'><i>Month/Date/Year</i></font>.\"\n\nSend for approval. \nAnd you just ready to start your adventure!</string>
+</resources>
