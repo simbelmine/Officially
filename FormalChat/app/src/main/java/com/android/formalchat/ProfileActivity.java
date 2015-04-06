@@ -3,7 +3,6 @@ package com.android.formalchat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -15,10 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -60,8 +57,17 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
         setTitle();
         init();
+        initVideoMessage();
         addViewListeners();
         getProfileImgPath();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (isVideoExists()) {
+            exclamationLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void setTitle() {
@@ -76,14 +82,17 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         addImgBtn = (Button) findViewById(R.id.add_btn);
         editBtn = (Button) findViewById(R.id.edit_btn);
         exclamationLayout = (LinearLayout) findViewById(R.id.exclamation_layout);
+        btn = (Button) findViewById(R.id.btn);
+    }
 
+    private void initVideoMessage() {
         if(!isVideoExists()) {
             exclamationLayout.setVisibility(View.VISIBLE);
         }
         else {
             exclamationLayout.setVisibility(View.INVISIBLE);
+//            exclamationLayout.invalidate();
         }
-        btn = (Button) findViewById(R.id.btn);
     }
 
     private boolean isVideoExists() {
