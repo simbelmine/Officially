@@ -42,16 +42,11 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private ViewPager viewPager;
     private Button addImgBtn;
     private Button editBtn;
-    private ImageView imgProfile;
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
     private String profileImgPath;
     private LinearLayout exclamationLayout;
     private Button btn;
-    private VideoView video;
-
-    private ArrayList<Drawable> drawablesList;
-    private ArrayList<String> pathsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +56,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         View contentView = inflater.inflate(R.layout.profile_layout, null, false);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
-        drawablesList = new ArrayList<>();
-        pathsList = new ArrayList<>();
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
 
         setTitle();
@@ -83,6 +76,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         addImgBtn = (Button) findViewById(R.id.add_btn);
         editBtn = (Button) findViewById(R.id.edit_btn);
         exclamationLayout = (LinearLayout) findViewById(R.id.exclamation_layout);
+
         if(!isVideoExists()) {
             exclamationLayout.setVisibility(View.VISIBLE);
         }

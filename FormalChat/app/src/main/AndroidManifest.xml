@@ -74,6 +74,7 @@
         <activity android:name=".CropImageActivity" android:theme="@style/QuestionsDialogTheme"/>
         <activity android:name=".VideoRecordActivity"/>
         <activity android:name=".VideoShowActivity"/>
+        <service android:name=".VideoDownloadService"/>
     </application>
 
 </manifest>
