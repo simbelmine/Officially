@@ -12,22 +12,17 @@ import java.util.List;
 public class QuestionFragmentYourEthnicity extends QuestionFragment {
 
     @Override
-    protected int putLayoutId() {
-        return R.layout.question_four;
+    protected String getQuestionTag() {
+        return getResources().getString(R.string.tag_your_ethnicity);
     }
 
     @Override
-    protected int putAnswersLayout() {
-        return R.id.your_ethnicity_lyout;
+    protected String putQuestionText() {
+        return getResources().getString(R.string.q_your_ethnicity);
     }
 
     @Override
     protected List<String> putAnswersList() {
         return Arrays.asList(getResources().getStringArray(R.array.a_your_ethnicity));
-    }
-
-    @Override
-    protected String getSharedPreferencesQuestionId(View rootView) {
-        return rootView.findViewById(R.id.question).getTag().toString();
     }
 }
