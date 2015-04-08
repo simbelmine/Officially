@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_crop"
+    android:layout_width="300dp"
+    android:layout_height="400dp"
+    android:background="@color/pink"
     android:orientation="vertical"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:foregroundGravity="center"
 >
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/profile_pic_"
- />
+    <!--<ImageView-->
+        <!--android:id="@+id/image"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="fitXY"-->
+
+ <!--/>-->
 
     <!--<com.android.formalchat.DragedRectangleView-->
         <!--android:id="@+id/dragRect"-->
@@ -21,12 +23,19 @@
         <!--android:layout_height="match_parent"-->
         <!--/>-->
 
-    <View
+    <ImageView
         android:id="@+id/dragRect"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:background="@color/transp_black"
         />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/done_editing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:background="@drawable/rounded_btns"
+        android:text="Done"/>
+</FrameLayout>
