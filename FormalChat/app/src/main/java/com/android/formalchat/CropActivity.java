@@ -84,14 +84,14 @@ public class CropActivity extends Activity {
         File dir = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
         File imgFile = new File(dir, imgName);
 
-        if(!isImgExists(imgName, imgFile)){
-            donwloadedImg(url, imgName, imgFile);
+        if(!isImgExists(imgFile)){
+            downloadImg(url, imgName, imgFile);
         }
 
         return Drawable.createFromPath(imgFile.getAbsolutePath());
     }
 
-    private void donwloadedImg(String img_url, String imgName, File imgFile) {
+    private void downloadImg(String img_url, String imgName, File imgFile) {
 
         try {
             URL url = new URL(img_url);
@@ -113,7 +113,7 @@ public class CropActivity extends Activity {
         }
     }
 
-    private boolean isImgExists(String imgName, File imgFile) {
+    private boolean isImgExists(File imgFile) {
         if(imgFile.exists())
             return true;
         return false;
