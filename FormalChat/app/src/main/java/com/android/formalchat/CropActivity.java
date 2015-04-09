@@ -86,10 +86,9 @@ public class CropActivity extends Activity {
 
         if(!isImgExists(imgName, imgFile)){
             donwloadedImg(url, imgName, imgFile);
-            return  Drawable.createFromPath(imgFile.getAbsolutePath());
         }
 
-        return null;
+        return Drawable.createFromPath(imgFile.getAbsolutePath());
     }
 
     private void donwloadedImg(String img_url, String imgName, File imgFile) {
