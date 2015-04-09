@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -35,31 +36,6 @@ public class ZoomInOutImgView extends ImageView {
     private ScaleGestureDetector scaleGestureDetector;
     private float scaleFactor = 1.f;
 
-    private int size;
-    private int pX;
-    private int pY;
-
-//    public ZoomInOutImgView(Context context) {
-//        this(context, null, 0);
-//        image = getResources().getDrawable(context.getResources().getIdentifier("background", "drawable", context.getPackageName()));
-//        image.setBounds(50, 50, image.getIntrinsicWidth(), image.getIntrinsicHeight());
-//
-//        RelativeLayout rl = (RelativeLayout)findViewById(R.id.root_crop);
-//        posX = rl.getWidth()/2;
-//        posY = rl.getHeight()/2;
-//        Log.v("formalchat", "posX = "+posX+"   posY = "+posY);
-//    }
-//
-//    public ZoomInOutImgView(Context context, AttributeSet attrs) {
-//        this(context, attrs, 0);
-//    }
-//
-//    public ZoomInOutImgView(Context context, AttributeSet attrs, int defStyle) {
-//        super(context, attrs, defStyle);
-//        scaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
-//    }
-
-
     public ZoomInOutImgView(Context context, Drawable image, int pX, int pY) {
         super(context);
         this.image = image;
@@ -70,23 +46,6 @@ public class ZoomInOutImgView extends ImageView {
         posX = pX / 2 - pxs / 2;
         posY = pY / 2 - pxs / 2;
     }
-
-
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//        size = 0;
-//        int width = getMeasuredWidth();
-//        int height = getMeasuredHeight();
-//
-//        if (width > height) {
-//            size = height;
-//        } else {
-//            size = width;
-//        }
-//
-//        setMeasuredDimension(size, size);
-//    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -153,22 +112,13 @@ public class ZoomInOutImgView extends ImageView {
         canvas.translate(posX, posY);
         canvas.scale(scaleFactor, scaleFactor);
         image.draw(canvas);
-
+        setcache();
         canvas.restore();
     }
 
-    public Drawable getImageDrawable() {
-        return image;
+    private void setcache() {
+        this.setDrawingCacheEnabled(true);
     }
-
-    public int getPosX() {
-        return (int) posX;
-    }
-
-    public int getPosY() {
-        return (int) posY;
-    }
-
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override

@@ -122,6 +122,7 @@ public class FullImageActivity extends Activity {
     private void startCropActivity() {
         Intent intent = new Intent(FullImageActivity.this, CropActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("url", url);
         startActivity(intent);
     }
 
@@ -172,11 +173,11 @@ public class FullImageActivity extends Activity {
         editor.commit();
     }
 
-    private String getParseImgNameFromUri() {
+    public String getParseImgNameFromUri() {
         return url.substring(url.lastIndexOf("/")+1);
     }
 
-    private String getShortImageNameFromUri() {
+    public String getShortImageNameFromUri() {
         return url.substring(url.lastIndexOf("-")+1);
     }
 }
