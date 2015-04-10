@@ -1,5 +1,6 @@
 package com.android.formalchat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,6 +45,9 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private String profileImgPath;
     private LinearLayout exclamationLayout;
     private Button btn;
+    private ParseUser user;
+    private ArrayList<String> imagePaths;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,9 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
+        user = ParseUser.getCurrentUser();
+        imagePaths = new ArrayList<>();
+        activity = this;
 
         setTitle();
         init();
@@ -91,12 +98,10 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         }
         else {
             exclamationLayout.setVisibility(View.INVISIBLE);
-//            exclamationLayout.invalidate();
         }
     }
 
     private boolean isVideoExists() {
-        ParseUser user = ParseUser.getCurrentUser();
         if(user.containsKey("video")) {
             return true;
         }
@@ -120,12 +125,25 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         }
 
         if(isNetworkAvailable()) {
+            if(!isVideoExists()) {
+                exclamationLayout.setVisibility(View.VISIBLE);
+            }
+            else {
+                exclamationLayout.setVisibility(View.INVISIBLE);
+                addVideoToPaths();
+            }
+
             loadImagesFromParseRemote();
         }
         else {
             // Get from local
             getImagesFromLocalStorage();
         }
+    }
+
+    private void addVideoToPaths() {
+        String videoPath = user.getParseFile("video").getUrl();
+        imagePaths = setPathInFront(imagePaths, videoPath);
     }
 
     @Override
@@ -172,7 +190,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private void getImagesFromLocalStorage() {
         File folder = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
         File[] dirImages = folder.listFiles();
-        ArrayList<String> imagePaths = new ArrayList<>();
         String path;
 
         if(dirImages.length != 0) {
@@ -181,7 +198,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 imagePaths.add(path);
             }
 
-            profilePagerAdapter = new ProfilePagerAdapter(getApplicationContext(), imagePaths);
+            profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
             viewPager.setAdapter(profilePagerAdapter);
         }
     }
@@ -204,18 +221,17 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             public void done(List<ParseObject> imagesList, ParseException e) {
                 if (e == null) {
 
-                    ArrayList<String> imagePaths = new ArrayList<>();
                     for (ParseObject po : imagesList) {
                         imagePaths.add(((ParseFile)po.get("photo")).getUrl());
                     }
 
                     if(profileImgPath != null) {
-                        imagePaths = getProfileImg(imagePaths);
+                        imagePaths = setPathInFront(imagePaths, profileImgPath);
                     }
                     if (profilePagerAdapter != null) {
                         profilePagerAdapter.updateImages(imagePaths);
                     } else {
-                        profilePagerAdapter = new ProfilePagerAdapter(getApplicationContext(), imagePaths);
+                        profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
                         viewPager.setAdapter(profilePagerAdapter);
                     }
 
@@ -226,18 +242,18 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         });
     }
 
-    private ArrayList<String> getProfileImg(ArrayList<String> imagePaths) {
+    private ArrayList<String> setPathInFront(ArrayList<String> imagePaths, String path) {
         ArrayList<String> imagePathsNew = new ArrayList<>();
-        imagePathsNew.add(profileImgPath);
-        imagePathsNew.addAll(getNewPathList(imagePaths, profileImgPath));
+        imagePathsNew.add(path);
+        imagePathsNew.addAll(getNewPathList(imagePaths, path));
 
         return imagePathsNew;
     }
 
-    private ArrayList<String> getNewPathList(ArrayList<String> imagePaths, String profileImgPath) {
-        for(int path = 0; path < imagePaths.size(); path++) {
-            if(profileImgPath.equals(imagePaths.get(path))) {
-                imagePaths.remove(path);
+    private ArrayList<String> getNewPathList(ArrayList<String> imagePaths, String path) {
+        for(int pathIdx = 0; pathIdx < imagePaths.size(); pathIdx++) {
+            if(path.equals(imagePaths.get(pathIdx))) {
+                imagePaths.remove(pathIdx);
             }
         }
         return imagePaths;
