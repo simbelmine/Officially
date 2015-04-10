@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
@@ -154,7 +154,7 @@ public class ProfilePagerAdapter extends PagerAdapter {
         };
     }
 
-    private void loadVideo(VideoView videoView) {
+    private void loadVideo(final VideoView videoView) {
         Uri uri = Uri.parse(dir+filePath+fileName);
 
         MediaController mediaController = new MediaController(activity, false);
@@ -162,7 +162,23 @@ public class ProfilePagerAdapter extends PagerAdapter {
         videoView.setVideoURI(uri);
         videoView.requestFocus();
         videoView.setMediaController(mediaController);
-        videoView.pause();
+        seekTo(videoView, 100);
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener()  {
+                    @Override
+                    public void onSeekComplete(MediaPlayer mp) {
+                        videoView.pause();
+                    }
+                });
+            }
+        });
+    }
+
+    private void seekTo(VideoView v, int pos) {
+        v.start();
+        v.seekTo(pos);
     }
 
     private void getStartedWithVideo(VideoView videoView) {
