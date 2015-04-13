@@ -120,7 +120,7 @@ public class ProfileAddImageDialog extends DialogFragment {
     }
 
     private void saveToLocalStorage(Drawable drawable) {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         boolean success = true;
         if(!folder.exists()) {
             success = folder.mkdir();

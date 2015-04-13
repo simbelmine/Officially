@@ -166,7 +166,9 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 startActivity(VideoRecordActivity.class);
                 break;
             case R.id.btn:
-                startActivity(VideoShowActivity.class);
+                //startActivity(VideoShowActivity.class);
+                Intent intent = new Intent(this, VideoCompressService.class);
+                startService(intent);
         }
 
     }
@@ -188,7 +190,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     }
 
     private void getImagesFromLocalStorage() {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         File[] dirImages = folder.listFiles();
         String path;
 

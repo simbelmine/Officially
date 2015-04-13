@@ -154,7 +154,7 @@ public class FullImageActivity extends Activity {
     }
 
     private void deleteImageFromLocalStorage() {
-        File dir = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
+        File dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         File[] dirImages = dir.listFiles();
 
         if(dirImages.length != 0) {

@@ -6,3 +6,5 @@ gradlew
 gradlew.bat
 local.properties
 *.iml
+FormalChat/ffmpeg4android_lib/build/generated/source/buildConfig
+FormalChat/ffmpeg4android_lib/build
