@@ -2,29 +2,28 @@ package com.android.formalchat;
 
 import android.app.Activity;
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.netcompss.ffmpeg4android.CommandValidationException;
 import com.netcompss.ffmpeg4android.GeneralUtils;
-import com.netcompss.ffmpeg4android.Prefs;
 import com.netcompss.loader.LoadJNI;
 
 /**
  * Created by Sve on 4/13/15.
  */
 public class VideoCompressService extends IntentService {
-    Context context;
-    String workFolder = null;
-    String demoVideoFolder = null;
-    String demoVideoPath = null;
-    String vkLogPath = null;
+    private String workFolder = null;
+    private String vkLogPath = null;
     private boolean commandValidationFailedFlag = false;
+    private String destinationFolder;
+    private String destinationVideoPath;
+    private String videoName;
+
+    private String destinationVideoPathOut;
 
     public VideoCompressService() {
         super("VideoCompressService");
@@ -32,24 +31,26 @@ public class VideoCompressService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        videoName = intent.getStringExtra("videoName");
 
-        demoVideoFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/";
-        demoVideoPath = demoVideoFolder + "in.mp4";
+        destinationFolder = intent.getStringExtra("destinationFolder");
+        destinationVideoPath = destinationFolder + videoName;
+        destinationVideoPathOut = destinationFolder + "out_" + videoName;
 
-        Log.i(Prefs.TAG, getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
+        Log.i("formalchat", getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
         workFolder = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
-        Log.i(Prefs.TAG, "workFolder (license and logs location) path: " + workFolder);
+        Log.i("formalchat", "workFolder (license and logs location) path: " + workFolder);
         vkLogPath = workFolder + "vk.log";
-        Log.i(Prefs.TAG, "vk log (native log) path: " + vkLogPath);
+        Log.i("formalchat", "vk log (native log) path: " + vkLogPath);
 
 //        GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(activity, workFolder);
 //        GeneralUtils.copyDemoVideoFromAssetsToSDIfNeeded(activity, demoVideoFolder);
 
-        if (GeneralUtils.checkIfFileExistAndNotEmpty(demoVideoPath)) {
+        if (GeneralUtils.checkIfFileExistAndNotEmpty(destinationVideoPath)) {
             new TranscdingBackground().execute();
         }
         else {
-            Toast.makeText(getApplicationContext(), demoVideoPath + " not found", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), destinationFolder + " not found", Toast.LENGTH_LONG).show();
         }
 
         int rc = GeneralUtils.isLicenseValid(getApplicationContext(), workFolder);
@@ -78,7 +79,9 @@ public class VideoCompressService extends IntentService {
             wakeLock.acquire();
 
 
-            String commandStr = "ffmpeg -y -i "+demoVideoFolder+"in.mp4 -strict experimental -s 160x120 -r 25 -vcodec mpeg4 -b 150k -ab 48000 -ac 2 -ar 22050 "+demoVideoFolder+"out.mp4";
+            String commandStr = "ffmpeg -y -i "+ destinationVideoPath +
+                    " -strict experimental -s 160x120 -r 25 -vcodec mpeg4 -b 150k -ab 48000 -ac 2 -ar 22050 " +
+                    destinationVideoPathOut;
             Log.e("formalchat", commandStr);
 
             ///////////// Set Command using code (overriding the UI EditText) /////
@@ -97,7 +100,7 @@ public class VideoCompressService extends IntentService {
                 //vk.run(complexCommand, workFolder, getApplicationContext(), false);
 
                 // copying vk.log (internal native log) to the videokit folder
-                GeneralUtils.copyFileToFolder(vkLogPath, demoVideoFolder);
+                GeneralUtils.copyFileToFolder(vkLogPath, destinationFolder);
 
             } catch (CommandValidationException e) {
                 Log.e("formalchat", "vk run exeption.", e);

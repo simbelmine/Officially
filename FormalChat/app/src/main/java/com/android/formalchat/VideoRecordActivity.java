@@ -1,6 +1,7 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,19 +16,24 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.PrefixFileFilter;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Sve on 4/2/15.
  */
 public class VideoRecordActivity extends Activity implements View.OnClickListener{
-    static final int REQUEST_VIDEO_CAPTURE = 1;
+    private static final int REQUEST_VIDEO_CAPTURE = 1;
+    private static final String VIDEO_EXTENSION = ".mp4";
     private Button startRecordingBtn;
-    private String videoName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,17 +63,44 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String destinationFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/";
+        String videoName;
+
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
             Uri videoUri = data.getData();
-            File videoFile = new File(videoUri.getPath());
-            saveVideoToParse(videoFile);
+            videoName = getVideoName(videoUri);
+            compressVideo(destinationFolder, videoName);
+
+            File videoFile = getVideoFile(destinationFolder);
+            saveVideoToParse(videoFile, videoName);
         }
     }
 
-    private void saveVideoToParse(File videoFile) {
+    private File getVideoFile(String destinationFolder) {
+        Collection<File> files =  FileUtils.listFiles(new File(destinationFolder), new PrefixFileFilter("out"), null);
+        if(files.size() != 0) {
+            return (File)files.toArray()[0];
+        }
+        
+        return null;
+    }
+
+    private String getVideoName(Uri videoUri) {
+        String videoUrl = videoUri.getPath();
+        return videoUrl.substring(videoUrl.lastIndexOf("/")+1);
+    }
+
+    private void compressVideo(String startFolder, String videoName) {
+        Intent intent = new Intent(this, VideoCompressService.class);
+        intent.putExtra("destinationFolder", startFolder);
+        intent.putExtra("videoName", videoName);
+        startService(intent);
+    }
+
+    private void saveVideoToParse(File videoFile, String videoName) {
         ParseUser user = ParseUser.getCurrentUser();
         try {
-            byte[] data = FileUtils.readFileToByteArray(videoFile);//Convert any file, image or video into byte array
+            byte[] data = FileUtils.readFileToByteArray(videoFile); //Convert any file, image or video into byte array
             ParseFile parseFile = new ParseFile(videoName, data);
             user.put("video", parseFile);
             user.saveInBackground();
@@ -90,14 +123,14 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
     }
 
     private File getMediaFileUri() {
-        File root = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
+        File root = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/");
         // Create the storage directory if it does not exist
         if (! root.exists()){
             root.mkdirs();
         }
         // Create a media file name
-        videoName = "VID_"+ getTimeStamp();
-        File mediaFile = new File(root, videoName);
+        String videoName = "VID_intro";
+        File mediaFile = new File(root, videoName + VIDEO_EXTENSION);
         return mediaFile;
     }
 
