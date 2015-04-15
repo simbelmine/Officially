@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,6 +28,7 @@ public abstract class QuestionFragment extends Fragment {
     protected static int question;
     protected ViewPager viewPager;
     protected List<String> answers;
+    protected String questionTxt;
     protected LinearLayout layout;
     protected String answerFromPrefs;
     protected View rootView;
@@ -62,6 +61,7 @@ public abstract class QuestionFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, 0);
         clicked = false;
 
+        questionTxt = putQuestionText();
         answers = putAnswersList();
         layout = (LinearLayout) rootView.findViewById(putAnswersLayout());
 
@@ -71,11 +71,21 @@ public abstract class QuestionFragment extends Fragment {
         return rootView;
     }
 
-    protected abstract int putLayoutId();
-    protected abstract int putAnswersLayout();
+    protected int putLayoutId() {
+        return R.layout.question_layout;
+    }
+
+    protected int putAnswersLayout() {
+        return R.id.answers_lyout;
+    }
+
+    protected abstract String putQuestionText();
     protected abstract List<String> putAnswersList();
 
     protected void init() {
+        TextView questionView = (TextView) rootView.findViewById(R.id.question);
+        questionView.setText(questionTxt);
+
         TextView textView;
         for(int idx = 0; idx < answers.size(); idx++) {
             textView = initTextView(idx);
@@ -170,7 +180,7 @@ public abstract class QuestionFragment extends Fragment {
 
     protected void setAnswerToSharedPrefs(String answer) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(getSharedPreferencesQuestionId(rootView), answer);
+        editor.putString(getQuestionTag(), answer);
         editor.commit();
     }
 
@@ -187,19 +197,15 @@ public abstract class QuestionFragment extends Fragment {
         }
     }
 
-    protected abstract String getSharedPreferencesQuestionId(View rootView);
-
     protected void saveAnswerToParse(int answer) {
         String questionTag = getQuestionTag();
         questionaryPagerAdapter.updateQuestionary_(questionTag, answer);
     }
 
-    private String getQuestionTag() {
-        return rootView.findViewById(R.id.question).getTag().toString();
-    }
+    protected abstract String getQuestionTag();
 
     protected String getAnswerFromSharedPrefs() {
-        return sharedPreferences.getString(getSharedPreferencesQuestionId(rootView), "");
+        return sharedPreferences.getString(getQuestionTag(), "");
     }
 
     protected  void putCorrectAnswerColor(TextView view, int color) {

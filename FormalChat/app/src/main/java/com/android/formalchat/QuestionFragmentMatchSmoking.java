@@ -10,23 +10,19 @@ import java.util.List;
  * Question 2 of 7
  */
 public class QuestionFragmentMatchSmoking extends QuestionFragment {
+
     @Override
-    protected int putLayoutId() {
-        return R.layout.question_two;
+    protected String getQuestionTag() {
+        return getResources().getString(R.string.tag_match_smoking);
     }
 
     @Override
-    protected int putAnswersLayout() {
-        return R.id.match_smoking_lyout;
+    protected String putQuestionText() {
+        return getResources().getString(R.string.q_match_smoking);
     }
 
     @Override
     protected List<String> putAnswersList() {
         return Arrays.asList(getResources().getStringArray(R.array.a_match_smoking));
-    }
-
-    @Override
-    protected String getSharedPreferencesQuestionId(View rootView) {
-        return rootView.findViewById(R.id.question).getTag().toString();
     }
 }

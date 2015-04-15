@@ -12,22 +12,17 @@ import java.util.List;
 public class QuestionFragmentYourSmoking extends QuestionFragment {
 
     @Override
-    protected int putLayoutId() {
-        return R.layout.question_six;
+    protected String getQuestionTag() {
+        return getResources().getString(R.string.tag_your_smoking);
     }
 
     @Override
-    protected int putAnswersLayout() {
-        return R.id.your_smoking_lyout;
+    protected String putQuestionText() {
+        return getResources().getString(R.string.q_your_smoking);
     }
 
     @Override
     protected List<String> putAnswersList() {
         return Arrays.asList(getResources().getStringArray(R.array.a_your_smoking));
-    }
-
-    @Override
-    protected String getSharedPreferencesQuestionId(View rootView) {
-        return rootView.findViewById(R.id.question).getTag().toString();
     }
 }

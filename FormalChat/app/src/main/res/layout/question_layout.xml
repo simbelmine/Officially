@@ -19,20 +19,25 @@
         android:gravity="center">
         <TextView
             android:id="@+id/question"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:paddingTop="@dimen/question_padding_top"
-            android:text="@string/q_match_smoking"
-            android:tag="@string/tag_match_smoking"
+
             style="@style/QuestionStyle"/>
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/match_smoking_lyout"
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        >
-    </LinearLayout>
+        android:scrollbars="vertical"
+        android:fillViewport="true"
+        android:layout_marginBottom="5dp">
+        <LinearLayout
+            android:id="@+id/answers_lyout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            />
+    </ScrollView>
 </LinearLayout>

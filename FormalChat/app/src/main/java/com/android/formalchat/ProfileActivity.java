@@ -1,9 +1,9 @@
 package com.android.formalchat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Created by Sve on 2/4/15.
  */
-public class ProfileActivity extends DrawerActivity {
+public class ProfileActivity extends DrawerActivity implements View.OnClickListener {
     private static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
     private SharedPreferences sharedPreferences;
@@ -40,13 +40,14 @@ public class ProfileActivity extends DrawerActivity {
     private ViewPager viewPager;
     private Button addImgBtn;
     private Button editBtn;
-    private ImageView imgProfile;
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
     private String profileImgPath;
-
-    private ArrayList<Drawable> drawablesList;
-    private ArrayList<String> pathsList;
+    private LinearLayout exclamationLayout;
+    private Button btn;
+    private ParseUser user;
+    private ArrayList<String> imagePaths;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +57,13 @@ public class ProfileActivity extends DrawerActivity {
         View contentView = inflater.inflate(R.layout.profile_layout, null, false);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
-        drawablesList = new ArrayList<>();
-        pathsList = new ArrayList<>();
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
+        user = ParseUser.getCurrentUser();
+        imagePaths = new ArrayList<>();
+        activity = this;
 
         setTitle();
+<<<<<<< HEAD
 
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
 
@@ -87,7 +90,20 @@ public class ProfileActivity extends DrawerActivity {
             }
         });
 
+=======
+        init();
+        initVideoMessage();
+        addViewListeners();
+>>>>>>> 8434a870439f96b589eaf27e4c361434a9240467
         getProfileImgPath();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (isVideoExists()) {
+            exclamationLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void setTitle() {
@@ -97,9 +113,35 @@ public class ProfileActivity extends DrawerActivity {
         }
     }
 
-    private void startUserInfoActivity() {
-        Intent intent = new Intent(this, UserInfoActivity.class);
-        startActivity(intent);
+    private void init() {
+        viewPager = (ViewPager) findViewById(R.id.pager_profile);
+        addImgBtn = (Button) findViewById(R.id.add_btn);
+        editBtn = (Button) findViewById(R.id.edit_btn);
+        exclamationLayout = (LinearLayout) findViewById(R.id.exclamation_layout);
+        btn = (Button) findViewById(R.id.btn);
+    }
+
+    private void initVideoMessage() {
+        if(!isVideoExists()) {
+            exclamationLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            exclamationLayout.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private boolean isVideoExists() {
+        if(user.containsKey("video")) {
+            return true;
+        }
+        return false;
+    }
+
+    private void addViewListeners() {
+        addImgBtn.setOnClickListener(this);
+        editBtn.setOnClickListener(this);
+        exclamationLayout.setOnClickListener(this);
+        btn.setOnClickListener(this);
     }
 
     @Override
@@ -112,6 +154,14 @@ public class ProfileActivity extends DrawerActivity {
         }
 
         if(isNetworkAvailable()) {
+            if(!isVideoExists()) {
+                exclamationLayout.setVisibility(View.VISIBLE);
+            }
+            else {
+                exclamationLayout.setVisibility(View.INVISIBLE);
+                addVideoToPaths();
+            }
+
             loadImagesFromParseRemote();
         }
         else {
@@ -119,6 +169,42 @@ public class ProfileActivity extends DrawerActivity {
             getImagesFromLocalStorage();
         }
     }
+
+    private void addVideoToPaths() {
+        String videoPath = user.getParseFile("video").getUrl();
+        imagePaths = setPathInFront(imagePaths, videoPath);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.add_btn:
+                if(isNetworkAvailable()){
+                    addImgWithDialog = new ProfileAddImageDialog();
+                    FragmentManager manager = getSupportFragmentManager();
+                    addImgWithDialog.show(manager, "add_img_dialog");
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.edit_btn:
+                startActivity(UserInfoActivity.class);
+                break;
+            case R.id.exclamation_layout:
+                startActivity(VideoRecordActivity.class);
+                break;
+            case R.id.btn:
+                startActivity(VideoShowActivity.class);
+        }
+
+    }
+
+    private void startActivity(Class classToLoad) {
+        Intent intent = new Intent(this, classToLoad);
+        startActivity(intent);
+    }
+
 
     private void setNewSharedPrefs() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -133,7 +219,6 @@ public class ProfileActivity extends DrawerActivity {
     private void getImagesFromLocalStorage() {
         File folder = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         File[] dirImages = folder.listFiles();
-        ArrayList<String> imagePaths = new ArrayList<>();
         String path;
 
         if(dirImages.length != 0) {
@@ -142,7 +227,7 @@ public class ProfileActivity extends DrawerActivity {
                 imagePaths.add(path);
             }
 
-            profilePagerAdapter = new ProfilePagerAdapter(getApplicationContext(), imagePaths);
+            profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
             viewPager.setAdapter(profilePagerAdapter);
         }
     }
@@ -165,18 +250,17 @@ public class ProfileActivity extends DrawerActivity {
             public void done(List<ParseObject> imagesList, ParseException e) {
                 if (e == null) {
 
-                    ArrayList<String> imagePaths = new ArrayList<>();
                     for (ParseObject po : imagesList) {
                         imagePaths.add(((ParseFile)po.get("photo")).getUrl());
                     }
 
                     if(profileImgPath != null) {
-                        imagePaths = getProfileImg(imagePaths);
+                        imagePaths = setPathInFront(imagePaths, profileImgPath);
                     }
                     if (profilePagerAdapter != null) {
                         profilePagerAdapter.updateImages(imagePaths);
                     } else {
-                        profilePagerAdapter = new ProfilePagerAdapter(getApplicationContext(), imagePaths);
+                        profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
                         viewPager.setAdapter(profilePagerAdapter);
                     }
 
@@ -187,25 +271,30 @@ public class ProfileActivity extends DrawerActivity {
         });
     }
 
-    private ArrayList<String> getProfileImg(ArrayList<String> imagePaths) {
+    private ArrayList<String> setPathInFront(ArrayList<String> imagePaths, String path) {
         ArrayList<String> imagePathsNew = new ArrayList<>();
-        imagePathsNew.add(profileImgPath);
-        imagePathsNew.addAll(getNewPathList(imagePaths, profileImgPath));
+        imagePathsNew.add(path);
+        imagePathsNew.addAll(getNewPathList(imagePaths, path));
 
         return imagePathsNew;
     }
 
-    private ArrayList<String> getNewPathList(ArrayList<String> imagePaths, String profileImgPath) {
-        for(int path = 0; path < imagePaths.size(); path++) {
-            if(profileImgPath.equals(imagePaths.get(path))) {
-                imagePaths.remove(path);
+    private ArrayList<String> getNewPathList(ArrayList<String> imagePaths, String path) {
+        for(int pathIdx = 0; pathIdx < imagePaths.size(); pathIdx++) {
+            if(path.equals(imagePaths.get(pathIdx))) {
+                imagePaths.remove(pathIdx);
             }
         }
         return imagePaths;
     }
 
     private void getProfileImgPath() {
+<<<<<<< HEAD
         profileImgPath = sharedPreferences.getString("profPic", null);
+=======
+        ParseUser user = ParseUser.getCurrentUser();
+        profileImgPath = user.getString("profileImgPath");
+>>>>>>> 8434a870439f96b589eaf27e4c361434a9240467
     }
 
     private String getUserName() {

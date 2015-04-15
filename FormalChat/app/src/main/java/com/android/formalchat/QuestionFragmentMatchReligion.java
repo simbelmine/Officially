@@ -12,22 +12,17 @@ import java.util.List;
 public class QuestionFragmentMatchReligion extends QuestionFragment {
 
     @Override
-    protected int putLayoutId() {
-        return R.layout.question_one;
+    protected String getQuestionTag() {
+        return getResources().getString(R.string.tag_match_religion);
     }
 
     @Override
-    protected int putAnswersLayout() {
-        return R.id.match_religion_lyout;
+    protected String putQuestionText() {
+        return getResources().getString(R.string.q_match_religion);
     }
 
     @Override
     protected List<String> putAnswersList() {
         return Arrays.asList(getResources().getStringArray(R.array.a_match_religion));
-    }
-
-    @Override
-    protected String getSharedPreferencesQuestionId(View rootView) {
-        return rootView.findViewById(R.id.question).getTag().toString();
     }
 }
