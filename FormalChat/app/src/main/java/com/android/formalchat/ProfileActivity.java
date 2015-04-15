@@ -169,7 +169,9 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 startActivity(VideoRecordActivity.class);
                 break;
             case R.id.btn:
-                startActivity(VideoShowActivity.class);
+                //startActivity(VideoShowActivity.class);
+                Intent intent = new Intent(this, VideoCompressService.class);
+                startService(intent);
         }
     }
 

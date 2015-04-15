@@ -7,8 +7,12 @@ gradlew.bat
 local.properties
 *.iml
 <<<<<<< HEAD
+<<<<<<< HEAD
 FormalChat/ffmpeg4android_lib/build/generated/source/buildConfig
 FormalChat/ffmpeg4android_lib/build/generated/source/r/debug
 =======
 >>>>>>> 8434a870439f96b589eaf27e4c361434a9240467
+=======
+FormalChat/ffmpeg4android_lib/build/generated/source/buildConfig
+>>>>>>> video-compression
 FormalChat/ffmpeg4android_lib/build

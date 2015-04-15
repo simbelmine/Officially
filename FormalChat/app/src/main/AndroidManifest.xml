@@ -18,6 +18,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
     <application
         android:name="com.android.formalchat.ParseApplication"
         android:allowBackup="true"
@@ -75,6 +78,7 @@
         <activity android:name=".VideoRecordActivity"/>
         <activity android:name=".VideoShowActivity"/>
         <service android:name=".VideoDownloadService"/>
+        <service android:name=".VideoCompressService"/>
     </application>
 
 </manifest>
