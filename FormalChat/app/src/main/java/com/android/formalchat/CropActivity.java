@@ -1,7 +1,11 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.app.IntentService;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,6 +31,7 @@ import java.net.URL;
  * Created by Sve on 3/31/15.
  */
 public class CropActivity extends Activity {
+    private static final String PREFS_NAME = "FormalChatPrefs";
     private ImageView windowRectangleView;
     private ZoomInOutImgView imgView;
     private Button doneEditing;
@@ -40,7 +46,6 @@ public class CropActivity extends Activity {
 
         final FrameLayout rl = (FrameLayout) findViewById(R.id.root_crop);
         final LinearLayout.LayoutParams params_original = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
 
         ViewTreeObserver viewTreeObserver = rl.getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -73,15 +78,64 @@ public class CropActivity extends Activity {
 
                         windowRectangleView.setImageBitmap(newBitmap);
                         imgView.destroyDrawingCache();
+
+                        saveProfileImg(newBitmap);
+
+
+                        String profileImgPath = getProfileImgPath();
+
+                        Intent intent = new Intent(CropActivity.this, FullImageActivity.class);
+                        //intent.putExtra("profileImgPath", profileImgPath);
+                        byte[] profileImg = bitmapToByteArray(newBitmap);
+                        intent.putExtra("profileImg", profileImg);
+                        setResult(RESULT_OK, intent);
+
+                        finish();
                     }
                 });
             }
         });
+
+    }
+
+    private byte[] bitmapToByteArray(Bitmap newBitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        newBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+        return outputStream.toByteArray();
+    }
+
+
+    private String getProfileImgPath() {
+        File filename = new File(Environment.getExternalStorageDirectory() + "/.formal_chat/profile_pic.jpg");
+        if(filename.exists()) {
+            return filename.getPath();
+        }
+        return null;
+    }
+
+    private void saveProfileImg(Bitmap bitmapToReturn) {
+        File filename = new File(Environment.getExternalStorageDirectory() + "/.formal_chat/profile_pic.jpg");
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(filename);
+            bitmapToReturn.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private Drawable getDrawableFromUrl(String url) {
         String imgName = getShortName(url);
-        File dir = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
+        File dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         File imgFile = new File(dir, imgName);
 
         if(!isImgExists(imgFile)){

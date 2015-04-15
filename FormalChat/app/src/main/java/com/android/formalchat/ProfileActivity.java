@@ -209,9 +209,11 @@ public class ProfileActivity extends DrawerActivity {
     }
 
     private void getProfileImgPath() {
-        ParseUser user = ParseUser.getCurrentUser();
-        profileImgPath = user.getString("profileImgPath");
-                        Log.v("formalchat", "ProfileImgPath = " + profileImgPath);
+//        ParseUser user = ParseUser.getCurrentUser();
+//        profileImgPath = user.getString("profileImgPath");
+//                        Log.v("formalchat", "ProfileImgPath = " + profileImgPath);
+
+        profileImgPath = sharedPreferences.getString("profPic", null);
     }
 
     private String getUserName() {

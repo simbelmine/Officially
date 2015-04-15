@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -33,7 +35,7 @@ import java.util.List;
  */
 public class FullImageActivity extends Activity {
     private static final String PREFS_NAME = "FormalChatPrefs";
-    private static final int CROP_FROM_CAMERA = 123;
+    private static final int CROP_FROM_IMG = 123;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private ImageView fullScreenView;
@@ -52,7 +54,6 @@ public class FullImageActivity extends Activity {
         editor = sharedPreferences.edit();
         Intent i = getIntent();
         url = i.getExtras().getString("url");
-        Log.v("fomralchat", "# url = " + url);
 
         fullScreenView = (ImageView) findViewById(R.id.full_screen_img);
         Picasso.with(this)
@@ -102,8 +103,7 @@ public class FullImageActivity extends Activity {
                                 deleteImage();
                                 return true;
                             case R.id.set_as:
-                                 startCropActivity();
-
+                                startCropActivity();
 
 //                                setImageAsProfile();
 //                                setFlagToSharedPrefs();
@@ -119,16 +119,40 @@ public class FullImageActivity extends Activity {
         });
     }
 
-    private void startCropActivity() {
-        Intent intent = new Intent(FullImageActivity.this, CropActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("url", url);
-        startActivity(intent);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(data != null) {
+            if(resultCode == RESULT_OK) {
+                //String profileImgPath = data.getStringExtra("profileImgPath");
+                byte[] profileImg = data.getByteArrayExtra("profileImg");
+                setImageAsProfile(profileImg);
+                setFlagToSharedPrefs();
+                setProfPicNameToSharPrefs();
+                finish();
+            }
+        }
     }
 
-    private void setImageAsProfile() {
+    private void setProfPicNameToSharPrefs() {
+        editor.putString("profPic", url);
+        editor.commit();
+    }
+
+    private void startCropActivity() {
+        Intent intent = new Intent(FullImageActivity.this, CropActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // NB: if it starts with FLAG_ACTIVITY_NEW_TASK it cannot start it for result
+        intent.putExtra("url", url);
+        //startActivity(intent);
+
+        startActivityForResult(intent, CROP_FROM_IMG);
+    }
+
+    private void setImageAsProfile(byte[] profileImg) {
         ParseUser user = ParseUser.getCurrentUser();
-        user.put("profileImgPath", url);
+        ParseFile parseProfImg = new ParseFile(profileImg);
+        //user.put("profileImgPath", url);
+        user.put("profileImg", parseProfImg);
         user.saveInBackground();
     }
 
@@ -155,7 +179,7 @@ public class FullImageActivity extends Activity {
     }
 
     private void deleteImageFromLocalStorage() {
-        File dir = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
+        File dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         File[] dirImages = dir.listFiles();
 
         if(dirImages.length != 0) {

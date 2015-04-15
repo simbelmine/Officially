@@ -1,17 +1,21 @@
 package com.android.formalchat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -70,27 +74,43 @@ public class DrawerActivity extends FragmentActivity {
     }
 
     private void setPic() {
-        final String profilePicPath = getUserProfilePic();
-        if(profilePicPath != null) {
-            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
-            parseQuery.whereEqualTo("userName", user.getUsername());
-            parseQuery.whereEqualTo("photo", getNameFromPath(profilePicPath));
-            parseQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> parseObjects, ParseException e) {
-                    if(e == null) {
-                        Picasso.with(getApplicationContext()).load(profilePicPath).into(profilePic);
-                    }
-                }
-            });
+        //final String profilePicPath = getUserProfilePicPath();
+        String profilePicUri = getUserProfilePicUri();
+//        if(profilePicPath != null) {
+//            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+//            parseQuery.whereEqualTo("userName", user.getUsername());
+//            parseQuery.whereEqualTo("photo", getNameFromPath(profilePicPath));
+//            parseQuery.findInBackground(new FindCallback<ParseObject>() {
+//                @Override
+//                public void done(List<ParseObject> parseObjects, ParseException e) {
+//                    if(e == null) {
+//                        Picasso.with(getApplicationContext()).load(profilePicPath).into(profilePic);
+//                    }
+//                }
+//            });
+
+            if(profilePicUri != null) {
+                Picasso.with(getApplicationContext()).load(profilePicUri).into(profilePic);
+            }
+            else {
+                Picasso.with(getApplicationContext()).load("/drawabe/" + R.drawable.profile_pic_).into(profilePic);
+            }
+ //       }
+    }
+
+    private String getUserProfilePicUri() {
+        ParseFile pic = user.getParseFile("profileImg");
+        if(pic != null) {
+            return pic.getUrl();
         }
+        return null;
     }
 
     private String getNameFromPath(String profilePicPath) {
         return profilePicPath.substring(profilePicPath.lastIndexOf("/")+1);
     }
 
-    private String getUserProfilePic() {
+    private String getUserProfilePicPath() {
         return user.getString("profileImgPath");
     }
 
@@ -171,6 +191,7 @@ public class DrawerActivity extends FragmentActivity {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 //updateTitle(drawerTitle);
+                setPic();
             }
         };
     }
