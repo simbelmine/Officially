@@ -263,8 +263,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
     private void getProfileImgPath() {
         profileImgPath = sharedPreferences.getString("profPic", null);
-        ParseUser user = ParseUser.getCurrentUser();
-        profileImgPath = user.getString("profileImgPath");
     }
 
     private String getUserName() {
