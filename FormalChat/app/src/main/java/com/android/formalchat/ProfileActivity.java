@@ -62,9 +62,7 @@ public class ProfileActivity extends DrawerActivity {
 
         setTitle();
 
-//        profilePagerAdapter = new ProfilePagerAdapter(drawablesList, this);
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
-//        viewPager.setAdapter(profilePagerAdapter);
 
         addImgBtn = (Button) findViewById(R.id.add_btn);
         addImgBtn.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +131,7 @@ public class ProfileActivity extends DrawerActivity {
     }
 
     private void getImagesFromLocalStorage() {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         File[] dirImages = folder.listFiles();
         ArrayList<String> imagePaths = new ArrayList<>();
         String path;
@@ -169,8 +167,6 @@ public class ProfileActivity extends DrawerActivity {
 
                     ArrayList<String> imagePaths = new ArrayList<>();
                     for (ParseObject po : imagesList) {
-                        ParseFile imageFile = (ParseFile) po.get("photo");
-                        //  Log.v("formalchat", "photo name = " + imageFile.getName() + " " + imageFile.getUrl());
                         imagePaths.add(((ParseFile)po.get("photo")).getUrl());
                     }
 
@@ -209,10 +205,6 @@ public class ProfileActivity extends DrawerActivity {
     }
 
     private void getProfileImgPath() {
-//        ParseUser user = ParseUser.getCurrentUser();
-//        profileImgPath = user.getString("profileImgPath");
-//                        Log.v("formalchat", "ProfileImgPath = " + profileImgPath);
-
         profileImgPath = sharedPreferences.getString("profPic", null);
     }
 

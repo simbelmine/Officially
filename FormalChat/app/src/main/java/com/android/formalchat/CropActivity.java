@@ -1,11 +1,8 @@
 package com.android.formalchat;
 
 import android.app.Activity;
-import android.app.IntentService;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,8 +28,7 @@ import java.net.URL;
  * Created by Sve on 3/31/15.
  */
 public class CropActivity extends Activity {
-    private static final String PREFS_NAME = "FormalChatPrefs";
-    private ImageView windowRectangleView;
+    private ImageView cropMeasureView;
     private ZoomInOutImgView imgView;
     private Button doneEditing;
 
@@ -61,31 +57,24 @@ public class CropActivity extends Activity {
 
                 rl.addView(imgView);
 
-                windowRectangleView = (ImageView) findViewById(R.id.dragRect);
-                windowRectangleView.bringToFront();
+                cropMeasureView = (ImageView) findViewById(R.id.mesureRect);
+                cropMeasureView.bringToFront();
 
                 doneEditing = (Button) findViewById(R.id.done_editing);
                 doneEditing.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Bitmap b1 = imgView.getDrawingCache();
                         Bitmap newBitmap = Bitmap.createBitmap(b1,
-                                (int) windowRectangleView.getX(),
-                                (int) windowRectangleView.getY(),
-                                windowRectangleView.getWidth(),
-                                windowRectangleView.getHeight());
+                                (int) cropMeasureView.getX(),
+                                (int) cropMeasureView.getY(),
+                                cropMeasureView.getWidth(),
+                                cropMeasureView.getHeight());
 
-                        windowRectangleView.setImageBitmap(newBitmap);
+                        cropMeasureView.setImageBitmap(newBitmap);
                         imgView.destroyDrawingCache();
 
-                        saveProfileImg(newBitmap);
-
-
-                        String profileImgPath = getProfileImgPath();
-
                         Intent intent = new Intent(CropActivity.this, FullImageActivity.class);
-                        //intent.putExtra("profileImgPath", profileImgPath);
                         byte[] profileImg = bitmapToByteArray(newBitmap);
                         intent.putExtra("profileImg", profileImg);
                         setResult(RESULT_OK, intent);
@@ -104,48 +93,19 @@ public class CropActivity extends Activity {
         return outputStream.toByteArray();
     }
 
-
-    private String getProfileImgPath() {
-        File filename = new File(Environment.getExternalStorageDirectory() + "/.formal_chat/profile_pic.jpg");
-        if(filename.exists()) {
-            return filename.getPath();
-        }
-        return null;
-    }
-
-    private void saveProfileImg(Bitmap bitmapToReturn) {
-        File filename = new File(Environment.getExternalStorageDirectory() + "/.formal_chat/profile_pic.jpg");
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(filename);
-            bitmapToReturn.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-            // PNG is a lossless format, the compression factor (100) is ignored
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private Drawable getDrawableFromUrl(String url) {
         String imgName = getShortName(url);
         File dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         File imgFile = new File(dir, imgName);
 
         if(!isImgExists(imgFile)){
-            downloadImg(url, imgName, imgFile);
+            downloadImg(url, imgFile);
         }
 
         return Drawable.createFromPath(imgFile.getAbsolutePath());
     }
 
-    private void downloadImg(String img_url, String imgName, File imgFile) {
+    private void downloadImg(String img_url, File imgFile) {
 
         try {
             URL url = new URL(img_url);

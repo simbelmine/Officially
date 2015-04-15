@@ -68,34 +68,18 @@ public class DrawerActivity extends FragmentActivity {
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
         drawerLayout.setDrawerListener(drawerToggle);
-        //leftDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, listElements));
         leftDrawerList.setAdapter(new DrawerListAdapter(this));
         setListOnClickItemListener();
     }
 
     private void setPic() {
-        //final String profilePicPath = getUserProfilePicPath();
         String profilePicUri = getUserProfilePicUri();
-//        if(profilePicPath != null) {
-//            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
-//            parseQuery.whereEqualTo("userName", user.getUsername());
-//            parseQuery.whereEqualTo("photo", getNameFromPath(profilePicPath));
-//            parseQuery.findInBackground(new FindCallback<ParseObject>() {
-//                @Override
-//                public void done(List<ParseObject> parseObjects, ParseException e) {
-//                    if(e == null) {
-//                        Picasso.with(getApplicationContext()).load(profilePicPath).into(profilePic);
-//                    }
-//                }
-//            });
-
-            if(profilePicUri != null) {
-                Picasso.with(getApplicationContext()).load(profilePicUri).into(profilePic);
-            }
-            else {
-                Picasso.with(getApplicationContext()).load("/drawabe/" + R.drawable.profile_pic_).into(profilePic);
-            }
- //       }
+        if(profilePicUri != null) {
+            Picasso.with(getApplicationContext()).load(profilePicUri).into(profilePic);
+        }
+        else {
+            Picasso.with(getApplicationContext()).load("/drawabe/" + R.drawable.profile_pic_).into(profilePic);
+        }
     }
 
     private String getUserProfilePicUri() {
@@ -104,14 +88,6 @@ public class DrawerActivity extends FragmentActivity {
             return pic.getUrl();
         }
         return null;
-    }
-
-    private String getNameFromPath(String profilePicPath) {
-        return profilePicPath.substring(profilePicPath.lastIndexOf("/")+1);
-    }
-
-    private String getUserProfilePicPath() {
-        return user.getString("profileImgPath");
     }
 
     private void setPicOnClickListenre() {

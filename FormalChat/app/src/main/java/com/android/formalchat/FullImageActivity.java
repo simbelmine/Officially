@@ -1,12 +1,8 @@
 package com.android.formalchat;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -16,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -27,7 +22,6 @@ import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,7 +33,7 @@ public class FullImageActivity extends Activity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private ImageView fullScreenView;
-    private RelativeLayout topImgLayout;
+    private RelativeLayout topBtnsLayout;
     private ImageButton backBtn;
     private ImageButton menuBtn;
     private boolean isVisible = false;
@@ -60,7 +54,7 @@ public class FullImageActivity extends Activity {
                 .load(url)
                 .into(fullScreenView);
 
-        topImgLayout = (RelativeLayout) findViewById(R.id.top_btns_layout);
+        topBtnsLayout = (RelativeLayout) findViewById(R.id.top_btns_layout);
         backBtn = (ImageButton) findViewById(R.id.back_btn);
         menuBtn = (ImageButton) findViewById(R.id.menu_btn);
 
@@ -68,13 +62,13 @@ public class FullImageActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if(!isVisible) {
-                    topImgLayout.setVisibility(View.VISIBLE);
+                    topBtnsLayout.setVisibility(View.VISIBLE);
                     backBtn.setVisibility(View.VISIBLE);
                     menuBtn.setVisibility(View.VISIBLE);
                     isVisible = true;
                 }
                 else {
-                    topImgLayout.setVisibility(View.GONE);
+                    topBtnsLayout.setVisibility(View.GONE);
                     backBtn.setVisibility(View.GONE);
                     menuBtn.setVisibility(View.GONE);
                     isVisible = false;
@@ -88,7 +82,6 @@ public class FullImageActivity extends Activity {
                 finish();
             }
         });
-
 
         menuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,10 +97,6 @@ public class FullImageActivity extends Activity {
                                 return true;
                             case R.id.set_as:
                                 startCropActivity();
-
-//                                setImageAsProfile();
-//                                setFlagToSharedPrefs();
-//                                finish();
                                 return true;
                             default:
                                 return false;
@@ -123,7 +112,6 @@ public class FullImageActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(data != null) {
             if(resultCode == RESULT_OK) {
-                //String profileImgPath = data.getStringExtra("profileImgPath");
                 byte[] profileImg = data.getByteArrayExtra("profileImg");
                 setImageAsProfile(profileImg);
                 setFlagToSharedPrefs();
@@ -143,15 +131,12 @@ public class FullImageActivity extends Activity {
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // NB: if it starts with FLAG_ACTIVITY_NEW_TASK it cannot start it for result
         intent.putExtra("url", url);
-        //startActivity(intent);
-
         startActivityForResult(intent, CROP_FROM_IMG);
     }
 
     private void setImageAsProfile(byte[] profileImg) {
         ParseUser user = ParseUser.getCurrentUser();
         ParseFile parseProfImg = new ParseFile(profileImg);
-        //user.put("profileImgPath", url);
         user.put("profileImg", parseProfImg);
         user.saveInBackground();
     }

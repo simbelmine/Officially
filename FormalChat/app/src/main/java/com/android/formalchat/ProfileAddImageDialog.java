@@ -51,12 +51,9 @@ public class ProfileAddImageDialog extends DialogFragment {
 
     public String imageName = "IMG_"+ getTimeStamp() + ".jpg";
     private ImageButton mTakePhotoImg;
-    private TextView mTakePhotoText;
     private ImageButton mAttachPhotoImg;
-    private TextView mAttachPhotoText;
     private Uri fileUri;
     private ProfileActivity callingActivity;
-    private String imgGalleryPath;
     private String imgCameraPath;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder notificationBuilder;
@@ -68,7 +65,6 @@ public class ProfileAddImageDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.add_img_dialog, container, false);
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //mTakePhotoText = (TextView) view.findViewById(R.id.take_photo_txt);
         mTakePhotoImg = (ImageButton) view.findViewById(R.id.take_photo_img);
         mTakePhotoImg.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -80,7 +76,6 @@ public class ProfileAddImageDialog extends DialogFragment {
             }
         });
 
-        //mAttachPhotoText = (TextView) view.findViewById(R.id.attach_photo_txt);
         mAttachPhotoImg = (ImageButton) view.findViewById(R.id.attach_photo_img);
         mAttachPhotoImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +95,6 @@ public class ProfileAddImageDialog extends DialogFragment {
         Drawable drawable;
         callingActivity = (ProfileActivity) getActivity();
         Random random = new Random();
-        int randomInteger = random.nextInt(100);
 
         if(resultCode == Activity.RESULT_OK) {
             if (data != null) {
@@ -109,7 +103,6 @@ public class ProfileAddImageDialog extends DialogFragment {
                     saveToParse(drawable);
                 }
             }
-
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
                 drawable = getSelectedImage(data, requestCode);
                 saveToParse(drawable);
@@ -120,7 +113,7 @@ public class ProfileAddImageDialog extends DialogFragment {
     }
 
     private void saveToLocalStorage(Drawable drawable) {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/formal_chat");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         boolean success = true;
         if(!folder.exists()) {
             success = folder.mkdir();
@@ -280,10 +273,8 @@ public class ProfileAddImageDialog extends DialogFragment {
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String filePath = cursor.getString(columnIndex);
-            imgGalleryPath = filePath;
             cursor.close();
 
-            //Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
             Bitmap yourSelectedImage = getLessResolutionImg(filePath);
             Bitmap compressedImage = compressBitmapImg(yourSelectedImage);
             drawable = new BitmapDrawable(getResources(), compressedImage);

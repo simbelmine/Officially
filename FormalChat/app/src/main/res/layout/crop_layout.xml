@@ -9,7 +9,7 @@
     android:foregroundGravity="center"
 >
     <ImageView
-        android:id="@+id/dragRect"
+        android:id="@+id/mesureRect"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
