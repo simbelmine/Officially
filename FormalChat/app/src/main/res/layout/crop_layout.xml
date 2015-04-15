@@ -9,24 +9,21 @@
     android:foregroundGravity="center"
 >
     <ImageView
-<<<<<<< HEAD
         android:id="@+id/mesureRect"
-=======
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/profile_pic_"
- />
-
-    <View
-        android:id="@+id/dragRect"
->>>>>>> 8434a870439f96b589eaf27e4c361434a9240467
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:scaleType="fitXY"
         android:layout_gravity="center"
         android:background="@color/transp_black"
-        />
+ />
+
+    <!--<View-->
+        <!--android:id="@+id/dragRect"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:background="@color/transp_black"-->
+        <!--/>-->
 
     <Button
         android:id="@+id/done_editing"

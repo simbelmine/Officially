@@ -63,38 +63,12 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         activity = this;
 
         setTitle();
-<<<<<<< HEAD
 
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
 
-        addImgBtn = (Button) findViewById(R.id.add_btn);
-        addImgBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isNetworkAvailable()){
-                    addImgWithDialog = new ProfileAddImageDialog();
-                    FragmentManager manager = getSupportFragmentManager();
-                    addImgWithDialog.show(manager, "add_img_dialog");
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        editBtn = (Button) findViewById(R.id.edit_btn);
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startUserInfoActivity();
-            }
-        });
-
-=======
         init();
         initVideoMessage();
         addViewListeners();
->>>>>>> 8434a870439f96b589eaf27e4c361434a9240467
         getProfileImgPath();
     }
 
@@ -197,7 +171,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             case R.id.btn:
                 startActivity(VideoShowActivity.class);
         }
-
     }
 
     private void startActivity(Class classToLoad) {
@@ -289,12 +262,9 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     }
 
     private void getProfileImgPath() {
-<<<<<<< HEAD
         profileImgPath = sharedPreferences.getString("profPic", null);
-=======
         ParseUser user = ParseUser.getCurrentUser();
         profileImgPath = user.getString("profileImgPath");
->>>>>>> 8434a870439f96b589eaf27e4c361434a9240467
     }
 
     private String getUserName() {
