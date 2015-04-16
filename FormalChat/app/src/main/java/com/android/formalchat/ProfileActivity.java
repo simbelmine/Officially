@@ -69,6 +69,9 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
 
         init();
+        if(isNetworkAvailable()) {
+            loadImagesFromParseRemote();
+        }
         initVideoMessage();
         addViewListeners();
         getProfileImgPath();
@@ -123,26 +126,24 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+//        if(isNeededToRefresh()) {
+//            setNewSharedPrefs();
+//            recreate();
+//        }
 
-        if(isNeededToRefresh()) {
-            setNewSharedPrefs();
-            recreate();
-        }
-
+        Log.v("formalchat", "onResume...");
         if(isNetworkAvailable()) {
             if(!videoExists) {
                 exclamationLayout.setVisibility(View.VISIBLE);
             }
             else {
                 exclamationLayout.setVisibility(View.INVISIBLE);
-//                addVideoToPaths();
             }
-
-            loadImagesFromParseRemote();
+            initProfilePagerdAdapter();
         }
         else {
             // Get from local
-            getImagesFromLocalStorage();
+            //getImagesFromLocalStorage();
         }
     }
 
@@ -171,7 +172,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 startActivity(VideoRecordActivity.class);
                 break;
             case R.id.btn:
-                //startActivity(VideoShowActivity.class);
                 startActivity(VideoRecordActivity.class);
         }
     }
@@ -225,7 +225,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             @Override
             public void done(List<ParseObject> imagesList, ParseException e) {
                 if (e == null) {
-
                     for (ParseObject po : imagesList) {
                         imagePaths.add(((ParseFile)po.get("photo")).getUrl());
                     }
@@ -237,18 +236,24 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         addVideoToPaths();
                     }
 
-                    if (profilePagerAdapter != null) {
-                        profilePagerAdapter.updateImages(imagePaths);
-                    } else {
-                        profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
-                        viewPager.setAdapter(profilePagerAdapter);
-                    }
+                    initProfilePagerdAdapter();
 
                 } else {
                     Log.d("formalchat", "Error: " + e.getMessage());
                 }
             }
         });
+    }
+
+    private void initProfilePagerdAdapter() {
+        if (profilePagerAdapter != null) {
+            profilePagerAdapter.updateImages(imagePaths);
+            Log.v("formalchat", "profilePagerAdapter NOT null");
+        } else {
+            profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
+            viewPager.setAdapter(profilePagerAdapter);
+            Log.v("formalchat", "profilePagerAdapter IS null");
+        }
     }
 
     private ArrayList<String> setPathInFront(ArrayList<String> imagePaths, String path) {

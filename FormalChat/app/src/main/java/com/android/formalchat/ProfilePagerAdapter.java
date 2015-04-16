@@ -59,6 +59,11 @@ public class ProfilePagerAdapter extends PagerAdapter {
     }
 
     @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+    @Override
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
     }
@@ -158,9 +163,9 @@ public class ProfilePagerAdapter extends PagerAdapter {
         Uri uri = Uri.parse(dir+filePath+fileName);
 
         MediaController mediaController = new MediaController(activity, false);
-        mediaController.setAnchorView(videoView);
+        //mediaController.setAnchorView(videoView);
         videoView.setVideoURI(uri);
-        videoView.requestFocus();
+        //videoView.requestFocus();
         videoView.setMediaController(mediaController);
         seekTo(videoView, 100);
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
