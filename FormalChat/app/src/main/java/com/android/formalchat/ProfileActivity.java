@@ -131,7 +131,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 //            recreate();
 //        }
 
-        Log.v("formalchat", "onResume...");
         if(isNetworkAvailable()) {
             if(!videoExists) {
                 exclamationLayout.setVisibility(View.VISIBLE);
@@ -248,11 +247,9 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private void initProfilePagerdAdapter() {
         if (profilePagerAdapter != null) {
             profilePagerAdapter.updateImages(imagePaths);
-            Log.v("formalchat", "profilePagerAdapter NOT null");
         } else {
             profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
             viewPager.setAdapter(profilePagerAdapter);
-            Log.v("formalchat", "profilePagerAdapter IS null");
         }
     }
 

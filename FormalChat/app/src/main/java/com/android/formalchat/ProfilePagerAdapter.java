@@ -5,10 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.MediaPlayer;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
@@ -39,12 +40,14 @@ public class ProfilePagerAdapter extends PagerAdapter {
     /////// ***** For the Video File *****
     private static final int RESULT_OK = -1;
     private File dir = Environment.getExternalStorageDirectory();
-    private String filePath = "/formal_chat/";
+    private String filePath = "/.formal_chat/";
     private String fileName;
     private File tmpFile;
     private ParseFile videoFile;
     private BroadcastReceiver broadcastReceiver;
     private Activity activity;
+    private Bitmap thumbnail;
+    private Uri videoUri;
 
     public ProfilePagerAdapter(Activity actvty, Context ctx, ArrayList<String> paths) {
         activity = actvty;
@@ -76,7 +79,7 @@ public class ProfilePagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(final ViewGroup container, final int position) {
-        View itemView = layoutInflater.inflate(R.layout.viewpager_item, container, false);
+        final View itemView = layoutInflater.inflate(R.layout.viewpager_item, container, false);
         final ImageView imageView = (ImageView) itemView.findViewById(R.id.image);
         final VideoView videoView = (VideoView) itemView.findViewById(R.id.video);
         final ProgressBar progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
@@ -93,9 +96,12 @@ public class ProfilePagerAdapter extends PagerAdapter {
                 if (isVideo(position)) {
                     initBroadcastReceiver(videoView);
                     context.registerReceiver(broadcastReceiver, new IntentFilter(VideoDownloadService.NOTIFICATION));
-                    imageView.setVisibility(View.INVISIBLE);
-                    videoView.setVisibility(View.VISIBLE);
-                    getStartedWithVideo(videoView);
+                    downloadVideoIfNotExists();
+
+                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    addTransparentPlayImage(itemView);
+                    reCreateImageView(layoutParams, imageView);
+                    setVideoImgOnClickListener(imageView);
                     progressBar.setVisibility(View.GONE);
                     context.unregisterReceiver(broadcastReceiver);
                 }
@@ -114,6 +120,47 @@ public class ProfilePagerAdapter extends PagerAdapter {
 
         container.addView(itemView);
         return itemView;
+    }
+
+    private void addTransparentPlayImage(View itemView) {
+        ImageView playImageView = (ImageView) itemView.findViewById(R.id.image_play);
+        playImageView.setVisibility(View.VISIBLE);
+    }
+
+    private void reCreateImageView(FrameLayout.LayoutParams layoutParams, ImageView imageView) {
+        imageView.setLayoutParams(layoutParams);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setVisibility(View.VISIBLE);
+        imageView.setImageBitmap(thumbnail);
+    }
+
+    private void downloadVideoIfNotExists() {
+        ParseUser user = ParseUser.getCurrentUser();
+        videoFile = user.getParseFile("video");
+        fileName = videoFile.getName();
+        videoUri = Uri.parse(dir + filePath + fileName);
+
+        File targetFolder = new File(dir + filePath);
+        if(!targetFolder.exists()) {
+            targetFolder.mkdir();
+        }
+
+        tmpFile = new File(dir, filePath + fileName);
+        if(!tmpFile.exists()) {
+            startVideoDownloadService();
+        }
+        else {
+            thumbnail  = getVideoThumbnail();
+        }
+    }
+
+    private void setVideoImgOnClickListener(ImageView imageView) {
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openVideoShowActivity();
+            }
+        });
     }
 
     private boolean isVideo(int position) {
@@ -149,7 +196,7 @@ public class ProfilePagerAdapter extends PagerAdapter {
                 if(bundle != null) {
                     int resultCode = bundle.getInt(VideoDownloadService.RESULT);
                     if(resultCode == RESULT_OK) {
-                        loadVideo(videoView);
+                        thumbnail  = getVideoThumbnail();
                     }
                     else {
                         Log.e("formalchat", "DoWnLoAd Failed .... !!!");
@@ -159,50 +206,17 @@ public class ProfilePagerAdapter extends PagerAdapter {
         };
     }
 
-    private void loadVideo(final VideoView videoView) {
-        Uri uri = Uri.parse(dir+filePath+fileName);
-
-        MediaController mediaController = new MediaController(activity, false);
-        //mediaController.setAnchorView(videoView);
-        videoView.setVideoURI(uri);
-        //videoView.requestFocus();
-        videoView.setMediaController(mediaController);
-        seekTo(videoView, 100);
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener()  {
-                    @Override
-                    public void onSeekComplete(MediaPlayer mp) {
-                        videoView.pause();
-                    }
-                });
-            }
-        });
+    private Bitmap getVideoThumbnail() {
+        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
+                MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+        return thumb;
     }
 
-    private void seekTo(VideoView v, int pos) {
-        v.start();
-        v.seekTo(pos);
-    }
-
-    private void getStartedWithVideo(VideoView videoView) {
-        ParseUser user = ParseUser.getCurrentUser();
-        videoFile = user.getParseFile("video");
-        fileName = videoFile.getName();
-
-        File targetFolder = new File(dir + filePath);
-        if(!targetFolder.exists()) {
-            targetFolder.mkdir();
-        }
-
-        tmpFile = new File(dir, filePath + fileName);
-        if(tmpFile.exists()) {
-            loadVideo(videoView);
-        }
-        else {
-            startVideoDownloadService();
-        }
+    private void openVideoShowActivity() {
+        Intent intent = new Intent(activity, VideoShowActivity.class);
+        intent.putExtra("videoUri", videoUri.toString());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     private void startVideoDownloadService() {
