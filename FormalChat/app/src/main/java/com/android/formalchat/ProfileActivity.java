@@ -48,6 +48,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private ParseUser user;
     private ArrayList<String> imagePaths;
     private Activity activity;
+    private boolean videoExists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         activity = this;
 
         setTitle();
+        videoExists = isVideoExists();
 
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
 
@@ -75,7 +77,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (isVideoExists()) {
+        if (videoExists) {
             exclamationLayout.setVisibility(View.INVISIBLE);
         }
     }
@@ -96,7 +98,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     }
 
     private void initVideoMessage() {
-        if(!isVideoExists()) {
+        if(!videoExists) {
             exclamationLayout.setVisibility(View.VISIBLE);
         }
         else {
@@ -128,12 +130,12 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         }
 
         if(isNetworkAvailable()) {
-            if(!isVideoExists()) {
+            if(!videoExists) {
                 exclamationLayout.setVisibility(View.VISIBLE);
             }
             else {
                 exclamationLayout.setVisibility(View.INVISIBLE);
-                addVideoToPaths();
+//                addVideoToPaths();
             }
 
             loadImagesFromParseRemote();
@@ -170,8 +172,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 break;
             case R.id.btn:
                 //startActivity(VideoShowActivity.class);
-                Intent intent = new Intent(this, VideoCompressService.class);
-                startService(intent);
+                startActivity(VideoRecordActivity.class);
         }
     }
 
@@ -232,6 +233,10 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                     if(profileImgPath != null) {
                         imagePaths = setPathInFront(imagePaths, profileImgPath);
                     }
+                    if(videoExists) {
+                        addVideoToPaths();
+                    }
+
                     if (profilePagerAdapter != null) {
                         profilePagerAdapter.updateImages(imagePaths);
                     } else {

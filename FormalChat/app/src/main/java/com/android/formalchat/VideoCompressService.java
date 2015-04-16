@@ -11,11 +11,21 @@ import android.widget.Toast;
 import com.netcompss.ffmpeg4android.CommandValidationException;
 import com.netcompss.ffmpeg4android.GeneralUtils;
 import com.netcompss.loader.LoadJNI;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.PrefixFileFilter;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
 
 /**
  * Created by Sve on 4/13/15.
  */
 public class VideoCompressService extends IntentService {
+
     private String workFolder = null;
     private String vkLogPath = null;
     private boolean commandValidationFailedFlag = false;
@@ -38,13 +48,16 @@ public class VideoCompressService extends IntentService {
         destinationVideoPathOut = destinationFolder + "out_" + videoName;
 
         Log.i("formalchat", getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
-        workFolder = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
-        Log.i("formalchat", "workFolder (license and logs location) path: " + workFolder);
-        vkLogPath = workFolder + "vk.log";
-        Log.i("formalchat", "vk log (native log) path: " + vkLogPath);
+//        workFolder = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
+//        Log.i("formalchat", "workFolder (license and logs location) path: " + workFolder);
+//        vkLogPath = workFolder + "vk.log";
+//        Log.i("formalchat", "vk log (native log) path: " + vkLogPath);
 
 //        GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(activity, workFolder);
 //        GeneralUtils.copyDemoVideoFromAssetsToSDIfNeeded(activity, demoVideoFolder);
+
+        workFolder = destinationFolder;
+        vkLogPath = workFolder + "vk.log";
 
         if (GeneralUtils.checkIfFileExistAndNotEmpty(destinationVideoPath)) {
             new TranscdingBackground().execute();
@@ -71,7 +84,8 @@ public class VideoCompressService extends IntentService {
             Log.i("formalchat", "doInBackground started...");
 
             // delete previous log
-            GeneralUtils.deleteFileUtil(workFolder + "/vk.log");
+            //GeneralUtils.deleteFileUtil(workFolder + "/vk.log");
+            GeneralUtils.deleteFileUtil(destinationFolder + "/vk.log");
 
             PowerManager powerManager = (PowerManager)getApplicationContext().getSystemService(Activity.POWER_SERVICE);
             PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VK_LOCK");
@@ -100,7 +114,7 @@ public class VideoCompressService extends IntentService {
                 //vk.run(complexCommand, workFolder, getApplicationContext(), false);
 
                 // copying vk.log (internal native log) to the videokit folder
-                GeneralUtils.copyFileToFolder(vkLogPath, destinationFolder);
+                    //GeneralUtils.copyFileToFolder(vkLogPath, destinationFolder);
 
             } catch (CommandValidationException e) {
                 Log.e("formalchat", "vk run exeption.", e);
@@ -146,11 +160,38 @@ public class VideoCompressService extends IntentService {
             final String status = rc;
 
 
-            Toast.makeText(VideoCompressService.this, status, Toast.LENGTH_LONG).show();
             if (status.equals("Transcoding Status: Failed")) {
                 Log.v("formalchat", "Check: " + vkLogPath + " for more information.");
             }
+            else if(status.equals("Transcoding Status: Finished OK")) {
+                //Toast.makeText(VideoCompressService.this, status, Toast.LENGTH_LONG).show();
+                Toast.makeText(VideoCompressService.this, "Your Video will appear shortly on your wall.", Toast.LENGTH_LONG).show();
 
+                File videoFile = getVideoFile(destinationFolder);
+                saveVideoToParse(videoFile, videoName);
+            }
+        }
+
+        private File getVideoFile(String destinationFolder) {
+            Collection<File> files =  FileUtils.listFiles(new File(destinationFolder), new PrefixFileFilter("out"), null);
+            if(files.size() != 0) {
+                return (File)files.toArray()[0];
+            }
+
+            return null;
+        }
+
+        private void saveVideoToParse(File videoFile, String videoName) {
+            ParseUser user = ParseUser.getCurrentUser();
+            try {
+                byte[] data = FileUtils.readFileToByteArray(videoFile); //Convert any file, image or video into byte array
+                ParseFile parseFile = new ParseFile(videoName, data);
+                user.put("video", parseFile);
+                user.saveInBackground();
+
+            } catch (IOException e) {
+                Log.e("formalchat", e.getMessage());
+            }
         }
 
     }

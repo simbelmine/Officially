@@ -70,19 +70,8 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
             Uri videoUri = data.getData();
             videoName = getVideoName(videoUri);
             compressVideo(destinationFolder, videoName);
-
-            File videoFile = getVideoFile(destinationFolder);
-            saveVideoToParse(videoFile, videoName);
+            finish();
         }
-    }
-
-    private File getVideoFile(String destinationFolder) {
-        Collection<File> files =  FileUtils.listFiles(new File(destinationFolder), new PrefixFileFilter("out"), null);
-        if(files.size() != 0) {
-            return (File)files.toArray()[0];
-        }
-        
-        return null;
     }
 
     private String getVideoName(Uri videoUri) {
@@ -95,19 +84,6 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
         intent.putExtra("destinationFolder", startFolder);
         intent.putExtra("videoName", videoName);
         startService(intent);
-    }
-
-    private void saveVideoToParse(File videoFile, String videoName) {
-        ParseUser user = ParseUser.getCurrentUser();
-        try {
-            byte[] data = FileUtils.readFileToByteArray(videoFile); //Convert any file, image or video into byte array
-            ParseFile parseFile = new ParseFile(videoName, data);
-            user.put("video", parseFile);
-            user.saveInBackground();
-
-        } catch (IOException e) {
-            Log.e("formalchat", e.getMessage());
-        }
     }
 
     private void dispatchTakeVideoIntent() {
