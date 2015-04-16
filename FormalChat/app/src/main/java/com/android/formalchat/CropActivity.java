@@ -84,7 +84,6 @@ public class CropActivity extends Activity {
                 });
             }
         });
-
     }
 
     private byte[] bitmapToByteArray(Bitmap newBitmap) {
