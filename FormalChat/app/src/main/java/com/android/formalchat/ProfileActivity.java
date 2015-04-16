@@ -126,10 +126,10 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-//        if(isNeededToRefresh()) {
-//            setNewSharedPrefs();
-//            recreate();
-//        }
+        if(isNeededToRefresh()) {
+            setNewSharedPrefs();
+            recreate();
+        }
 
         if(isNetworkAvailable()) {
             if(!videoExists) {
@@ -138,7 +138,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             else {
                 exclamationLayout.setVisibility(View.INVISIBLE);
             }
-            initProfilePagerdAdapter();
         }
         else {
             // Get from local
