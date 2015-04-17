@@ -41,6 +41,7 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:noHistory="true">
         </activity>
+        <activity android:name=".DrawerActivity"/>
         <activity android:name=".MainActivity"/>
         <activity android:name=".ProfileActivity"/>
         <activity android:name=".UserInfoActivity"

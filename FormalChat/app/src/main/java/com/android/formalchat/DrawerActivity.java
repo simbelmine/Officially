@@ -1,12 +1,17 @@
 package com.android.formalchat;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.util.AttributeSet;
@@ -19,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -34,7 +40,9 @@ import java.util.List;
  * Created by Sve on 3/26/15.
  */
 public class DrawerActivity extends FragmentActivity {
+    public static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
+    private SharedPreferences sharedPreferences;
     private RoundedImageView profilePic;
     private TextView profileName;
     private DrawerLayout drawerLayout;
@@ -45,6 +53,7 @@ public class DrawerActivity extends FragmentActivity {
     private CharSequence title;
     private CharSequence drawerTitle;
     private ParseUser user;
+    private boolean exit;
 
 
     @Override
@@ -52,6 +61,9 @@ public class DrawerActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer);
 
+        callDefaultFragment();
+        sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
+        exit = false;
         user = ParseUser.getCurrentUser();
         title = drawerTitle = getTitle();
         listElements = getResources().getStringArray(R.array.menu_list);
@@ -70,6 +82,12 @@ public class DrawerActivity extends FragmentActivity {
         drawerLayout.setDrawerListener(drawerToggle);
         leftDrawerList.setAdapter(new DrawerListAdapter(this));
         setListOnClickItemListener();
+    }
+
+    private void callDefaultFragment() {
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = new MainFragment();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
 
     private void setPic() {
@@ -166,7 +184,7 @@ public class DrawerActivity extends FragmentActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                //updateTitle(drawerTitle);
+               // updateTitle(drawerTitle);
                 setPic();
             }
         };
@@ -180,25 +198,38 @@ public class DrawerActivity extends FragmentActivity {
     private void setListOnClickItemListener() {
         leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 selectItem(position);
             }
         });
     }
 
     private void selectItem(int position) {
+        Fragment fragment = null;
         switch (position) {
             case 0:
+                fragment = new MainFragment();
                 onItemSelected(position);
-                launchActivity(MainActivity.class, position);
+                //launchActivity(MainActivity.class, position);
+                //onItemSelected(position);
                 break;
             case 1:
+                fragment = new ProfileFragment();
                 onItemSelected(position);
-                launchActivity(ProfileActivity.class, position);
+                //launchActivity(ProfileActivity.class, position);
+                //onItemSelected(position);
                 break;
             case 2:
                 logOut();
                 break;
+        }
+
+        if (fragment != null) {
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        } else {
+            Log.e("MainActivity", "Error in creating fragment");
         }
     }
 
@@ -210,12 +241,43 @@ public class DrawerActivity extends FragmentActivity {
 
     private void onItemSelected(int position) {
         leftDrawerList.setItemChecked(position, true);
-        setTitle(listElements[position]);
+        //setTitle(listElements[position]);
+        updateTitle(listElements[position]);
+
         drawerLayout.closeDrawer(leftDrawerLayout);
     }
 
     public void logOut() {
         ParseUser.logOut();
         launchActivity(LoginActivity.class, NONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isLoggedIn()){
+            if(exit) {
+                finish();
+            }
+            else {
+                //The Handler here handles accidental back presses,
+                // it simply shows a Toast, and if there is another back press within 3 seconds,
+                // it closes the application.
+                Toast.makeText(this, getString(R.string.back_to_exit), Toast.LENGTH_SHORT).show();
+                exit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        exit = false;
+                    }
+                }, 3 * 1000 );
+            }
+        }
+    }
+
+    private boolean isLoggedIn() {
+        if(sharedPreferences.getBoolean("loggedIn", false)) {
+            return true;
+        }
+        return false;
     }
 }

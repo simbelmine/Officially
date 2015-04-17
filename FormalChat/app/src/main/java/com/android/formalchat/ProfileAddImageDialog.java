@@ -1,6 +1,7 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Display;
