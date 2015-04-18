@@ -2,19 +2,14 @@ package com.android.formalchat;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -61,7 +56,7 @@ public class DrawerActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer);
 
-        callDefaultFragment();
+        callFragment(new MainFragment());
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         exit = false;
         user = ParseUser.getCurrentUser();
@@ -75,7 +70,7 @@ public class DrawerActivity extends FragmentActivity {
         initDrawableToggle();
         initActionBar();
         setPic();
-        setPicOnClickListenre();
+        setPicOnClickListener();
         setProfileName();
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
@@ -84,9 +79,8 @@ public class DrawerActivity extends FragmentActivity {
         setListOnClickItemListener();
     }
 
-    private void callDefaultFragment() {
+    private void callFragment(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = new MainFragment();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
 
@@ -108,11 +102,12 @@ public class DrawerActivity extends FragmentActivity {
         return null;
     }
 
-    private void setPicOnClickListenre() {
+    private void setPicOnClickListener() {
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchActivity(ProfileActivity.class, NONE);
+                callFragment(new ProfileFragment());
+                drawerLayout.closeDrawer(leftDrawerLayout);
             }
         });
     }
