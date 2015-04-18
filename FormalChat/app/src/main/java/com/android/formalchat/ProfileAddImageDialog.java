@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -40,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 /**
  * Created by Sve on 2/4/15.
@@ -68,7 +66,7 @@ public class ProfileAddImageDialog extends DialogFragment {
 
         mTakePhotoImg = (ImageButton) view.findViewById(R.id.take_photo_img);
         mTakePhotoImg.setOnClickListener(new View.OnClickListener() {
-        @Override
+            @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
@@ -94,21 +92,18 @@ public class ProfileAddImageDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         Drawable drawable;
-        callingActivity = (ProfileActivity) getActivity();
-        Random random = new Random();
 
-        if(resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 if (requestCode == ACTIVITY_SELECT_IMAGE) {
                     drawable = getSelectedImage(data, requestCode);
-                    saveToParse(drawable);
+                    saveToParse(getActivity(), drawable);
                 }
             }
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
                 drawable = getSelectedImage(data, requestCode);
-                saveToParse(drawable);
+                saveToParse(getActivity(), drawable);
             }
-
             getDialog().dismiss();
         }
     }
@@ -138,7 +133,7 @@ public class ProfileAddImageDialog extends DialogFragment {
         }
     }
 
-    private void saveToParse(final Drawable drawableL) {
+    private void saveToParse(final Activity activity, final Drawable drawableL) {
         ParseUser parseUser = ParseUser.getCurrentUser();
         final String userName = parseUser.getUsername();
         final ParseFile imgFile = drawableToParseFile(drawableL);
@@ -153,7 +148,7 @@ public class ProfileAddImageDialog extends DialogFragment {
                 @Override
                 public void done(ParseException e) {
                     saveToLocalStorage(drawableL);
-                    onDoneSaveTransaction(e);
+                    onDoneSaveTransaction(activity, e);
                 }
             });
         }
@@ -187,13 +182,14 @@ public class ProfileAddImageDialog extends DialogFragment {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void onDoneSaveTransaction(ParseException e) {
+    private void onDoneSaveTransaction(Activity activity, ParseException e) {
         if (e == null) {
             Log.e("formalchat", "Photo was saved Successfully !");
             //hide notification for uploading - or just show error on the same notification
             hideUploadNotification();
-            callingActivity.onImageUploaded();
-        } else {
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, activity.getIntent());
+        }
+        else {
             Log.e("formalchat", "Error saving: " + e.getMessage());
         }
     }
@@ -207,18 +203,18 @@ public class ProfileAddImageDialog extends DialogFragment {
                 .setOngoing(true);
 
         new Thread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    int progress;
-                    // Do the operation 20 times
-                    for (progress = 0; progress <= 100; progress+= 5) {
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        int progress;
+                        // Do the operation 20 times
+                        for (progress = 0; progress <= 100; progress+= 5) {
                             // Set the progress indicator to (max value, current completition percentage, determinate state)
                             notificationBuilder.setProgress(100, progress, true);
                             notificationManager.notify(id, notificationBuilder.build());
+                        }
                     }
                 }
-            }
         ).start();
     }
 

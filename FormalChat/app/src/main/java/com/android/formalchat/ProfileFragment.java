@@ -2,9 +2,7 @@ package com.android.formalchat;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -13,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,13 +36,13 @@ import java.util.List;
 public class ProfileFragment extends Fragment implements View.OnClickListener {
     private static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
+    private static final int ADD_IMG_DIALOG = 1;
     private SharedPreferences sharedPreferences;
     private ProfilePagerAdapter profilePagerAdapter;
     private ViewPager viewPager;
     private Button addImgBtn;
     private Button editBtn;
     private ProfileAddImageDialog addImgWithDialog;
-    private DrawerLayout drawerLayout;
     private String profileImgPath;
     private LinearLayout exclamationLayout;
     private Button btn;
@@ -64,14 +61,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, 0);
         user = ParseUser.getCurrentUser();
-        imagePaths = new ArrayList<>();
         activity = getActivity();
 
         setTitle();
         videoExists = isVideoExists();
 
         viewPager = (ViewPager) rootView.findViewById(R.id.pager_profile);
-
         init(rootView);
         if (isNetworkAvailable()) {
             AsyncTask<Void, Void, Void> loadingTask = new AsyncTask<Void, Void, Void>() {
@@ -94,49 +89,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         return rootView;
     }
 
-//    @Override
-//    protected void onResume() {
-//        Log.v("formalchat", "#@# onResume ---- ");
-//        super.onResume();
-//        if(isNeededToRefresh()) {
-//            setNewSharedPrefs();
-//            recreate();
-//        }
-//
-//        if(isNetworkAvailable()) {
-//            if(!videoExists) {
-//                exclamationLayout.setVisibility(View.VISIBLE);
-//            }
-//            else {
-//                exclamationLayout.setVisibility(View.INVISIBLE);
-//            }
-//        }
-//        else {
-//            // Get from local
-//            //getImagesFromLocalStorage();
-//        }
-//    }
-
-
-//    @Override
-//    protected void onRestart() {
-//        Log.v("formalchat", "#@# onRestart ---- ");
-//        super.onRestart();
-////        if (videoExists) {
-////            exclamationLayout.setVisibility(View.INVISIBLE);
-////        }
-//    }
-
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_btn:
                 if (isNetworkAvailable()) {
-                    addImgWithDialog = new ProfileAddImageDialog();
-                    FragmentManager manager = getFragmentManager();
-                    addImgWithDialog.show(manager, "add_img_dialog");
-
+                    showDialog();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
                 }
@@ -149,6 +107,25 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.btn:
                 startActivity(VideoRecordActivity.class);
+        }
+    }
+
+    private void showDialog() {
+        addImgWithDialog = new ProfileAddImageDialog();
+        addImgWithDialog.setTargetFragment(this, ADD_IMG_DIALOG);
+        addImgWithDialog.show(getFragmentManager().beginTransaction(), "add_img_dialog");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case ADD_IMG_DIALOG:
+                if (resultCode == Activity.RESULT_OK) {
+                    loadImagesFromParseRemote();
+                } else if (resultCode == Activity.RESULT_CANCELED){
+                    Log.v("formalchat", "onActivityResult CANCELED");
+                }
+                break;
         }
     }
 
@@ -244,6 +221,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             @Override
             public void done(List<ParseObject> imagesList, ParseException e) {
                 if (e == null) {
+                    imagePaths = new ArrayList<>();
                     for (ParseObject po : imagesList) {
                         imagePaths.add(((ParseFile) po.get("photo")).getUrl());
                     }
@@ -265,6 +243,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initProfilePagerdAdapter() {
+        Log.e("formalchat", "pagerAdapter = " + profilePagerAdapter);
         if (profilePagerAdapter != null) {
             profilePagerAdapter.updateImages(imagePaths);
         } else {
