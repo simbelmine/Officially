@@ -1,15 +1,14 @@
 package com.android.formalchat;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -55,7 +54,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.v("formalchat", "#@# onCreate ---- ");
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View contentView = inflater.inflate(R.layout.profile_layout, null, false);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -70,34 +68,21 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
 
-//        init();
-//        if(isNetworkAvailable()) {
-//            AsyncTask<Void, Void, Void> loadingTask = new AsyncTask<Void, Void, Void>() {
-//                @Override
-//                protected Void doInBackground(Void... params) {
-//                    loadImagesFromParseRemote();
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Void aVoid) {
-//                    initVideoMessage();
-//                    addViewListeners();
-//                    getProfileImgPath();
-//                }
-//            };
-//            loadingTask.execute();
-//        }
-
+        init();
+        if(isNetworkAvailable()) {
+            loadImagesFromParseRemote();
+        }
+        initVideoMessage();
+        addViewListeners();
+        getProfileImgPath();
     }
 
     @Override
     protected void onRestart() {
-        Log.v("formalchat", "#@# onRestart ---- ");
         super.onRestart();
-//        if (videoExists) {
-//            exclamationLayout.setVisibility(View.INVISIBLE);
-//        }
+        if (videoExists) {
+            exclamationLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void setTitle() {
@@ -140,25 +125,24 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-        Log.v("formalchat", "#@# onResume ---- ");
         super.onResume();
-//        if(isNeededToRefresh()) {
-//            setNewSharedPrefs();
-//            recreate();
-//        }
-//
-//        if(isNetworkAvailable()) {
-//            if(!videoExists) {
-//                exclamationLayout.setVisibility(View.VISIBLE);
-//            }
-//            else {
-//                exclamationLayout.setVisibility(View.INVISIBLE);
-//            }
-//        }
-//        else {
-//            // Get from local
-//            //getImagesFromLocalStorage();
-//        }
+        if(isNeededToRefresh()) {
+            setNewSharedPrefs();
+            recreate();
+        }
+
+        if(isNetworkAvailable()) {
+            if(!videoExists) {
+                exclamationLayout.setVisibility(View.VISIBLE);
+            }
+            else {
+                exclamationLayout.setVisibility(View.INVISIBLE);
+            }
+        }
+        else {
+            // Get from local
+            //getImagesFromLocalStorage();
+        }
     }
 
     private void addVideoToPaths() {
@@ -172,7 +156,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             case R.id.add_btn:
                 if(isNetworkAvailable()){
                     addImgWithDialog = new ProfileAddImageDialog();
-                    FragmentManager manager = getFragmentManager();
+                    FragmentManager manager = getSupportFragmentManager();
                     addImgWithDialog.show(manager, "add_img_dialog");
                 }
                 else {
