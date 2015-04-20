@@ -72,7 +72,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         if(isNetworkAvailable()) {
             loadImagesFromParseRemote();
         }
-        initVideoMessage();
+        initVideoWarningMessage();
         addViewListeners();
         getProfileImgPath();
     }
@@ -88,7 +88,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private void setTitle() {
         int title_position = getIntent().getIntExtra("title_position", NONE);
         if(title_position != NONE) {
-            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position].toUpperCase());
         }
     }
 
@@ -100,7 +100,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         btn = (Button) findViewById(R.id.btn);
     }
 
-    private void initVideoMessage() {
+    private void initVideoWarningMessage() {
         if(!videoExists) {
             exclamationLayout.setVisibility(View.VISIBLE);
         }
@@ -132,12 +132,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         }
 
         if(isNetworkAvailable()) {
-            if(!videoExists) {
-                exclamationLayout.setVisibility(View.VISIBLE);
-            }
-            else {
-                exclamationLayout.setVisibility(View.INVISIBLE);
-            }
+            initVideoWarningMessage();
         }
         else {
             // Get from local

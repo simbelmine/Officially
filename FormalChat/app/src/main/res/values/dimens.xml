@@ -41,6 +41,13 @@
     <!--Profile-->
     <dimen name="font_size">14sp</dimen>
     <dimen name="button_margin">5dp</dimen>
+    <dimen name="play_size">70dp</dimen>
+    <dimen name="exclamation_size">30dp</dimen>
+    <dimen name="exclamation_margin_left">10dp</dimen>
+    <dimen name="icons_margin">5dp</dimen>
+    <dimen name="FEB_size">40dp</dimen>
+    <dimen name="FEB_margin">16dp</dimen>
+    <dimen name="FEB_elevation">2dp</dimen>
 
     <!--Main-->
     <dimen name="header_height">50dp</dimen>
