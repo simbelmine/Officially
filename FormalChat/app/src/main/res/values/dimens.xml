@@ -35,9 +35,11 @@
     <dimen name="l_padding_top">10dp</dimen>
     <dimen name="l_txt_padding_l_r">15dp</dimen>
     <dimen name="l_switch_margin_r">5dp</dimen>
-    <dimen name="profile_pic_margine">16dp</dimen>
+    <dimen name="profile_pic_margin">16dp</dimen>
     <dimen name="profile_img_dimen">80dp</dimen>
     <dimen name="profile_name_left_margin">10dp</dimen>
+    <dimen name="list_icon_size">20dp</dimen>
+    <dimen name="list_icon_margin">10dp</dimen>
 
     <!--Profile-->
     <dimen name="font_size">14sp</dimen>

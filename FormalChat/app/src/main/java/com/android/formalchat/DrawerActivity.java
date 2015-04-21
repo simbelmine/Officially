@@ -30,6 +30,7 @@ import java.util.List;
  */
 public class DrawerActivity extends FragmentActivity {
     public static final int NONE = 101;
+    public static final int PROFILE_ID = 202;
     private RoundedImageView profilePic;
     private TextView profileName;
     private DrawerLayout drawerLayout;
@@ -89,7 +90,8 @@ public class DrawerActivity extends FragmentActivity {
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchActivity(ProfileActivity.class, NONE);
+                drawerLayout.closeDrawer(leftDrawerLayout);
+                launchActivity(ProfileActivity.class, PROFILE_ID);
             }
         });
     }
@@ -155,7 +157,7 @@ public class DrawerActivity extends FragmentActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                //updateTitle(title);
+                updateTitle(title);
             }
 
             @Override

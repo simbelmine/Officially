@@ -4,16 +4,24 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="bottom"
-     >
+    >
+    <ImageView
+        android:id="@+id/drawer_list_icon"
+        android:layout_width="@dimen/list_icon_size"
+        android:layout_height="@dimen/list_icon_size"
+        android:layout_marginLeft="@dimen/icons_margin"
+        android:src="@drawable/ic_launcher"
+        />
     <TextView
         android:id="@+id/drawertxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/l_txt_padding_l_r"
+        android:layout_marginRight="@dimen/l_txt_padding_l_r"
         android:paddingLeft="@dimen/l_txt_padding_l_r"
-        android:paddingRight="@dimen/l_txt_padding_l_r"
-        android:textColor="@color/purple"
+        android:textColor="@color/action_bar"
         android:typeface="serif"
         android:background="?android:attr/activatedBackgroundIndicator"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
@@ -26,4 +34,4 @@
         android:layout_marginRight="@dimen/l_switch_margin_r"
         android:visibility="invisible"
         />
-     </RelativeLayout>
+</RelativeLayout>
