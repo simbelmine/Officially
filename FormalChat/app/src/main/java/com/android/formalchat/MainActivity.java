@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridView;
@@ -41,7 +42,7 @@ public class MainActivity extends DrawerActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
         exit = false;
-        isGrid = true;
+        isGrid = false;
 
         setTitle();
         initSharedPreferences();
@@ -69,13 +70,18 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void initGridListBtn() {
-        if(sharedPreferences.getBoolean("isGrid", false)) {
-            grid_list_btn.setImageResource(R.drawable.grid);
+        if(!sharedPreferences.contains("isGrid")) {
+            grid_list_btn.setImageResource(R.drawable.list);
             setPplGridView();
         }
         else {
-            grid_list_btn.setImageResource(R.drawable.list);
-            setPplListView();
+            if (sharedPreferences.getBoolean("isGrid", false)) {
+                grid_list_btn.setImageResource(R.drawable.list);
+                setPplGridView();
+            } else {
+                grid_list_btn.setImageResource(R.drawable.grid);
+                setPplListView();
+            }
         }
     }
 
@@ -85,13 +91,13 @@ public class MainActivity extends DrawerActivity {
             public void onClick(View v) {
                 if(isGrid) {
                     isGrid = false;
-                    grid_list_btn.setImageResource(R.drawable.list);
+                    grid_list_btn.setImageResource(R.drawable.grid);
                     setGridListStatus();
                     setPplListView();
                 }
                 else {
                     isGrid = true;
-                    grid_list_btn.setImageResource(R.drawable.grid);
+                    grid_list_btn.setImageResource(R.drawable.list);
                     setGridListStatus();
                     setPplGridView();
                 }
