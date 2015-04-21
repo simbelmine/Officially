@@ -62,4 +62,7 @@
     <dimen name="list_margin">3dp</dimen>
     <dimen name="list_item_txt_padding">10dp</dimen>
     <dimen name="list_item_txt_height">30dp</dimen>
+
+    <!--PopUp Menu-->
+    <dimen name="divider_height">1dp</dimen>
 </resources>

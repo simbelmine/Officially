@@ -27,6 +27,9 @@
     <string name="user_info_save">Save</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_set_as">Set As Profile</string>
+    <string name="menu_edit_profile">Edit Profile</string>
+    <string name="menu_add_pic">Add Picture</string>
+    <string name="menu_record_video">Record Video</string>
 
     <string-array name="gender_values">
         <item>Man</item>

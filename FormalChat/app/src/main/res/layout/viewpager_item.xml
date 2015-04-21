@@ -14,7 +14,7 @@
         android:id="@+id/image_play"
         android:layout_width="@dimen/play_size"
         android:layout_height="@dimen/play_size"
-        android:src="@drawable/play_g"
+        android:src="@drawable/play_g_"
         android:layout_gravity="center"
         android:scaleType="fitCenter"
         android:visibility="invisible"/>

@@ -6,11 +6,34 @@
     </style>
     <style name="AppThemeW" parent="@android:style/Theme.Holo.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:popupMenuStyle">@style/MyPopUpMenu</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
     </style>
     <!-- ActionBar styles -->
     <style name="MyActionBar"
         parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/action_bar</item>
+    </style>
+
+    <!-- Pop Up Menu styles -->
+    <style name="MyPopUpMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@color/white</item>
+    </style>
+    <!-- Pop Up Menu styles -->
+    <style name="DropDownListView" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <item name="android:dividerHeight">@dimen/divider_height</item>
+        <item name="android:divider">@drawable/divider</item>
+        <item name="android:listSelector">@color/items</item>
+    </style>
+
+    <style name="myPopupMenuTextAppearanceSmall" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
+        <item name="android:textColor">@color/action_bar</item>
+    </style>
+
+    <style name="myPopupMenuTextAppearanceLarge" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
+        <item name="android:textColor">@color/action_bar</item>
     </style>
 
     <style name="QuestionsDialogTheme" parent="Theme.AppCompat.Dialog">

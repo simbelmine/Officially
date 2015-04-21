@@ -8,14 +8,22 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -38,13 +46,11 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private SharedPreferences sharedPreferences;
     private ProfilePagerAdapter profilePagerAdapter;
     private ViewPager viewPager;
-    private Button addImgBtn;
-    private Button editBtn;
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
     private String profileImgPath;
     private LinearLayout exclamationLayout;
-    private Button btn;
+    private ImageButton edit_feb_btn;
     private ParseUser user;
     private ArrayList<String> imagePaths;
     private Activity activity;
@@ -94,10 +100,8 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
     private void init() {
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
-        addImgBtn = (Button) findViewById(R.id.add_btn);
-        editBtn = (Button) findViewById(R.id.edit_btn);
         exclamationLayout = (LinearLayout) findViewById(R.id.exclamation_layout);
-        btn = (Button) findViewById(R.id.btn);
+        edit_feb_btn = (ImageButton) findViewById(R.id.feb_button);
     }
 
     private void initVideoWarningMessage() {
@@ -117,10 +121,8 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     }
 
     private void addViewListeners() {
-        addImgBtn.setOnClickListener(this);
-        editBtn.setOnClickListener(this);
         exclamationLayout.setOnClickListener(this);
-        btn.setOnClickListener(this);
+        edit_feb_btn.setOnClickListener(this);
     }
 
     @Override
@@ -148,7 +150,28 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.add_btn:
+            case R.id.exclamation_layout:
+                startActivity(VideoRecordActivity.class);
+                break;
+            case R.id.feb_button:
+                PopupMenu popupMenu = new PopupMenu(ProfileActivity.this, edit_feb_btn);
+                popupMenu.getMenuInflater().inflate(R.menu.profile_edit_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return onItemClicked(item);
+                    }
+                });
+                popupMenu.show();
+        }
+    }
+
+    private boolean onItemClicked(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.edit_profile:
+                startActivity(UserInfoActivity.class);
+                return true;
+            case R.id.add_pic:
                 if(isNetworkAvailable()){
                     addImgWithDialog = new ProfileAddImageDialog();
                     FragmentManager manager = getSupportFragmentManager();
@@ -157,15 +180,12 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 else {
                     Toast.makeText(getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
                 }
-                break;
-            case R.id.edit_btn:
-                startActivity(UserInfoActivity.class);
-                break;
-            case R.id.exclamation_layout:
+                return true;
+            case R.id.record_video:
                 startActivity(VideoRecordActivity.class);
-                break;
-            case R.id.btn:
-                startActivity(VideoRecordActivity.class);
+                return true;
+            default:
+                return false;
         }
     }
 
