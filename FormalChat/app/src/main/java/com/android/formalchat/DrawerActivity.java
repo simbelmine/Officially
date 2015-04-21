@@ -73,7 +73,7 @@ public class DrawerActivity extends FragmentActivity {
             Picasso.with(getApplicationContext()).load(profilePicUri).into(profilePic);
         }
         else {
-            Picasso.with(getApplicationContext()).load(R.drawable.profile_pic_).into(profilePic);
+            Picasso.with(getApplicationContext()).load(R.drawable.profile_pic).into(profilePic);
         }
     }
 

@@ -18,40 +18,16 @@
         android:layout_gravity="start"
         android:orientation="vertical"
         android:gravity="center">
-        <RelativeLayout
-            android:id="@+id/images_layout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/l_img_height"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/image_view"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/l_img_height"
-                android:layout_centerInParent="true"
-                android:background="@drawable/background"/>
-            <com.android.formalchat.RoundedImageView
-                android:id="@+id/profile_img"
-                android:layout_width="@dimen/profile_img_dimen"
-                android:layout_height="@dimen/profile_img_dimen"
-                android:fadingEdge="horizontal"
-                android:layout_centerInParent="true"
-                android:src="@drawable/profile_pic_"
-                />
-            <TextView
-                android:id="@+id/profile_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_img"
-                android:layout_marginLeft="@dimen/profile_name_left_margin"
-                android:textColor="@color/white"
-                />
-        </RelativeLayout>
+       <include
+           android:id="@+id/header"
+           layout="@layout/drawer_header">
+       </include>
 
         <ListView
             android:id="@+id/left_list_drawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/images_layout"
+            android:layout_below="@+id/header"
             android:layout_gravity="start"
             android:paddingTop="@dimen/l_padding_top"
             android:choiceMode="singleChoice"
