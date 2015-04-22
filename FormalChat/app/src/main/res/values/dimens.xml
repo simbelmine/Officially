@@ -60,11 +60,16 @@
     <dimen name="grid_column_width">70dp</dimen>
     <dimen name="grid_margin">10dp</dimen>
     <dimen name="grid_item_txt_l_r_padding">10dp</dimen>
-    <dimen name="grid_item_txt_t_b_padding">15dp</dimen>
+    <dimen name="grid_item_txt_t_b_padding">3dp</dimen>
+    <dimen name="grid_img_size">100dp</dimen>
+    <dimen name="grid_img_margin">10dp</dimen>
 
     <dimen name="list_margin">3dp</dimen>
+    <dimen name="list_item_height">80dp</dimen>
     <dimen name="list_item_txt_padding">90dp</dimen>
-    <dimen name="list_item_txt_height">30dp</dimen>
+    <dimen name="list_item_txt_height">20dp</dimen>
+    <dimen name="list_img_size">60dp</dimen>
+    <dimen name="list_img_margin">10dp</dimen>
 
     <!--PopUp Menu-->
     <dimen name="divider_height">1dp</dimen>

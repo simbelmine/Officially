@@ -3,18 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:background="@drawable/background">
-    <!--<com.android.formalchat.SquareImageView-->
-        <!--android:id="@+id/picture"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:scaleType="centerCrop"-->
-        <!--android:src="@drawable/profile_pic"-->
-        <!--/>-->
     <com.android.formalchat.RoundedImageView
         android:id="@+id/picture"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
+        android:layout_width="@dimen/grid_img_size"
+        android:layout_height="@dimen/grid_img_size"
         android:layout_gravity="center"
+        android:layout_marginTop="@dimen/grid_img_margin"
+        android:layout_marginBottom="@dimen/grid_img_margin"
         android:src="@drawable/profile_pic"/>
     <TextView
         android:id="@+id/text"
@@ -22,12 +17,12 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/grid_item_txt_l_r_padding"
         android:paddingRight="@dimen/grid_item_txt_l_r_padding"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
+        android:paddingTop="@dimen/grid_item_txt_t_b_padding"
+        android:paddingBottom="@dimen/grid_item_txt_t_b_padding"
         android:layout_gravity="bottom"
         android:gravity="center_vertical"
         android:textColor="@color/white"
-        android:background="@color/transp_black_30"
+        android:background="@color/transp_black_20"
         android:text="User's Name"
         />
 </FrameLayout>

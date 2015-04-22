@@ -33,6 +33,7 @@ public class DrawerActivity extends FragmentActivity {
     public static final int PROFILE_ID = 202;
     private RoundedImageView profilePic;
     private TextView profileName;
+    private TextView email;
     private DrawerLayout drawerLayout;
     private RelativeLayout leftDrawerLayout;
     private ListView leftDrawerList;
@@ -56,11 +57,14 @@ public class DrawerActivity extends FragmentActivity {
         leftDrawerList = (ListView) findViewById(R.id.left_list_drawer);
         profilePic = (RoundedImageView) findViewById(R.id.profile_img);
         profileName = (TextView) findViewById(R.id.profile_name);
+        email = (TextView) findViewById(R.id.email);
         initDrawableToggle();
         initActionBar();
         setPic();
         setPicOnClickListenre();
-        setProfileName();
+        ParseUser user = ParseUser.getCurrentUser();
+        setProfileName(user);
+        setProfileEmail(user);
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
         drawerLayout.setDrawerListener(drawerToggle);
@@ -96,8 +100,7 @@ public class DrawerActivity extends FragmentActivity {
         });
     }
 
-    private void setProfileName() {
-        final ParseUser user = ParseUser.getCurrentUser();
+    private void setProfileName(final ParseUser user) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserInfo");
         query.whereEqualTo("loginName", user.getUsername());
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -107,6 +110,10 @@ public class DrawerActivity extends FragmentActivity {
                 profileName.setText(userInfo.get("name").toString());
             }
         });
+    }
+
+    private void setProfileEmail(ParseUser user) {
+        email.setText(user.getEmail());
     }
 
     private void initActionBar() {

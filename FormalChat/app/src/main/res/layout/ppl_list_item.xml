@@ -2,21 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="@dimen/list_item_height"
     android:background="@drawable/background"
     android:gravity="bottom"
     >
-    <!--<com.android.formalchat.SquareImageView-->
-    <!--android:layout_width="@dimen/header_element_width"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@drawable/profile_pic"-->
-    <!--android:scaleType="centerCrop"-->
-    <!--android:layout_weight="1"/>-->
     <com.android.formalchat.RoundedImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/list_img_size"
+        android:layout_height="@dimen/list_img_size"
         android:scaleType="centerCrop"
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/list_img_margin"
         android:src="@drawable/profile_pic"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,8 +23,9 @@
             android:text="User's Name"
             android:paddingLeft="@dimen/list_item_txt_padding"
             android:gravity="center|left"
+            android:layout_gravity="bottom"
             android:textColor="@color/white"
-            android:background="@color/transp_black_30"
+            android:background="@color/transp_black_20"
             />
     </LinearLayout>
 </RelativeLayout>

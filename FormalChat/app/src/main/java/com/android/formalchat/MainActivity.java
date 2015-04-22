@@ -23,7 +23,6 @@ public class MainActivity extends DrawerActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
     private SharedPreferences sharedPreferences;
-    private TextView userName;
     private ParseUser currentUser;
     private Boolean exit;
     private DrawerLayout drawerLayout;
@@ -46,12 +45,8 @@ public class MainActivity extends DrawerActivity {
         setTitle();
         initSharedPreferences();
 
-        userName = (TextView) findViewById(R.id.user_name);
         currentUser = ParseUser.getCurrentUser();
-        if (currentUser != null) {
-            // do stuff with the user
-            userName.setText(currentUser.getUsername());
-        } else {
+        if (currentUser == null) {
             // show the signup or login screen
             launchLoginActivity();
         }
