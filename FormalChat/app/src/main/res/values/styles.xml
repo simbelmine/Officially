@@ -10,6 +10,8 @@
         <item name="android:dropDownListViewStyle">@style/DropDownListView</item>
         <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
+        <item name="android:spinnerDropDownItemStyle">@style/mySpinnerItemStyle</item>
+        <item name="android:spinnerItemStyle">@style/MySpinnerItem</item>
     </style>
     <!-- ActionBar styles -->
     <style name="MyActionBar"
@@ -41,6 +43,19 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@color/transp_black</item>
     </style>
+
+    <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">@color/action_bar</item>
+    </style>
+
+    <style name="MySpinnerItem" parent="android:Widget.TextView.SpinnerItem">
+        <item name="android:textAppearance">@style/MyTextAppearanceSpinnerItem</item>
+    </style>
+
+    <style name="MyTextAppearanceSpinnerItem" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="android:textColor">@color/items</item>
+    </style>
+
 
     <style name="QuestionStyle">
         <item name="android:textSize">30sp</item>

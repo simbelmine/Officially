@@ -17,7 +17,9 @@
             android:layout_height="match_parent"
             android:entries="@array/search_for"
             android:layout_weight="6"
-            android:layout_gravity="bottom"/>
+            android:layout_gravity="bottom"
+
+            />
         <ImageButton
             android:id="@+id/grid_list_btn"
             android:layout_width="@dimen/header_element_width"

@@ -3,6 +3,7 @@
     <color name="black">#000000</color>
     <color name="transp_black">#60000000</color>
     <color name="transp_black_55">#55000000</color>
+    <color name="transp_black_30">#30000000</color>
     <color name="transp_white">#00FFFFFF</color>
     <color name="transp_white_60">#60FFFFFF</color>
     <color name="transp_white_20">#30707070</color>
@@ -20,6 +21,7 @@
 
     <color name="action_bar">#004457</color>
     <color name="items">#00a5a5</color>
+    <color name="items_40">#4000a5a5</color>
     <color name="border_green">#00b3b4</color>
     <color name="background">#002833</color>
 </resources>

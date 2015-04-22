@@ -63,7 +63,7 @@
     <dimen name="grid_item_txt_t_b_padding">15dp</dimen>
 
     <dimen name="list_margin">3dp</dimen>
-    <dimen name="list_item_txt_padding">10dp</dimen>
+    <dimen name="list_item_txt_padding">90dp</dimen>
     <dimen name="list_item_txt_height">30dp</dimen>
 
     <!--PopUp Menu-->

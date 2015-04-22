@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/list_item_rounded"
+    android:layout_height="100dp"
+    android:background="@drawable/background"
     android:gravity="bottom"
-    android:weightSum="5">
-    <com.android.formalchat.SquareImageView
-        android:layout_width="@dimen/header_element_width"
-        android:layout_height="wrap_content"
-        android:src="@drawable/background"
+    >
+    <!--<com.android.formalchat.SquareImageView-->
+    <!--android:layout_width="@dimen/header_element_width"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:src="@drawable/profile_pic"-->
+    <!--android:scaleType="centerCrop"-->
+    <!--android:layout_weight="1"/>-->
+    <com.android.formalchat.RoundedImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:scaleType="centerCrop"
-        android:layout_weight="1"/>
+        android:layout_margin="10dp"
+        android:src="@drawable/profile_pic"/>
     <LinearLayout
-        android:layout_width="@dimen/header_element_width"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_txt_height"
-        android:layout_weight="4"
-        android:gravity="bottom">
+        android:layout_alignParentBottom="true"
+        >
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -24,7 +30,7 @@
             android:paddingLeft="@dimen/list_item_txt_padding"
             android:gravity="center|left"
             android:textColor="@color/white"
-            android:background="@color/transp_black_55"
+            android:background="@color/transp_black_30"
             />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
