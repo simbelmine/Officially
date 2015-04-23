@@ -41,40 +41,43 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:noHistory="true">
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".ProfileActivity"/>
-        <activity android:name=".UserInfoActivity"
-                  android:windowSoftInputMode="adjustPan|stateHidden"
-            android:noHistory="true"/>
-        <activity android:name=".MainQuestionsActivity"
-                  android:windowSoftInputMode="adjustPan|stateHidden"
+        <activity   android:name=".MainActivity"/>
+        <activity   android:name=".ProfileActivity"
+                    android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity   android:name=".UserInfoActivity"
+                    android:windowSoftInputMode="adjustPan|stateHidden"
+                    android:noHistory="true"/>
+        <activity   android:name=".MainQuestionsActivity"
+                    android:windowSoftInputMode="adjustPan|stateHidden"
                   />
-        <activity android:name=".FullImageActivity"/>
-        <activity android:name=".QuestionaryActivity"
-                  android:noHistory="true"/>
-        <activity android:name=".DialogActivityInterestedIn"
-                  android:theme="@style/QuestionsDialogTheme"
+        <activity   android:name=".FullImageActivity"/>
+        <activity   android:name=".QuestionaryActivity"
+                    android:noHistory="true"/>
+        <activity   android:name=".DialogActivityInterestedIn"
+                    android:theme="@style/QuestionsDialogTheme"
             />
-        <activity android:name=".DialogActivityLookingFor"
-            android:theme="@style/QuestionsDialogTheme"
+        <activity   android:name=".DialogActivityLookingFor"
+                    android:theme="@style/QuestionsDialogTheme"
             />
-        <activity android:name=".DialogActivtyAboutMe"
-            android:theme="@style/QuestionsDialogTheme"
+        <activity   android:name=".DialogActivtyAboutMe"
+                    android:theme="@style/QuestionsDialogTheme"
             />
-        <activity android:name=".DialogActivityRelationship"
-            android:theme="@style/QuestionsDialogTheme"
+        <activity   android:name=".DialogActivityRelationship"
+                    android:theme="@style/QuestionsDialogTheme"
             />
-        <activity android:name=".DialogActivityBodyType"
-            android:theme="@style/QuestionsDialogTheme"
+        <activity   android:name=".DialogActivityBodyType"
+                    android:theme="@style/QuestionsDialogTheme"
             />
-        <activity android:name=".DialogActivityEthnicity"
-            android:theme="@style/QuestionsDialogTheme"
+        <activity   android:name=".DialogActivityEthnicity"
+                    android:theme="@style/QuestionsDialogTheme"
             />
-        <activity android:name=".DialogActivityInterests"
-            android:theme="@style/QuestionsDialogTheme"
+        <activity   android:name=".DialogActivityInterests"
+                    android:theme="@style/QuestionsDialogTheme"
             />
-        <activity android:name=".CropActivity" android:theme="@style/QuestionsDialogTheme"/>
-        <activity android:name=".CropImageActivity" android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".CropActivity"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".CropImageActivity"
+                    android:theme="@style/QuestionsDialogTheme"/>
         <activity android:name=".VideoRecordActivity"/>
         <activity android:name=".VideoShowActivity"/>
         <service android:name=".VideoDownloadService"/>

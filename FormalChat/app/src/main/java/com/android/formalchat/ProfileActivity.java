@@ -61,7 +61,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.profile_layout, null, false);
+        View contentView = inflater.inflate(R.layout.profile, null, false);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
