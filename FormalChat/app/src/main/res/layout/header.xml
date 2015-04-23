@@ -50,11 +50,11 @@
         android:layout_height="@dimen/FEB_size"
         android:layout_gravity="bottom|right"
         android:layout_marginRight="@dimen/FEB_margin"
-        android:layout_marginBottom="@dimen/FEB_margin"
+        android:layout_marginBottom="@dimen/FEB_margin_bottom"
         android:scaleType="centerInside"
         android:elevation="@dimen/FEB_elevation"
         android:background="@drawable/oval_btn"
-        android:src="@drawable/edit_btn"
+        android:src="@drawable/plus"
         />
 
     <RelativeLayout

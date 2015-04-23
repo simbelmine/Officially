@@ -11,32 +11,63 @@
         android:gravity="center"
         android:textColor="@color/items"
         android:textStyle="italic"
-        android:layout_margin="15dp"
+        android:layout_margin="@dimen/motto_margin"
         android:text="What's the phrase you live by?"/>
+
+    <!-- Divider -->
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="35dp"
+        android:layout_height="@dimen/divider_info_height"
+        android:layout_margin="@dimen/divider_info_margin"
         android:src="@drawable/divider"/>
+
+    <!-- Sweitch: Edit On/Off -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/label_height"
-        android:gravity="bottom">
+        android:layout_marginBottom="@dimen/divider_info_margin"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/label_padding"
+            android:gravity="center"
+            android:textColor="@color/items"
+            android:text="EDIT"/>
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/label_padding"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+    <!-- Name -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/label_height"
+        >
         <TextView
             android:id="@+id/name_lbl"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:text="@string/name_lbl"
+            android:textColor="@color/action_bar"
             />
-        <EditText
+        <TextView
             android:id="@+id/name_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/name_lbl"/>
+            android:layout_toRightOf="@+id/name_lbl"
+            android:gravity="right"
+            android:paddingRight="@dimen/label_padding"
+            android:textColor="@color/items"
+            android:textStyle="italic"
+            android:text="My User Name"/>
     </RelativeLayout>
+
+    <!-- Gender -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/label_height">
@@ -45,13 +76,18 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/gender_lbl"
-            android:paddingLeft="@dimen/label_padding_left"/>
-        <Spinner
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar"
+            />
+        <TextView
             android:id="@+id/gender_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/gender_lbl"
-            android:entries="@array/gender_values"/>
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
+            android:textColor="@color/items"
+            android:text="My Gender is..."/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -60,15 +96,19 @@
             android:id="@+id/age_lbl"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:layout_marginTop="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
-            android:text="@string/age_lbl" />
-        <EditText
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar"
+            android:text="@string/age_lbl"
+            />
+        <TextView
             android:id="@+id/age_edit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/age_lbl"/>
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/age_lbl"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
+            android:textColor="@color/items"
+            android:text="My Age is..."/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -78,15 +118,19 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar"
             android:text="@string/location_lbl" />
-        <EditText
+        <TextView
             android:id="@+id/location_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/location_lbl"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
             android:editable="false"
-            android:textColor="@color/dark_gray"/>
+            android:textColor="@color/dark_gray"
+            android:text="location..."/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -96,16 +140,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
-            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar"
             android:text="@string/interested_in_lbl" />
         <TextView
             android:id="@+id/interested_in_edit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_toRightOf="@+id/interested_in_lbl"
-            android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
+            android:textColor="@color/items"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
@@ -116,16 +161,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
-            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar"
             android:text="@string/looking_for_lbl" />
         <TextView
             android:id="@+id/looking_for_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/looking_for_lbl"
-            android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
+            android:textColor="@color/items"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
@@ -136,23 +182,29 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
-            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar"
             android:text="@string/about_me_lbl" />
         <TextView
             android:id="@+id/about_me_edit"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/aboutMe_height"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
             android:layout_toRightOf="@+id/about_me_lbl"
+            android:textColor="@color/items"
             android:text="@string/multy_txt"/>
     </RelativeLayout>
-    <LinearLayout
+
+    <!-- Divider -->
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/label_height"
-        android:orientation="horizontal"
-        android:background="@color/gray"></LinearLayout>
+        android:layout_height="@dimen/divider_info_height"
+        android:layout_margin="@dimen/divider_info_margin"
+        android:src="@drawable/divider"/>
+
+    <!-- Relationship Status -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/label_height">
@@ -161,15 +213,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/relationship_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
-            android:gravity="center_vertical" />
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar" />
         <TextView
             android:id="@+id/relationship_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/relationship_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
+            android:textColor="@color/items"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
@@ -180,15 +234,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/body_type_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
-            android:gravity="center_vertical" />
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar" />
         <TextView
             android:id="@+id/body_type_edit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_toRightOf="@+id/body_type_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
+            android:textColor="@color/items"
             android:text="@string/choice_txt"/>
 
     </RelativeLayout>
@@ -200,15 +256,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/ethnicity_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
-            android:gravity="center_vertical" />
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar" />
         <TextView
             android:id="@+id/ethnicity_edit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_toRightOf="@+id/ethnicity_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
+            android:textColor="@color/items"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
@@ -219,15 +277,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/interests_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
-            android:gravity="center_vertical" />
+            android:paddingLeft="@dimen/label_padding"
+            android:textColor="@color/action_bar" />
         <TextView
             android:id="@+id/interests_edit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_toRightOf="@+id/interests_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingRight="@dimen/label_padding"
+            android:gravity="right"
+            android:textColor="@color/items"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 </LinearLayout>

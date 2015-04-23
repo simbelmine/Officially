@@ -16,10 +16,10 @@
     <dimen name="padding_left_check">10dp</dimen>
     <dimen name="margin_right_check">30dp</dimen>
 
-    <dimen name="label_height">30dp</dimen>
+    <dimen name="label_height">50dp</dimen>
     <dimen name="aboutMe_height">40dp</dimen>
     <dimen name="label_margin_bottom">5dp</dimen>
-    <dimen name="label_padding_left">5dp</dimen>
+    <dimen name="label_padding">26dp</dimen>
     <dimen name="questions_btn_left_right">10dp</dimen>
     <dimen name="questions_btn_top">30dp</dimen>
 
@@ -50,6 +50,7 @@
     <dimen name="icons_margin">5dp</dimen>
     <dimen name="FEB_size">40dp</dimen>
     <dimen name="FEB_margin">16dp</dimen>
+    <dimen name="FEB_margin_bottom">51dp</dimen>
     <dimen name="FEB_elevation">2dp</dimen>
 
     <!--Main-->
@@ -73,4 +74,10 @@
 
     <!--PopUp Menu-->
     <dimen name="divider_height">1dp</dimen>
+
+    <!--User Info-->
+    <dimen name="motto_margin">16dp</dimen>
+    <dimen name="divider_info_height">0.5dp</dimen>
+    <dimen name="divider_info_margin">15dp</dimen>
+
 </resources>

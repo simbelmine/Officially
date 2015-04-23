@@ -94,11 +94,11 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private void setTitle() {
         int title_position = getIntent().getIntExtra("title_position", NONE);
         if(title_position == DrawerActivity.PROFILE_ID) {
-            getActionBar().setTitle(getResources().getString(R.string.profile).toUpperCase());
+            getActionBar().setTitle(getResources().getString(R.string.profile));
         }
         else
         if(title_position != NONE) {
-            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position].toUpperCase());
+            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
         }
     }
 

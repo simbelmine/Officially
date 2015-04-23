@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:text="@string/name_lbl"
             android:textAllCaps="true"
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:text="@string/gender_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:textAllCaps="true"
             android:background="@color/green_transp"/>
@@ -57,7 +57,7 @@
             android:layout_height="@dimen/label_height"
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:layout_marginTop="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:text="@string/age_lbl"
             android:textAllCaps="true"
@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:text="@string/location_lbl"
             android:textAllCaps="true"
@@ -97,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:text="@string/interested_in_lbl"
             android:textAllCaps="true"
@@ -114,7 +114,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/interested_in_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
@@ -125,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:text="@string/looking_for_lbl"
             android:textAllCaps="true"
@@ -142,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/looking_for_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
@@ -153,7 +153,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:text="@string/about_me_lbl"
             android:textAllCaps="true"
@@ -168,7 +168,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/aboutMe_height"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:layout_below="@+id/about_me_lbl"
             android:text="@string/multy_txt"/>
     </RelativeLayout>
@@ -184,7 +184,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:text="@string/relationship_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:textAllCaps="true"
             android:background="@color/green_transp"/>
@@ -200,7 +200,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/relationship_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
@@ -211,7 +211,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:text="@string/body_type_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:textAllCaps="true"
             android:background="@color/green_transp"/>
@@ -227,7 +227,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/body_type_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:text="@string/choice_txt"/>
 
     </RelativeLayout>
@@ -239,7 +239,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:text="@string/ethnicity_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:textAllCaps="true"
             android:background="@color/green_transp"/>
@@ -255,7 +255,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/ethnicity_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
@@ -266,7 +266,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:text="@string/interests_lbl"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:gravity="center_vertical"
             android:textAllCaps="true"
             android:background="@color/green_transp"/>
@@ -282,7 +282,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/interests_lbl"
             android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding_left"
+            android:paddingLeft="@dimen/label_padding"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
     <RelativeLayout
