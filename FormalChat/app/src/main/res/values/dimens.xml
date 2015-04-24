@@ -50,7 +50,8 @@
     <dimen name="icons_margin">5dp</dimen>
     <dimen name="FEB_size">40dp</dimen>
     <dimen name="FEB_margin">16dp</dimen>
-    <dimen name="FEB_margin_bottom">51dp</dimen>
+    <!--<dimen name="FEB_margin_bottom">51dp</dimen>-->
+    <dimen name="FEB_margin_bottom">16dp</dimen>
     <dimen name="FEB_elevation">2dp</dimen>
 
     <!--Main-->
