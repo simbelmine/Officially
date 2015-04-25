@@ -8,6 +8,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <include layout="@layout/header"></include>
-        <include layout="@layout/info_user"></include>
+        <include
+            android:id="@+id/info_user"
+            layout="@layout/info_user"></include>
     </LinearLayout>
 </ScrollView>

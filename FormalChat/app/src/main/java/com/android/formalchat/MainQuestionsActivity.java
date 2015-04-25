@@ -83,7 +83,7 @@ public class MainQuestionsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String aboutMeTxt = about_me.getText().toString();
-                startDialogActivity(resultCode_aboutMe, DialogActivtyAboutMe.class, aboutMeTxt);
+                startDialogActivity(resultCode_aboutMe, DialogActivtyMultiText.class, aboutMeTxt);
             }
         });
 

@@ -12,7 +12,7 @@
         android:textColor="@color/items"
         android:textStyle="italic"
         android:layout_margin="@dimen/motto_margin"
-        android:text="What's the phrase you live by?"/>
+        android:text="@string/motto"/>
 
     <!-- Divider -->
     <ImageView
@@ -20,27 +20,6 @@
         android:layout_height="@dimen/divider_info_height"
         android:layout_margin="@dimen/divider_info_margin"
         android:src="@drawable/divider"/>
-
-    <!-- Sweitch: Edit On/Off -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/label_height"
-        android:layout_marginBottom="@dimen/divider_info_margin"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/label_padding"
-            android:gravity="center"
-            android:textColor="@color/items"
-            android:text="EDIT"/>
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingRight="@dimen/label_padding"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"/>
-    </RelativeLayout>
 
     <!-- Name -->
     <RelativeLayout
