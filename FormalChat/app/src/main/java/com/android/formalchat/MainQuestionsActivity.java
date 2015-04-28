@@ -34,6 +34,7 @@ import java.util.List;
  */
 public class MainQuestionsActivity extends Activity {
     public static final String PREFS_NAME = "FormalChatPrefs";
+    private static final String EXTRA_ABOUT_ME = "aboutMeText";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private static final int resultCode_interestedIn = 101;
@@ -47,7 +48,7 @@ public class MainQuestionsActivity extends Activity {
     //private static Spinner interested_in;
     private static TextView interested_in;
     private int interestedIn_position;
-//    private static Spinner looking_for;
+    //    private static Spinner looking_for;
     private TextView looking_for;
     private int lookingFor_position;
     private static TextView about_me;
@@ -61,6 +62,7 @@ public class MainQuestionsActivity extends Activity {
         editor = sharedPreferences.edit();
 
         findAllById();
+        Log.v("formalchat", "Location: " + getCurrentLocation());
         location.setText(getCurrentLocation());
         setOnClickListeners();
         onDoneBtnPressed();
@@ -70,27 +72,27 @@ public class MainQuestionsActivity extends Activity {
         interested_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_interestedIn, DialogActivityInterestedIn.class, null);
+                startDialogActivity(resultCode_interestedIn, DialogActivityInterestedIn.class, null, null);
             }
         });
         looking_for.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_lookingFor, DialogActivityLookingFor.class, null);
+                startDialogActivity(resultCode_lookingFor, DialogActivityLookingFor.class, null, null);
             }
         });
         about_me.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String aboutMeTxt = about_me.getText().toString();
-                startDialogActivity(resultCode_aboutMe, DialogActivtyMultiText.class, aboutMeTxt);
+                startDialogActivity(resultCode_aboutMe, DialogActivtyMultiText.class, EXTRA_ABOUT_ME, aboutMeTxt);
             }
         });
 
         gender_male.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     gender_male.setChecked(true);
                     gender_female.setChecked(false);
                 }
@@ -99,7 +101,7 @@ public class MainQuestionsActivity extends Activity {
         gender_female.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
+                if (isChecked) {
                     gender_male.setChecked(false);
                     gender_female.setChecked(true);
                 }
@@ -107,12 +109,12 @@ public class MainQuestionsActivity extends Activity {
         });
     }
 
-    private void startDialogActivity(int resultCode, Class className, String extras) {
+    private void startDialogActivity(int resultCode, Class className, String extraName, String extraText) {
         Intent intent = new Intent(getApplicationContext(), className);
-        if(extras != null) {
+        if(extraText != null) {
             ArrayList<String> extrasList = new ArrayList<>();
-            extrasList.add(extras);
-            intent.putStringArrayListExtra("aboutMeList_actvty", extrasList);
+            extrasList.add(extraText);
+            intent.putStringArrayListExtra(extraName, extrasList);
         }
         startActivityForResult(intent, resultCode);
     }
@@ -132,7 +134,7 @@ public class MainQuestionsActivity extends Activity {
                 break;
             case resultCode_aboutMe:
                 if(!isAboutMeEmpty()) {
-                    ArrayList<String> aboutMe_txt = data.getStringArrayListExtra("aboutMeList");
+                    ArrayList<String> aboutMe_txt = data.getStringArrayListExtra(EXTRA_ABOUT_ME);
                     about_me.setText(aboutMe_txt.get(0).toString());
                 }
             default:
@@ -141,7 +143,7 @@ public class MainQuestionsActivity extends Activity {
     }
 
     private boolean isAboutMeEmpty() {
-        return getIntent().hasExtra("aboutMeList");
+        return getIntent().hasExtra(EXTRA_ABOUT_ME);
     }
 
     private void onDoneBtnPressed() {
@@ -181,12 +183,11 @@ public class MainQuestionsActivity extends Activity {
         parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
-                if(e == null) {
+                if (e == null) {
                     Log.e("formalchat", "EXISTS...." + parseObject.getString("name"));
 
                     saveToExistingUserInfo(parseObject, userName);
-                }
-                else {
+                } else {
                     Log.e("formalchat", "DOESN/'T EXISTS");
 
                     saveToNonExistingUserInfo(userName);
@@ -212,10 +213,9 @@ public class MainQuestionsActivity extends Activity {
         userInfo.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if(e == null) {
+                if (e == null) {
                     Log.e("formalchat", "Questionary was saved Successfully !");
-                }
-                else {
+                } else {
                     Log.e("formalchat", "Error saving: " + e.getMessage());
                 }
             }
@@ -238,7 +238,7 @@ public class MainQuestionsActivity extends Activity {
         parseObject.put("gender", getCorrectGender());
         parseObject.put("age", age.getText().toString());
         parseObject.put("location", location.getText().toString());
-       // parseObject.put("interestedIn", interested_in.getSelectedItemPosition());
+        // parseObject.put("interestedIn", interested_in.getSelectedItemPosition());
         parseObject.put("interestedIn", interestedIn_position);
         //parseObject.put("lookingFor", looking_for.getSelectedItemPosition());
         parseObject.put("lookingFor", lookingFor_position);
@@ -257,22 +257,33 @@ public class MainQuestionsActivity extends Activity {
     }
 
     private String getCurrentLocation() {
-        Location lastLoc = getLastLocation();
-        Geocoder gcd = new Geocoder(this);
-        try {
-            List<Address> addresses = gcd.getFromLocation(lastLoc.getLatitude(), lastLoc.getLongitude(), 1);
-            if (addresses.size() > 0) {
-                Address address = addresses.get(0);
-                String message = String.format("%s, %s",
-                        address.getCountryCode(), address.getLocality());
-                Log.v("formalchat", "***********************  " + message );
-                return message;
-            }
-        }catch (IOException e) {
+        if(Geocoder.isPresent()) {
+            try {
+                Location lastLoc = getLastLocation();
+                Log.v("formalchat", "Last location: " + lastLoc.getLatitude() + "  " + lastLoc.getLongitude());
+                Geocoder gcd = new Geocoder(this);
+                List<Address> addresses = gcd.getFromLocation(lastLoc.getLatitude(), lastLoc.getLongitude(), 1);
 
+                if (addresses.size() > 0) {
+                    Address address = addresses.get(0);
+                    String message = String.format("%s, %s",
+                            address.getCountryCode(), address.getLocality());
+                    Log.v("formalchat", "***********************  " + message );
+                    return message;
+                }
+                else {
+                    return "Waiting for location...";
+                }
+            } catch (IOException e) {
+                Log.e("formalchat", "Error message: " + e.getMessage());
+            }
+        }
+        else {
+            Toast.makeText(this, "Something went wrong. Check your Internet connection or GPS!", Toast.LENGTH_LONG).show();
         }
         return null;
     }
+
 
     private Location getLastLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
