@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -36,6 +37,7 @@ import java.util.List;
  */
 public class ProfileActivity extends DrawerActivity implements View.OnClickListener {
     private static final String PREFS_NAME = "FormalChatPrefs";
+    private static final String PREFS_INFO = "FormalChatUserInfo";
     public static final int NONE = 101;
     private SharedPreferences sharedPreferences;
     private ProfilePagerAdapter profilePagerAdapter;
@@ -49,6 +51,19 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private ArrayList<String> imagePaths;
     private Activity activity;
     private boolean videoExists;
+
+    private TextView motto;
+    private TextView name;
+    private TextView gender;
+    private TextView age;
+    private TextView location;
+    private TextView interestedIn;
+    private TextView lookingFor;
+    private TextView aboutMe;
+    private TextView relationship;
+    private TextView bodyType;
+    private TextView ethnicity;
+    private TextView interests;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +111,23 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     }
 
     private void init() {
+        // *** Header
         viewPager = (ViewPager) findViewById(R.id.pager_profile);
         exclamationLayout = (LinearLayout) findViewById(R.id.exclamation_layout);
         edit_feb_btn = (ImageButton) findViewById(R.id.feb_button);
+        // *** Footer
+        motto = (TextView) findViewById(R.id.motto);
+        name = (TextView) findViewById(R.id.name_edit);
+        gender = (TextView) findViewById(R.id.gender_edit);
+        age = (TextView) findViewById(R.id.age_edit);
+        location = (TextView) findViewById(R.id.location_edit);
+        interestedIn = (TextView) findViewById(R.id.interested_in_edit);
+        lookingFor = (TextView) findViewById(R.id.looking_for_edit);
+        aboutMe = (TextView) findViewById(R.id.about_me_edit);
+        relationship = (TextView) findViewById(R.id.relationship_edit);
+        bodyType = (TextView) findViewById(R.id.body_type_edit);
+        ethnicity = (TextView) findViewById(R.id.ethnicity_edit);
+        interests = (TextView) findViewById(R.id.interests_edit);
     }
 
     private void initVideoWarningMessage() {
@@ -127,11 +156,13 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         super.onResume();
         if(isNeededToRefresh()) {
             setNewSharedPrefs();
-            recreate();
+            //recreate();
+            initProfilePagerdAdapter();
         }
 
         if(isNetworkAvailable()) {
             initVideoWarningMessage();
+            populateInfoFromParse();
         }
         else {
             // Get from local
@@ -293,5 +324,112 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     public void onImageUploaded() {
         loadImagesFromParseRemote();
         profilePagerAdapter.notifyDataSetChanged();
+    }
+
+    private void populateInfoFromParse() {
+        String currentUser = getCurrentUser();
+
+        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
+        parseQuery.whereEqualTo("loginName", currentUser);
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    for (ParseObject parseObject : objects) {
+                        String motto_p = parseObject.getString("motto");
+                        String name_p = parseObject.getString("name");
+                        int gender_p = parseObject.getInt("gender");
+                        String age_p = parseObject.getString("age");
+                        String location_p = parseObject.getString("location");
+                        int interestedIn_p = parseObject.getInt("interestedIn");
+                        int lookingFor_p = parseObject.getInt("lookingFor");
+                        String aboutMe_p = parseObject.getString("aboutMe");
+                        int relationship_p = parseObject.getInt("relationship");
+                        int bodyType_p = parseObject.getInt("bodyType");
+                        int ethnicity_p = parseObject.getInt("ethnicity");
+                        int interests_p = parseObject.getInt("interests");
+
+                        motto.setText(motto_p);
+                        name.setText(name_p);
+//                        gender.setSelection(gender_p);
+                        gender.setText(getNameByPosition(getResources().getStringArray(R.array.gender_values), gender_p));
+                        age.setText(age_p);
+                        location.setText(location_p);
+
+                        if(interestedIn_p == 0) {
+                            interestedIn.setText(getResources().getString(R.string.none_txt));
+                        }
+                        else {
+                            interestedIn.setText(getNameByPosition(getResources().getStringArray(R.array.interested_in_values), interestedIn_p));
+                        }
+                        if(lookingFor_p == 0) {
+                            lookingFor.setText(getResources().getString(R.string.none_txt));
+                        }
+                        else {
+                            lookingFor.setText(getNameByPosition(getResources().getStringArray(R.array.looking_for_values), lookingFor_p));
+                        }
+                        if(aboutMe_p == null) {
+                            aboutMe.setText(getResources().getString(R.string.none_txt));
+                        }
+                        else {
+                            aboutMe.setText(aboutMe_p);
+                        }
+                        if(relationship_p == 0) {
+                            relationship.setText(getResources().getString(R.string.none_txt));
+                        }
+                        else {
+                            relationship.setText(getNameByPosition(getResources().getStringArray(R.array.relationship_values), relationship_p));
+                        }
+                        if(bodyType_p == 0) {
+                            bodyType.setText(getResources().getString(R.string.none_txt));
+                        }
+                        else {
+                            bodyType.setText(getNameByPosition(getResources().getStringArray(R.array.body_type_values), bodyType_p));
+                        }
+                        if (ethnicity_p == 0) {
+                            ethnicity.setText(getResources().getString(R.string.none_txt));
+                        } else {
+                            ethnicity.setText(getNameByPosition(getResources().getStringArray(R.array.ethnicity_values), ethnicity_p));
+                        }
+                        if (interests_p == 0) {
+                            interests.setText(getResources().getString(R.string.none_txt));
+                        } else {
+                            interests.setText(getNameByPosition(getResources().getStringArray(R.array.interests_values), interests_p));
+                        }
+
+                        setUserInfoToExtras();
+                    }
+                } else {
+                    Log.e("formalchat", "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private String getCurrentUser() {
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        return currentUser.getUsername();
+    }
+
+    private String getNameByPosition(String[] array, int position) {
+        return array[position];
+    }
+
+    private void setUserInfoToExtras() {
+        SharedPreferences sharedInfoPreferences = getSharedPreferences(PREFS_INFO, 0);
+        SharedPreferences.Editor editor = sharedInfoPreferences.edit();
+        editor.putString("motto", motto.getText().toString());
+        editor.putString("name", name.getText().toString());
+        editor.putString("gender", gender.getText().toString());
+        editor.putString("age", age.getText().toString());
+        editor.putString("location", location.getText().toString());
+        editor.putString("interestedIn", interestedIn.getText().toString());
+        editor.putString("lookingFor", lookingFor.getText().toString());
+        editor.putString("aboutMe",aboutMe.getText().toString());
+        editor.putString("relationship", relationship.getText().toString());
+        editor.putString("bodyType", bodyType.getText().toString());
+        editor.putString("ethnicity", ethnicity.getText().toString());
+        editor.putString("interests", interests.getText().toString());
+        editor.commit();
     }
 }

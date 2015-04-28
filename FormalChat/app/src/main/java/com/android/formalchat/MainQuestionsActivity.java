@@ -177,15 +177,12 @@ public class MainQuestionsActivity extends Activity {
     private void saveVariablesToParse() {
         ParseUser parseUser = ParseUser.getCurrentUser();
         final String userName = parseUser.getUsername();
-        Log.v("formalchat", "userName = " + userName);
 
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
         parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    Log.e("formalchat", "EXISTS...." + parseObject.getString("name"));
-
                     saveToExistingUserInfo(parseObject, userName);
                 } else {
                     Log.e("formalchat", "DOESN/'T EXISTS");
@@ -208,7 +205,9 @@ public class MainQuestionsActivity extends Activity {
         userInfo.setInterestedIn(interestedIn_position);
         //userInfo.setLookingFor(looking_for.getSelectedItemPosition());
         userInfo.setLookingFor(lookingFor_position);
-        userInfo.setAboutMe(about_me.getText().toString());
+        if(!getResources().getString(R.string.multy_txt).equals(about_me.getText().toString())) {
+            userInfo.setAboutMe(about_me.getText().toString());
+        }
 
         userInfo.saveInBackground(new SaveCallback() {
             @Override
@@ -242,7 +241,9 @@ public class MainQuestionsActivity extends Activity {
         parseObject.put("interestedIn", interestedIn_position);
         //parseObject.put("lookingFor", looking_for.getSelectedItemPosition());
         parseObject.put("lookingFor", lookingFor_position);
-        parseObject.put("aboutMe", about_me.getText().toString());
+        if(!getResources().getString(R.string.multy_txt).equals(about_me.getText().toString())) {
+            parseObject.put("aboutMe", about_me.getText().toString());
+        }
 
         parseObject.saveInBackground(new SaveCallback() {
             @Override

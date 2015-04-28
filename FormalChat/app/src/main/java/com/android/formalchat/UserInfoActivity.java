@@ -2,13 +2,13 @@ package com.android.formalchat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -17,7 +17,6 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Sve on 2/18/15.
@@ -33,6 +32,7 @@ public class UserInfoActivity extends Activity {
     private static final int resultCode_interests = 107;
     private static final String EXTRA_MOTTO = "mottoText";
     private static final String EXTRA_ABOUT_ME = "aboutMeText";
+    private static final String PREFS_INFO = "FormalChatUserInfo";
     private static TextView motto;
     private static TextView name;
     private static TextView gender;
@@ -59,7 +59,7 @@ public class UserInfoActivity extends Activity {
         setContentView(R.layout.user_info);
 
         initialiseViewItems();
-        populateInfoFromParse();
+        populateInfoFromExtras();
         setOnClickListeners();
 //        addListenerOnSpinnerItemSelection();
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -242,71 +242,6 @@ public class UserInfoActivity extends Activity {
         });
     }
 
-    private void populateInfoFromParse() {
-        String currentUser = getCurrentUser();
-
-        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
-        parseQuery.whereEqualTo("loginName", currentUser);
-        parseQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if(e == null) {
-                    Log.v("formalchat", "User Info SIZE: " + objects.size());
-                    for(ParseObject parseObject : objects) {
-                        String motto_p = parseObject.getString("motto");
-                        String name_p = parseObject.getString("name");
-                        int gender_p = parseObject.getInt("gender");
-                        String age_p = parseObject.getString("age");
-                        String location_p = parseObject.getString("location");
-                        int interestedIn_p = parseObject.getInt("interestedIn");
-                        int lookingFor_p = parseObject.getInt("lookingFor");
-                        String aboutMe_p = parseObject.getString("aboutMe");
-                        int relationship_p = parseObject.getInt("relationship");
-                        int bodyType_p = parseObject.getInt("bodyType");
-                        int ethnicity_p = parseObject.getInt("ethnicity");
-                        int interests_p = parseObject.getInt("interests");
-
-                        motto.setText(motto_p);
-                        name.setText(name_p);
-                        //gender.setSelection(gender_p);
-                        age.setText(age_p);
-                        location.setText(location_p);
-
-                        interested_in.setText(getNameByPosition(getResources().getStringArray(R.array.interested_in_values), interestedIn_p));
-                        looking_for.setText(getNameByPosition(getResources().getStringArray(R.array.looking_for_values), lookingFor_p));
-                        about_me.setText(aboutMe_p);
-                        relationship.setText(getNameByPosition(getResources().getStringArray(R.array.relationship_values), relationship_p));
-                        body_type.setText(getNameByPosition(getResources().getStringArray(R.array.body_type_values), bodyType_p));
-                        if(ethnicity_p == 0) {
-                            ethnicity.setText(getResources().getString(R.string.choice_txt));
-                        }
-                        else {
-                            ethnicity.setText(getNameByPosition(getResources().getStringArray(R.array.ethnicity_values), ethnicity_p));
-                        }
-                        if(interests_p == 0) {
-                            interests.setText(getResources().getString(R.string.choice_txt));
-                        }
-                        else {
-                            interests.setText(getNameByPosition(getResources().getStringArray(R.array.interests_values), interests_p));
-                        }
-                    }
-                }
-                else {
-                    Log.e("formalchat", "Error: " + e.getMessage());
-                }
-            }
-        });
-    }
-
-    private String getNameByPosition(String[] array, int position) {
-        return array[position];
-    }
-
-    private String getCurrentUser() {
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        return currentUser.getUsername();
-    }
-
 //    private void addListenerOnSpinnerItemSelection() {
 //        gender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 //            @Override
@@ -337,5 +272,20 @@ public class UserInfoActivity extends Activity {
         saveBtn = (Button) findViewById(R.id.save_btn);
     }
 
+    private void populateInfoFromExtras() {
+        SharedPreferences sharedInfoPreferences = getSharedPreferences(PREFS_INFO, 0);
+        motto.setText(sharedInfoPreferences.getString("motto", getResources().getString(R.string.motto)));
+        name.setText(sharedInfoPreferences.getString("name", getResources().getString(R.string.change_txt)));
+        gender.setText(sharedInfoPreferences.getString("gender", getResources().getString(R.string.choice_txt)));
+        age.setText(sharedInfoPreferences.getString("age", getResources().getString(R.string.choice_txt)));
+        location.setText(sharedInfoPreferences.getString("location", ""));
+        interested_in.setText(sharedInfoPreferences.getString("interestedIn", getResources().getString(R.string.choice_txt)));
+        looking_for.setText(sharedInfoPreferences.getString("lookingFor", getResources().getString(R.string.choice_txt)));
+        about_me.setText(sharedInfoPreferences.getString("aboutMe", getResources().getString(R.string.change_txt)));
+        relationship.setText(sharedInfoPreferences.getString("relationship", getResources().getString(R.string.choice_txt)));
+        body_type.setText(sharedInfoPreferences.getString("bodyType", getResources().getString(R.string.choice_txt)));
+        ethnicity.setText(sharedInfoPreferences.getString("ethnicity", getResources().getString(R.string.choice_txt)));
+        interests.setText(sharedInfoPreferences.getString("interests", getResources().getString(R.string.choice_txt)));
+    }
 
 }
