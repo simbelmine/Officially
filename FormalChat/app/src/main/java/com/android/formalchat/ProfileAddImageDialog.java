@@ -191,7 +191,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             Log.e("formalchat", "Photo was saved Successfully !");
             //hide notification for uploading - or just show error on the same notification
             hideUploadNotification();
-            callingActivity.onImageUploaded();
+   //         callingActivity.onImageUploaded();
         } else {
             Log.e("formalchat", "Error saving: " + e.getMessage());
         }

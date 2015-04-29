@@ -2,7 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
+    <!-- Divider -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_info_height"
+        android:layout_marginBottom="@dimen/divider_info_margin"
+        android:layout_marginLeft="@dimen/divider_info_margin"
+        android:layout_marginRight="@dimen/divider_info_margin"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/divider"/>
 
     <TextView
         android:id="@+id/motto"
@@ -21,96 +31,61 @@
         android:layout_margin="@dimen/divider_info_margin"
         android:src="@drawable/divider"/>
 
-    <!-- Name -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/label_height"
-        >
-        <TextView
-            android:id="@+id/name_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/label_padding"
-            android:text="@string/name_lbl"
-            android:textColor="@color/action_bar"
-            />
-        <TextView
-            android:id="@+id/name_edit"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/name_lbl"
-            android:gravity="right"
-            android:paddingRight="@dimen/label_padding"
-            android:textColor="@color/items"
-            android:textStyle="italic"
-            android:text="My User Name"/>
-    </RelativeLayout>
-
-    <!-- Gender -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/label_height">
-        <TextView
-            android:id="@+id/gender_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/gender_lbl"
-            android:paddingLeft="@dimen/label_padding"
-            android:textColor="@color/action_bar"
-            />
-        <TextView
-            android:id="@+id/gender_edit"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/gender_lbl"
-            android:paddingRight="@dimen/label_padding"
-            android:gravity="right"
-            android:textColor="@color/items"
-            android:text="My Gender is..."/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/label_height">
-        <TextView
-            android:id="@+id/age_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/label_padding"
-            android:textColor="@color/action_bar"
-            android:text="@string/age_lbl"
-            />
-        <TextView
-            android:id="@+id/age_edit"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/age_lbl"
-            android:paddingRight="@dimen/label_padding"
-            android:gravity="right"
-            android:textColor="@color/items"
-            android:text="My Age is..."/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/label_height">
-        <TextView
-            android:id="@+id/location_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/label_margin_bottom"
-            android:paddingLeft="@dimen/label_padding"
-            android:textColor="@color/action_bar"
-            android:text="@string/location_lbl" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentLeft="true">
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/location"/>
         <TextView
             android:id="@+id/location_edit"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/location_lbl"
-            android:paddingRight="@dimen/label_padding"
-            android:gravity="right"
-            android:editable="false"
-            android:textColor="@color/dark_gray"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
             android:text="location..."/>
-    </RelativeLayout>
+    </LinearLayout>
+
+    <!--<RelativeLayout-->
+    <!--android:layout_height="35dp"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_gravity="bottom"-->
+    <!--android:layout_marginBottom="16dp"-->
+    <!-->-->
+    <!--<ImageView-->
+    <!--android:id="@+id/drinking_icon"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="@dimen/icons_margin"-->
+    <!--android:layout_marginBottom="@dimen/icons_margin"-->
+    <!--android:layout_marginRight="80dp"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:src="@drawable/drinking_g"/>-->
+    <!--<ImageView-->
+    <!--android:id="@+id/smoking_icon"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="@dimen/icons_margin"-->
+    <!--android:layout_marginBottom="@dimen/icons_margin"-->
+    <!--android:layout_marginRight="40dp"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:src="@drawable/smoking_g"/>-->
+    <!--<ImageView-->
+    <!--android:id="@+id/religion_icon"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="@dimen/icons_margin"-->
+    <!--android:layout_marginBottom="@dimen/icons_margin"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:src="@drawable/religion_g"/>-->
+    <!--</RelativeLayout>-->
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/label_height">

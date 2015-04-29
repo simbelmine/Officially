@@ -4,6 +4,9 @@
         android:id="@+id/edit_profile"
         android:title="@string/menu_edit_profile"/>
     <item
+        android:id="@+id/view_gallery"
+        android:title="@string/menu_view_gallery"/>
+    <item
         android:id="@+id/add_pic"
         android:title="@string/menu_add_pic"/>
     <item

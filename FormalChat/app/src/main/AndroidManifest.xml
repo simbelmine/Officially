@@ -71,6 +71,8 @@
                     android:theme="@style/QuestionsDialogTheme"/>
         <activity android:name=".VideoRecordActivity"/>
         <activity android:name=".VideoShowActivity"/>
+        <activity android:name=".ProfileViewGallery"/>
+
         <service android:name=".VideoDownloadService"/>
         <service android:name=".VideoCompressService"/>
     </application>

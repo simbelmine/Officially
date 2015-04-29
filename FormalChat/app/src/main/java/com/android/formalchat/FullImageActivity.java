@@ -123,6 +123,7 @@ public class FullImageActivity extends Activity {
 
     private void setProfPicNameToSharPrefs() {
         editor.putString("profPic", url);
+        editor.putString("profPicName", getShortImageNameFromUri());
         editor.commit();
     }
 
@@ -138,6 +139,7 @@ public class FullImageActivity extends Activity {
         ParseUser user = ParseUser.getCurrentUser();
         ParseFile parseProfImg = new ParseFile(profileImg);
         user.put("profileImg", parseProfImg);
+        user.put("profileImgName", getShortImageNameFromUri());
         user.saveInBackground();
     }
 

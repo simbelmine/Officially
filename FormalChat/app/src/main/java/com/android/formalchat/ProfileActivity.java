@@ -4,31 +4,33 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +42,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private static final String PREFS_INFO = "FormalChatUserInfo";
     public static final int NONE = 101;
     private SharedPreferences sharedPreferences;
-    private ProfilePagerAdapter profilePagerAdapter;
-    private ViewPager viewPager;
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
     private String profileImgPath;
@@ -51,6 +51,10 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private ArrayList<String> imagePaths;
     private Activity activity;
     private boolean videoExists;
+    private ImageView profilePic;
+    private RoundedImageView smallProfilePic;
+    private ImageView sexIcon;
+    private  boolean isMale;
 
     private TextView motto;
     private TextView name;
@@ -77,18 +81,19 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         user = ParseUser.getCurrentUser();
         imagePaths = new ArrayList<>();
         activity = this;
+        isMale = true;
 
         setTitle();
         videoExists = isVideoExists();
-        viewPager = (ViewPager) findViewById(R.id.pager_profile);
 
         init();
+        getProfileImgPath();
         if(isNetworkAvailable()) {
-            loadImagesFromParseRemote();
+            loadBigProfilePicFromParse();
+            loadSmallProfilePicFromParse();
         }
         initVideoWarningMessage();
         addViewListeners();
-        getProfileImgPath();
     }
 
     @Override
@@ -112,13 +117,14 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
     private void init() {
         // *** Header
-        viewPager = (ViewPager) findViewById(R.id.pager_profile);
         exclamationLayout = (LinearLayout) findViewById(R.id.exclamation_layout);
         edit_feb_btn = (ImageButton) findViewById(R.id.feb_button);
+        profilePic = (ImageView) findViewById(R.id.profile_pic);
+        smallProfilePic = (RoundedImageView) findViewById(R.id.small_prof_pic);
+        sexIcon = (ImageView) findViewById(R.id.sex_icon);
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
         name = (TextView) findViewById(R.id.name_edit);
-        gender = (TextView) findViewById(R.id.gender_edit);
         age = (TextView) findViewById(R.id.age_edit);
         location = (TextView) findViewById(R.id.location_edit);
         interestedIn = (TextView) findViewById(R.id.interested_in_edit);
@@ -139,6 +145,16 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         }
     }
 
+    private void setSexIcon(int sex) {
+        if(sex == 0) {
+            sexIcon.setImageDrawable(getResources().getDrawable(R.drawable.male));
+        }
+        else if(sex == 1){
+            sexIcon.setImageDrawable(getResources().getDrawable(R.drawable.female));
+            isMale = false;
+        }
+    }
+
     private boolean isVideoExists() {
         if(user.containsKey("video")) {
             return true;
@@ -154,11 +170,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        if(isNeededToRefresh()) {
-            setNewSharedPrefs();
-            //recreate();
-            initProfilePagerdAdapter();
-        }
 
         if(isNetworkAvailable()) {
             initVideoWarningMessage();
@@ -168,11 +179,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             // Get from local
             //getImagesFromLocalStorage();
         }
-    }
-
-    private void addVideoToPaths() {
-        String videoPath = user.getParseFile("video").getUrl();
-        imagePaths = setPathInFront(imagePaths, videoPath);
     }
 
     @Override
@@ -199,6 +205,9 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             case R.id.edit_profile:
                 startActivity(UserInfoActivity.class);
                 return true;
+            case R.id.view_gallery:
+                startActivity(ProfileViewGallery.class);
+                return true;
             case R.id.add_pic:
                 if(isNetworkAvailable()){
                     addImgWithDialog = new ProfileAddImageDialog();
@@ -222,33 +231,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-
-    private void setNewSharedPrefs() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("refresh", false);
-        editor.commit();
-    }
-
-    private boolean isNeededToRefresh() {
-        return sharedPreferences.getBoolean("refresh", false);
-    }
-
-    private void getImagesFromLocalStorage() {
-        File folder = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
-        File[] dirImages = folder.listFiles();
-        String path;
-
-        if(dirImages.length != 0) {
-            for(int counter = 0; counter < dirImages.length; counter++) {
-                path = "file:" + dirImages[counter].getPath().toString();
-                imagePaths.add(path);
-            }
-
-            profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
-            viewPager.setAdapter(profilePagerAdapter);
-        }
-    }
-
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -256,74 +238,285 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void loadImagesFromParseRemote() {
-        String currentUser = getUserName();
+    private void loadBigProfilePicFromParse() {
+        if(user.has("profileImgName")) {
+            final String profileImgName = user.get("profileImgName").toString();
+            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+            parseQuery.whereEqualTo("userName", getCurrentUser());
+            parseQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> list, ParseException e) {
+                    if(list.size() > 0) {
+                        for(ParseObject po : list) {
+                            String picUrl = ((ParseFile) po.get("photo")).getUrl();
+                            String nameFromUrl = getShortImageNameFromUri(picUrl);
 
-        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
-        parseQuery.whereEqualTo("userName", currentUser);
-        parseQuery.orderByAscending("createdAt");
-        parseQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> imagesList, ParseException e) {
-                if (e == null) {
-                    for (ParseObject po : imagesList) {
-                        imagePaths.add(((ParseFile)po.get("photo")).getUrl());
+                            if(profileImgName.equals(nameFromUrl)) {
+                                ParseFile parseFile = ((ParseFile) po.get("photo"));
+                                parseFile.getDataInBackground(new GetDataCallback() {
+                                    @Override
+                                    public void done(byte[] bytes, ParseException e) {
+                                        if (e == null) {
+                                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                            Bitmap blurredBitmap = fastblur(bmp, 50);
+                                            profilePic.setImageBitmap(blurredBitmap);
+                                        }
+                                    }
+                                });
+
+
+                                //Picasso.with(getApplicationContext()).load(picUrl).into(profilePic);
+
+                            }
+                        }
                     }
+                }
+            });
+        }
+    }
 
-                    if(profileImgPath != null) {
-                        imagePaths = setPathInFront(imagePaths, profileImgPath);
-                    }
-                    if(videoExists) {
-                        addVideoToPaths();
-                    }
+    public Bitmap fastblur(Bitmap sentBitmap, int radius) {
 
-                    initProfilePagerdAdapter();
+        // Stack Blur v1.0 from
+        // http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
+        //
+        // Java Author: Mario Klingemann <mario at quasimondo.com>
+        // http://incubator.quasimondo.com
+        // created Feburary 29, 2004
+        // Android port : Yahel Bouaziz <yahel at kayenko.com>
+        // http://www.kayenko.com
+        // ported april 5th, 2012
 
+        // This is a compromise between Gaussian Blur and Box blur
+        // It creates much better looking blurs than Box Blur, but is
+        // 7x faster than my Gaussian Blur implementation.
+        //
+        // I called it Stack Blur because this describes best how this
+        // filter works internally: it creates a kind of moving stack
+        // of colors whilst scanning through the image. Thereby it
+        // just has to add one new block of color to the right side
+        // of the stack and remove the leftmost color. The remaining
+        // colors on the topmost layer of the stack are either added on
+        // or reduced by one, depending on if they are on the right or
+        // on the left side of the stack.
+        //
+        // If you are using this algorithm in your code please add
+        // the following line:
+        //
+        // Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>
+
+        Bitmap bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
+
+        if (radius < 1) {
+            return (null);
+        }
+
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        int[] pix = new int[w * h];
+        Log.e("pix", w + " " + h + " " + pix.length);
+        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
+
+        int wm = w - 1;
+        int hm = h - 1;
+        int wh = w * h;
+        int div = radius + radius + 1;
+
+        int r[] = new int[wh];
+        int g[] = new int[wh];
+        int b[] = new int[wh];
+        int rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
+        int vmin[] = new int[Math.max(w, h)];
+
+        int divsum = (div + 1) >> 1;
+        divsum *= divsum;
+        int dv[] = new int[256 * divsum];
+        for (i = 0; i < 256 * divsum; i++) {
+            dv[i] = (i / divsum);
+        }
+
+        yw = yi = 0;
+
+        int[][] stack = new int[div][3];
+        int stackpointer;
+        int stackstart;
+        int[] sir;
+        int rbs;
+        int r1 = radius + 1;
+        int routsum, goutsum, boutsum;
+        int rinsum, ginsum, binsum;
+
+        for (y = 0; y < h; y++) {
+            rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
+            for (i = -radius; i <= radius; i++) {
+                p = pix[yi + Math.min(wm, Math.max(i, 0))];
+                sir = stack[i + radius];
+                sir[0] = (p & 0xff0000) >> 16;
+                sir[1] = (p & 0x00ff00) >> 8;
+                sir[2] = (p & 0x0000ff);
+                rbs = r1 - Math.abs(i);
+                rsum += sir[0] * rbs;
+                gsum += sir[1] * rbs;
+                bsum += sir[2] * rbs;
+                if (i > 0) {
+                    rinsum += sir[0];
+                    ginsum += sir[1];
+                    binsum += sir[2];
                 } else {
-                    Log.d("formalchat", "Error: " + e.getMessage());
+                    routsum += sir[0];
+                    goutsum += sir[1];
+                    boutsum += sir[2];
                 }
             }
-        });
-    }
+            stackpointer = radius;
 
-    private void initProfilePagerdAdapter() {
-        if (profilePagerAdapter != null) {
-            profilePagerAdapter.updateImages(imagePaths);
-        } else {
-            profilePagerAdapter = new ProfilePagerAdapter(activity, getApplicationContext(), imagePaths);
-            viewPager.setAdapter(profilePagerAdapter);
+            for (x = 0; x < w; x++) {
+
+                r[yi] = dv[rsum];
+                g[yi] = dv[gsum];
+                b[yi] = dv[bsum];
+
+                rsum -= routsum;
+                gsum -= goutsum;
+                bsum -= boutsum;
+
+                stackstart = stackpointer - radius + div;
+                sir = stack[stackstart % div];
+
+                routsum -= sir[0];
+                goutsum -= sir[1];
+                boutsum -= sir[2];
+
+                if (y == 0) {
+                    vmin[x] = Math.min(x + radius + 1, wm);
+                }
+                p = pix[yw + vmin[x]];
+
+                sir[0] = (p & 0xff0000) >> 16;
+                sir[1] = (p & 0x00ff00) >> 8;
+                sir[2] = (p & 0x0000ff);
+
+                rinsum += sir[0];
+                ginsum += sir[1];
+                binsum += sir[2];
+
+                rsum += rinsum;
+                gsum += ginsum;
+                bsum += binsum;
+
+                stackpointer = (stackpointer + 1) % div;
+                sir = stack[(stackpointer) % div];
+
+                routsum += sir[0];
+                goutsum += sir[1];
+                boutsum += sir[2];
+
+                rinsum -= sir[0];
+                ginsum -= sir[1];
+                binsum -= sir[2];
+
+                yi++;
+            }
+            yw += w;
         }
-    }
+        for (x = 0; x < w; x++) {
+            rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
+            yp = -radius * w;
+            for (i = -radius; i <= radius; i++) {
+                yi = Math.max(0, yp) + x;
 
-    private ArrayList<String> setPathInFront(ArrayList<String> imagePaths, String path) {
-        ArrayList<String> imagePathsNew = new ArrayList<>();
-        imagePathsNew.add(path);
-        imagePathsNew.addAll(getNewPathList(imagePaths, path));
+                sir = stack[i + radius];
 
-        return imagePathsNew;
-    }
+                sir[0] = r[yi];
+                sir[1] = g[yi];
+                sir[2] = b[yi];
 
-    private ArrayList<String> getNewPathList(ArrayList<String> imagePaths, String path) {
-        for(int pathIdx = 0; pathIdx < imagePaths.size(); pathIdx++) {
-            if(path.equals(imagePaths.get(pathIdx))) {
-                imagePaths.remove(pathIdx);
+                rbs = r1 - Math.abs(i);
+
+                rsum += r[yi] * rbs;
+                gsum += g[yi] * rbs;
+                bsum += b[yi] * rbs;
+
+                if (i > 0) {
+                    rinsum += sir[0];
+                    ginsum += sir[1];
+                    binsum += sir[2];
+                } else {
+                    routsum += sir[0];
+                    goutsum += sir[1];
+                    boutsum += sir[2];
+                }
+
+                if (i < hm) {
+                    yp += w;
+                }
+            }
+            yi = x;
+            stackpointer = radius;
+            for (y = 0; y < h; y++) {
+                // Preserve alpha channel: ( 0xff000000 & pix[yi] )
+                pix[yi] = ( 0xff000000 & pix[yi] ) | ( dv[rsum] << 16 ) | ( dv[gsum] << 8 ) | dv[bsum];
+
+                rsum -= routsum;
+                gsum -= goutsum;
+                bsum -= boutsum;
+
+                stackstart = stackpointer - radius + div;
+                sir = stack[stackstart % div];
+
+                routsum -= sir[0];
+                goutsum -= sir[1];
+                boutsum -= sir[2];
+
+                if (x == 0) {
+                    vmin[y] = Math.min(y + r1, hm) * w;
+                }
+                p = x + vmin[y];
+
+                sir[0] = r[p];
+                sir[1] = g[p];
+                sir[2] = b[p];
+
+                rinsum += sir[0];
+                ginsum += sir[1];
+                binsum += sir[2];
+
+                rsum += rinsum;
+                gsum += ginsum;
+                bsum += binsum;
+
+                stackpointer = (stackpointer + 1) % div;
+                sir = stack[stackpointer];
+
+                routsum += sir[0];
+                goutsum += sir[1];
+                boutsum += sir[2];
+
+                rinsum -= sir[0];
+                ginsum -= sir[1];
+                binsum -= sir[2];
+
+                yi += w;
             }
         }
-        return imagePaths;
+
+        Log.e("pix", w + " " + h + " " + pix.length);
+        bitmap.setPixels(pix, 0, w, 0, 0, w, h);
+
+        return (bitmap);
+    }
+
+    private void loadSmallProfilePicFromParse() {
+        if(profileImgPath != null) {
+            Picasso.with(this).load(profileImgPath).into(smallProfilePic);
+        }
     }
 
     private void getProfileImgPath() {
-        profileImgPath = sharedPreferences.getString("profPic", null);
-    }
-
-    private String getUserName() {
-        ParseUser parseUser = ParseUser.getCurrentUser();
-        return parseUser.getUsername();
-    }
-
-    public void onImageUploaded() {
-        loadImagesFromParseRemote();
-        profilePagerAdapter.notifyDataSetChanged();
+       // profileImgPath = sharedPreferences.getString("profPic", null);
+        ParseFile pic = user.getParseFile("profileImg");
+        profileImgPath = pic.getUrl();
     }
 
     private void populateInfoFromParse() {
@@ -352,7 +545,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         motto.setText(motto_p);
                         name.setText(name_p);
 //                        gender.setSelection(gender_p);
-                        gender.setText(getNameByPosition(getResources().getStringArray(R.array.gender_values), gender_p));
+                       // gender.setText(getNameByPosition(getResources().getStringArray(R.array.gender_values), gender_p));
                         age.setText(age_p);
                         location.setText(location_p);
 
@@ -398,6 +591,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         }
 
                         setUserInfoToExtras();
+                        setSexIcon(gender_p);
                     }
                 } else {
                     Log.e("formalchat", "Error: " + e.getMessage());
@@ -415,12 +609,21 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         return array[position];
     }
 
+    public String getShortImageNameFromUri(String url) {
+        return url.substring(url.lastIndexOf("-")+1);
+    }
+
     private void setUserInfoToExtras() {
         SharedPreferences sharedInfoPreferences = getSharedPreferences(PREFS_INFO, 0);
         SharedPreferences.Editor editor = sharedInfoPreferences.edit();
         editor.putString("motto", motto.getText().toString());
         editor.putString("name", name.getText().toString());
-        editor.putString("gender", gender.getText().toString());
+        if(isMale) {
+            editor.putString("gender", getNameByPosition(getResources().getStringArray(R.array.gender_values), 0));
+        }
+        else {
+            editor.putString("gender", getNameByPosition(getResources().getStringArray(R.array.gender_values), 1));
+        }
         editor.putString("age", age.getText().toString());
         editor.putString("location", location.getText().toString());
         editor.putString("interestedIn", interestedIn.getText().toString());
