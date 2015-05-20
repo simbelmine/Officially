@@ -7,9 +7,9 @@ import android.util.Log;
 /**
  * Created by Sve on 4/28/15.
  */
-public class BluredImage extends BitmapDrawable {
+public class BlurredImage extends BitmapDrawable {
 
-    public  BluredImage() {
+    public BlurredImage() {
     }
 
     public Bitmap getBlurredImage(Bitmap sentBitmap, int radius) {

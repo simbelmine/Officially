@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -31,6 +32,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -239,39 +241,59 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     }
 
     private void loadBigProfilePicFromParse() {
-        if(user.has("profileImgName")) {
-            final String profileImgName = user.get("profileImgName").toString();
-            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
-            parseQuery.whereEqualTo("userName", getCurrentUser());
-            parseQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> list, ParseException e) {
-                    if(list.size() > 0) {
-                        for(ParseObject po : list) {
-                            String picUrl = ((ParseFile) po.get("photo")).getUrl();
-                            String nameFromUrl = getShortImageNameFromUri(picUrl);
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
+        if(isProfPicExists(path)) {
+            Bitmap myBitmap = BitmapFactory.decodeFile(path + "/blurred_profile.jpg");
+            profilePic.setImageBitmap(myBitmap);
+        }
+        else
+        {
+            if (user.has("profileImgName")) {
+                final String profileImgName = user.get("profileImgName").toString();
+                ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+                parseQuery.whereEqualTo("userName", getCurrentUser());
+                parseQuery.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (list.size() > 0) {
+                            for (ParseObject po : list) {
+                                String picUrl = ((ParseFile) po.get("photo")).getUrl();
+                                String nameFromUrl = getShortImageNameFromUri(picUrl);
 
-                            if(profileImgName.equals(nameFromUrl)) {
-                                ParseFile parseFile = ((ParseFile) po.get("photo"));
-                                parseFile.getDataInBackground(new GetDataCallback() {
-                                    @Override
-                                    public void done(byte[] bytes, ParseException e) {
-                                        if (e == null) {
-                                            Bitmap blurredBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                            BluredImage bm = new BluredImage();
-                                            Bitmap bitmap = bm.getBlurredImage(blurredBitmap, 50);
-                                            profilePic.setImageBitmap(bitmap);
+                                if (profileImgName.equals(nameFromUrl)) {
+
+                                    ParseFile parseFile = ((ParseFile) po.get("photo"));
+                                    parseFile.getDataInBackground(new GetDataCallback() {
+                                        @Override
+                                        public void done(byte[] bytes, ParseException e) {
+                                            if (e == null) {
+                                                Bitmap blurredBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                                BlurredImage bm = new BlurredImage();
+                                                Bitmap bitmap = bm.getBlurredImage(blurredBitmap, 50);
+                                                profilePic.setImageBitmap(bitmap);
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
+    private boolean isProfPicExists(String path) {
+        File dir = new File(path);
+        File[] files_list = dir.listFiles();
+
+        for(int f = 0; f < files_list.length; f++) {
+            if("blurred_profile.jpg".equals(files_list[f].getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     private void loadSmallProfilePicFromParse() {
@@ -281,7 +303,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     }
 
     private void getProfileImgPath() {
-       // profileImgPath = sharedPreferences.getString("profPic", null);
+        // profileImgPath = sharedPreferences.getString("profPic", null);
         ParseFile pic = user.getParseFile("profileImg");
         profileImgPath = pic.getUrl();
     }
@@ -312,7 +334,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         motto.setText(motto_p);
                         name.setText(name_p);
 //                        gender.setSelection(gender_p);
-                       // gender.setText(getNameByPosition(getResources().getStringArray(R.array.gender_values), gender_p));
+                        // gender.setText(getNameByPosition(getResources().getStringArray(R.array.gender_values), gender_p));
                         age.setText(age_p);
                         location.setText(location_p);
 
