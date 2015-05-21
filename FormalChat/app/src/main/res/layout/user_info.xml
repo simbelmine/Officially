@@ -366,12 +366,13 @@
         android:gravity="center_horizontal|center_vertical">
         <Button
             android:id="@+id/save_btn"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/aboutMe_btn_margin"
             android:layout_marginBottom="@dimen/aboutMe_btn_margin"
             android:text="@string/user_info_save"
-            android:background="@drawable/rounded_btns"/>
+            android:textColor="@color/white"
+            android:background="@color/items"/>
         </RelativeLayout>
 
 </LinearLayout>

@@ -83,5 +83,6 @@
     <dimen name="dashed_line_width">103dp</dimen>
     <dimen name="dashed_line_height">25dp</dimen>
     <dimen name="dashed_line_margin_r">27dp</dimen>
+    <dimen name="button_width">300dp</dimen>
 
 </resources>
