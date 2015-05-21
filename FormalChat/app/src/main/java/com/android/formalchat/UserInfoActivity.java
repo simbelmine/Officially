@@ -17,6 +17,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Sve on 2/18/15.
@@ -33,6 +34,7 @@ public class UserInfoActivity extends Activity {
     private static final String EXTRA_MOTTO = "mottoText";
     private static final String EXTRA_ABOUT_ME = "aboutMeText";
     private static final String PREFS_INFO = "FormalChatUserInfo";
+    private static final String PREFS_INFO_LOCAL = "FormalChatUserInfoLocal";
     private static TextView motto;
     private static TextView name;
     private static TextView gender;
@@ -52,11 +54,16 @@ public class UserInfoActivity extends Activity {
     private int bodyType_position;
     private int ethnicity_position;
     private int interests_position;
+    private SharedPreferences sharedInfoPreferences_local;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_info);
+
+        sharedInfoPreferences_local = getSharedPreferences(PREFS_INFO_LOCAL, 0);
+        editor = sharedInfoPreferences_local.edit();
 
         initialiseViewItems();
         populateInfoFromExtras();
@@ -150,11 +157,13 @@ public class UserInfoActivity extends Activity {
                 interestedIn_position = data.getIntExtra("interestedIn_position", 11);
                 String value_ii = data.getStringExtra("interestedIn_value");
                 interested_in.setText(value_ii);
+                editor.putInt("interestedIn", interestedIn_position);
                 break;
             case resultCode_lookingFor:
                 lookingFor_position = data.getIntExtra("lookingFor_position", 11);
                 String value_lf = data.getStringExtra("lookingFor_value");
                 looking_for.setText(value_lf);
+                editor.putInt("lookingFor", lookingFor_position);
                 break;
             case resultCode_aboutMe:
                 if(!isExtraEmpty(EXTRA_ABOUT_ME)) {
@@ -166,25 +175,30 @@ public class UserInfoActivity extends Activity {
                 relationship_position = data.getIntExtra("relationship_position", 11);
                 String value_r = data.getStringExtra("relationship_value");
                 relationship.setText(value_r);
+                editor.putInt("relationship", relationship_position);
                 break;
             case resultCode_bodyType:
                 bodyType_position = data.getIntExtra("bodyType_position", 11);
                 String value_bt = data.getStringExtra("bodyType_value");
                 body_type.setText(value_bt);
+                editor.putInt("bodyType", bodyType_position);
                 break;
             case resultCode_ethnicity:
                 ethnicity_position = data.getIntExtra("ethnicity_position", 11);
                 String value_e = data.getStringExtra("ethnicity_value");
                 ethnicity.setText(value_e);
+                editor.putInt("ethnicity", ethnicity_position);
                 break;
             case resultCode_interests:
                 interests_position = data.getIntExtra("interests_position", 11);
                 String value_i = data.getStringExtra("interests_value");
                 interests.setText(value_i);
+                editor.putInt("interests", interests_position);
                 break;
             default:
                 break;
         }
+        editor.commit();
     }
 
     private boolean isExtraEmpty(String extra) {
@@ -217,18 +231,18 @@ public class UserInfoActivity extends Activity {
     }
 
     private void saveToExistingUserInfo(ParseObject parseObject, String userName) {
+        Map<String, ?> sharedPrefsMap = sharedInfoPreferences_local.getAll();
+
+        for(Map.Entry<String, ?> entry : sharedPrefsMap.entrySet()) {
+            Log.v("formalchat", entry.getKey() + " : " + entry.getValue());
+            parseObject.put(entry.getKey(), entry.getValue());
+        }
+
+
         parseObject.put("motto", motto.getText().toString());
         parseObject.put("name", name.getText().toString());
-        //parseObject.put("gender", gender.getSelectedItemPosition());
         parseObject.put("age", age.getText().toString());
-        parseObject.put("interestedIn", interestedIn_position);
-        parseObject.put("lookingFor", lookingFor_position);
         parseObject.put("aboutMe", about_me.getText().toString());
-
-        parseObject.put("relationship", relationship_position);
-        parseObject.put("bodyType", bodyType_position);
-        parseObject.put("ethnicity", ethnicity_position);
-        parseObject.put("interests", interests_position);
 
         parseObject.saveInBackground(new SaveCallback() {
             @Override
