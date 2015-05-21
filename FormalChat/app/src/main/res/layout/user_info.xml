@@ -8,7 +8,7 @@
     android:layout_height="match_parent">
 <!--<LinearLayout-->
     <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="20dp"-->
+    <!--android:layout_height="@dimen/dashed_line_margin_r"-->
     <!--android:background="@color/gray"></LinearLayout>-->
 
     <!--<include layout="@layout/info_user"/>-->
@@ -30,13 +30,16 @@
 
         <TextView
             android:id="@+id/motto"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
+            android:background="@drawable/dotted_line"
             android:textColor="@color/items"
             android:textStyle="italic"
             android:layout_margin="@dimen/motto_margin"
-            android:text="@string/motto"/>
+            android:text="@string/motto"
+            />
 
         <!-- Divider -->
         <ImageView
@@ -53,8 +56,8 @@
             android:layout_marginBottom="30dp"
             android:layout_alignParentLeft="true">
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/dashed_line_margin_r"
+                android:layout_height="@dimen/dashed_line_margin_r"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/location"/>
             <TextView
@@ -88,7 +91,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:textColor="@color/items"
                 android:textStyle="italic"
-                android:text="My User Name"/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
 
         <!-- Gender -->
@@ -111,7 +120,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
                 android:textColor="@color/items"
-                android:text="My Gender is..."/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -133,7 +148,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
                 android:textColor="@color/items"
-                android:text="My Age is..."/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
 
 
@@ -156,7 +177,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
                 android:textColor="@color/items"
-                android:text="@string/choice_txt"/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -178,7 +205,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
                 android:textColor="@color/items"
-                android:text="@string/choice_txt"/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -200,7 +233,13 @@
                 android:gravity="right"
                 android:layout_toRightOf="@+id/about_me_lbl"
                 android:textColor="@color/items"
-                android:text="@string/multy_txt"/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
 
         <!-- Divider -->
@@ -230,7 +269,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
                 android:textColor="@color/items"
-                android:text="@string/choice_txt"/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -251,8 +296,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
                 android:textColor="@color/items"
-                android:text="@string/choice_txt"/>
-
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -273,7 +323,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
                 android:textColor="@color/items"
-                android:text="@string/choice_txt"/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -294,7 +350,13 @@
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
                 android:textColor="@color/items"
-                android:text="@string/choice_txt"/>
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
     </LinearLayout>
 

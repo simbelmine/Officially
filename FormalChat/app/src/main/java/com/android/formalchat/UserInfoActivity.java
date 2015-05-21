@@ -238,11 +238,10 @@ public class UserInfoActivity extends Activity {
             parseObject.put(entry.getKey(), entry.getValue());
         }
 
-
         parseObject.put("motto", motto.getText().toString());
+        parseObject.put("aboutMe", about_me.getText().toString());
         parseObject.put("name", name.getText().toString());
         parseObject.put("age", age.getText().toString());
-        parseObject.put("aboutMe", about_me.getText().toString());
 
         parseObject.saveInBackground(new SaveCallback() {
             @Override

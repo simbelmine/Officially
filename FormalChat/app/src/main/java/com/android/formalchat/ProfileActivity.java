@@ -331,7 +331,12 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         int ethnicity_p = parseObject.getInt("ethnicity");
                         int interests_p = parseObject.getInt("interests");
 
-                        motto.setText(motto_p);
+                        if(motto_p == null || "".equals(motto_p)) {
+                            motto.setText(getResources().getString(R.string.motto));
+                        }
+                        else {
+                            motto.setText(motto_p);
+                        }
                         name.setText(name_p);
 //                        gender.setSelection(gender_p);
                         // gender.setText(getNameByPosition(getResources().getStringArray(R.array.gender_values), gender_p));
@@ -350,7 +355,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         else {
                             lookingFor.setText(getNameByPosition(getResources().getStringArray(R.array.looking_for_values), lookingFor_p));
                         }
-                        if(aboutMe_p == null) {
+                        if(aboutMe_p == null || "".equals(aboutMe_p)) {
                             aboutMe.setText(getResources().getString(R.string.none_txt));
                         }
                         else {
@@ -405,23 +410,34 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private void setUserInfoToExtras() {
         SharedPreferences sharedInfoPreferences = getSharedPreferences(PREFS_INFO, 0);
         SharedPreferences.Editor editor = sharedInfoPreferences.edit();
-        editor.putString("motto", motto.getText().toString());
-        editor.putString("name", name.getText().toString());
+
+        editor.putString("motto", getRightText(motto.getText().toString()));
+        editor.putString("name", getRightText(name.getText().toString()));
+
         if(isMale) {
             editor.putString("gender", getNameByPosition(getResources().getStringArray(R.array.gender_values), 0));
         }
         else {
             editor.putString("gender", getNameByPosition(getResources().getStringArray(R.array.gender_values), 1));
         }
-        editor.putString("age", age.getText().toString());
-        editor.putString("location", location.getText().toString());
-        editor.putString("interestedIn", interestedIn.getText().toString());
-        editor.putString("lookingFor", lookingFor.getText().toString());
-        editor.putString("aboutMe",aboutMe.getText().toString());
-        editor.putString("relationship", relationship.getText().toString());
-        editor.putString("bodyType", bodyType.getText().toString());
-        editor.putString("ethnicity", ethnicity.getText().toString());
-        editor.putString("interests", interests.getText().toString());
+
+        editor.putString("age", getRightText(age.getText().toString()));
+        editor.putString("location", getRightText(location.getText().toString()));
+        editor.putString("interestedIn", getRightText(interestedIn.getText().toString()));
+        editor.putString("lookingFor", getRightText(lookingFor.getText().toString()));
+        editor.putString("aboutMe", getRightText(aboutMe.getText().toString()));
+        editor.putString("relationship", getRightText(relationship.getText().toString()));
+        editor.putString("bodyType", getRightText(bodyType.getText().toString()));
+        editor.putString("ethnicity", getRightText(ethnicity.getText().toString()));
+        editor.putString("interests", getRightText(interests.getText().toString()));
         editor.commit();
+    }
+
+    private String getRightText(String s) {
+        String none_txt = getResources().getString(R.string.none_txt);
+        if(none_txt.equals(s)) {
+            return null;
+        }
+        return s;
     }
 }

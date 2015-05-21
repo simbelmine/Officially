@@ -80,5 +80,8 @@
     <dimen name="motto_margin">16dp</dimen>
     <dimen name="divider_info_height">0.5dp</dimen>
     <dimen name="divider_info_margin">15dp</dimen>
+    <dimen name="dashed_line_width">103dp</dimen>
+    <dimen name="dashed_line_height">25dp</dimen>
+    <dimen name="dashed_line_margin_r">27dp</dimen>
 
 </resources>

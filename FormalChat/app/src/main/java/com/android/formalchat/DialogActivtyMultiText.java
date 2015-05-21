@@ -116,12 +116,13 @@ public class DialogActivtyMultiText extends Activity {
     }
 
     private boolean isStarterText(String txt) {
-        if(getResources().getString(R.string.multy_txt).equals(txt)) {
+        if(getResources().getString(R.string.change_txt).equals(txt)) {
             return true;
         }
         else if(getResources().getString(R.string.motto).equals(txt)) {
             return true;
         }
+
         return false;
     }
 }
