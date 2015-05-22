@@ -40,23 +40,7 @@ public class VideoShowActivity extends Activity {
         videoView.setVideoURI(uri);
         videoView.requestFocus();
         videoView.setMediaController(mediaController);
-        seekTo(videoView, 100);
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener()  {
-                    @Override
-                    public void onSeekComplete(MediaPlayer mp) {
-                        videoView.pause();
-                    }
-                });
-            }
-        });
-    }
-
-    public static void seekTo(VideoView v, int pos) {
-        v.start();
-        v.seekTo(pos);
+        videoView.start();
     }
 }
 
