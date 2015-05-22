@@ -38,9 +38,9 @@ public class FullImageActivity extends Activity {
     private SharedPreferences.Editor editor;
     private ImageView fullScreenView;
     private RelativeLayout topBtnsLayout;
-    private ImageButton backBtn;
-    private ImageButton menuBtn;
-    private boolean isVisible = false;
+    private ImageView backBtn;
+    private ImageView menuBtn;
+    private boolean isVisible = true;
     private String url;
 
     @Override
@@ -59,8 +59,8 @@ public class FullImageActivity extends Activity {
                 .into(fullScreenView);
 
         topBtnsLayout = (RelativeLayout) findViewById(R.id.top_btns_layout);
-        backBtn = (ImageButton) findViewById(R.id.back_btn);
-        menuBtn = (ImageButton) findViewById(R.id.menu_btn);
+        backBtn = (ImageView) findViewById(R.id.back_btn);
+        menuBtn = (ImageView) findViewById(R.id.menu_btn);
 
         fullScreenView.setOnClickListener(new View.OnClickListener() {
             @Override
