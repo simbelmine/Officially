@@ -6,9 +6,9 @@
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/gallery_item_h"
         android:visibility="invisible"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         android:layout_gravity="center"/>
     <ImageView
         android:id="@+id/image_play"

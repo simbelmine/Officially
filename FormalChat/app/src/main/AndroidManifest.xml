@@ -72,6 +72,7 @@
         <activity android:name=".VideoRecordActivity"/>
         <activity android:name=".VideoShowActivity"/>
         <activity android:name=".ProfileViewGallery"/>
+        <activity android:name=".ProfileGallery"/>
 
         <service android:name=".VideoDownloadService"/>
         <service android:name=".VideoCompressService"/>

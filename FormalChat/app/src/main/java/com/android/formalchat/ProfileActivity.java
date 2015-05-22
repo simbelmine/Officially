@@ -208,7 +208,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 startActivity(UserInfoActivity.class);
                 return true;
             case R.id.view_gallery:
-                startActivity(ProfileViewGallery.class);
+                startActivity(ProfileGallery.class);
                 return true;
             case R.id.add_pic:
                 if(isNetworkAvailable()){

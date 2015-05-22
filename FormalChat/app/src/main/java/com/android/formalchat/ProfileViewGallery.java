@@ -20,6 +20,8 @@ import java.util.List;
 
 /**
  * Created by Sve on 4/28/15.
+ *
+ * Not used anymore. Change made on 5/22/15.
  */
 public class ProfileViewGallery extends Activity {
     private Activity activity;
