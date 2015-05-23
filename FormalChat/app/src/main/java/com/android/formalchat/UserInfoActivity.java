@@ -239,7 +239,12 @@ public class UserInfoActivity extends Activity {
         }
 
         parseObject.put("motto", motto.getText().toString());
-        parseObject.put("aboutMe", about_me.getText().toString());
+        if(getResources().getString(R.string.change_txt).equals(about_me.getText().toString())) {
+            parseObject.put("aboutMe", "");
+        }
+        else {
+            parseObject.put("aboutMe", about_me.getText().toString());
+        }
         parseObject.put("name", name.getText().toString());
         parseObject.put("age", age.getText().toString());
 
