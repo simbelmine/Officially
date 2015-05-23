@@ -57,10 +57,10 @@ public class DialogActivtyMultiText extends Activity {
     private void setTitle() {
         String title;
         if(hasMotto) {
-            title = getResources().getString(R.string.motto).toUpperCase();
+            title = getResources().getString(R.string.motto);
         }
         else if(hasAboutMe) {
-            title = getResources().getString(R.string.about_me_lbl).toUpperCase();
+            title = getResources().getString(R.string.about_me_lbl);
         }
         else {
             title = "";
