@@ -17,5 +17,6 @@
         android:paddingTop="@dimen/grid_margin"
         android:paddingBottom="@dimen/grid_margin"
         android:stretchMode="columnWidth"
-        android:gravity="center" />
+        android:gravity="center"
+        android:fastScrollEnabled="true"/>
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.android.formalchat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class ProfileGallery extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_gallery);
+        getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
         activity = this;
         gridView = (GridView) findViewById(R.id.grid_layout_profile);

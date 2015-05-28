@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,27 +76,20 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view;
 
         // **************************//
-        //**** To Do: Recicle grid views DOESN'T work ****//
+        //**** To Do: Recycle grid views DOESN'T work ****//
         // *************************//
-
-        //if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.viewpager_item, parent, false);
-//        }
-//        else {
-//            view = convertView;
-//        }
+            convertView = inflater.inflate(R.layout.viewpager_item, parent, false);
 
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        final VideoView videoView = (VideoView) view.findViewById(R.id.video);
-        ImageView img = (ImageView) view.findViewById(R.id.image);
+        ProgressBar progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+        VideoView videoView = (VideoView) convertView.findViewById(R.id.video);
+        ImageView img = (ImageView) convertView.findViewById(R.id.image);
 
-        populateImages(view, img, videoView, progressBar, position);
+        populateImages(convertView, img, progressBar, position);
         addImageOnClickListener(img, position);
-        return view;
+        return convertView;
     }
 
     private void addImageOnClickListener(ImageView img, final int position) {
@@ -112,7 +104,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
      });
     }
 
-    private void populateImages(final View view, final ImageView img, final VideoView videoView, final ProgressBar progressBar, final int position) {
+    private void populateImages(final View view, final ImageView img, final ProgressBar progressBar, final int position) {
         Picasso.with(context).load(images.get(position)).into(img, new Callback() {
             @Override
             public void onSuccess() {
