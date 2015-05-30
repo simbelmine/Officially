@@ -28,12 +28,14 @@
     <string name="multy_txt">Click to start writing...</string>
     <string name="about_me_done">Done</string>
     <string name="user_info_save">Save</string>
+
     <string name="menu_delete">Delete</string>
     <string name="menu_set_as">Set As Profile</string>
     <string name="menu_edit_profile">Edit Profile</string>
     <string name="menu_view_gallery">View Gallery</string>
     <string name="menu_add_pic">Add Picture</string>
     <string name="menu_record_video">Record Video</string>
+    <string name="menu_profile_remote">Open Prof Remote</string>
 
     <string-array name="gender_values">
         <item>Man</item>

@@ -1,5 +1,6 @@
 package com.android.formalchat;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +17,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,9 +41,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sve on 2/4/15.
+ * Created by Sve on 5/29/15.
  */
-public class ProfileActivity extends DrawerActivity implements View.OnClickListener {
+public class ProfileRemoteActivity extends DrawerActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final String PREFS_INFO = "FormalChatUserInfo";
     public static final int NONE = 101;
@@ -47,8 +51,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
     private String profileImgPath;
-    private LinearLayout exclamationLayout;
-    private ImageButton edit_feb_btn;
     private ParseUser user;
     private ArrayList<String> imagePaths;
     private Activity activity;
@@ -57,6 +59,8 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private RoundedImageView smallProfilePic;
     private ImageView sexIcon;
     private  boolean isMale;
+    private Button got_it;
+    private RelativeLayout help_video_leyout;
 
     private TextView motto;
     private TextView name;
@@ -76,7 +80,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.profile, null, false);
+        View contentView = inflater.inflate(R.layout.profile_remote, null, false);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
@@ -89,21 +93,18 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         videoExists = isVideoExists();
 
         init();
+        setOnClickListeners();
+        applyLayoutTransition();
         getProfileImgPath();
         if(isNetworkAvailable()) {
             loadBigProfilePicFromParse();
             loadSmallProfilePicFromParse();
         }
-        initVideoWarningMessage();
-        addViewListeners();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (videoExists) {
-            exclamationLayout.setVisibility(View.INVISIBLE);
-        }
     }
 
     private void setTitle() {
@@ -119,11 +120,11 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
     private void init() {
         // *** Header
-        exclamationLayout = (LinearLayout) findViewById(R.id.exclamation_layout);
-        edit_feb_btn = (ImageButton) findViewById(R.id.feb_button);
         profilePic = (ImageView) findViewById(R.id.profile_pic);
         smallProfilePic = (RoundedImageView) findViewById(R.id.small_prof_pic);
         sexIcon = (ImageView) findViewById(R.id.sex_icon);
+        got_it = (Button) findViewById(R.id.got_it_btn);
+        help_video_leyout = (RelativeLayout) findViewById(R.id.help_layout);
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
         name = (TextView) findViewById(R.id.name_edit);
@@ -136,15 +137,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         bodyType = (TextView) findViewById(R.id.body_type_edit);
         ethnicity = (TextView) findViewById(R.id.ethnicity_edit);
         interests = (TextView) findViewById(R.id.interests_edit);
-    }
-
-    private void initVideoWarningMessage() {
-        if(!videoExists) {
-            exclamationLayout.setVisibility(View.VISIBLE);
-        }
-        else {
-            exclamationLayout.setVisibility(View.INVISIBLE);
-        }
     }
 
     private void setSexIcon(int sex) {
@@ -164,9 +156,18 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         return false;
     }
 
-    private void addViewListeners() {
-        exclamationLayout.setOnClickListener(this);
-        edit_feb_btn.setOnClickListener(this);
+    private void setOnClickListeners() {
+        got_it.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((FrameLayout)help_video_leyout.getParent()).removeView(help_video_leyout);
+            }
+        });
+    }
+
+    private void applyLayoutTransition() {
+        LayoutTransition transition = new LayoutTransition();
+        help_video_leyout.setLayoutTransition(transition);
     }
 
     @Override
@@ -174,60 +175,11 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         super.onResume();
 
         if(isNetworkAvailable()) {
-            initVideoWarningMessage();
             populateInfoFromParse();
         }
         else {
             // Get from local
             //getImagesFromLocalStorage();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.exclamation_layout:
-                startActivity(VideoRecordActivity.class);
-                break;
-            case R.id.feb_button:
-                PopupMenu popupMenu = new PopupMenu(ProfileActivity.this, edit_feb_btn);
-                popupMenu.getMenuInflater().inflate(R.menu.profile_edit_menu, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        return onItemClicked(item);
-                    }
-                });
-                popupMenu.show();
-        }
-    }
-
-    private boolean onItemClicked(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.edit_profile:
-                startActivity(UserInfoActivity.class);
-                return true;
-            case R.id.view_gallery:
-                startActivity(ProfileGallery.class);
-                return true;
-            case R.id.add_pic:
-                if(isNetworkAvailable()){
-                    addImgWithDialog = new ProfileAddImageDialog();
-                    FragmentManager manager = getSupportFragmentManager();
-                    addImgWithDialog.show(manager, "add_img_dialog");
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
-                }
-                return true;
-            case R.id.record_video:
-                startActivity(VideoRecordActivity.class);
-                return true;
-            case R.id.profile_remote:
-                startActivity(ProfileRemoteActivity.class);
-                return true;
-            default:
-                return false;
         }
     }
 

@@ -10,12 +10,6 @@
         <!-- by placing the imageview inside the fragment we avoid overdraw when
              doing the parallax effect -->
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager_profile"
-            android:layout_height="265dp"
-            android:layout_width="match_parent"
-            android:background="@color/background"
-            />
         <ImageView
             android:id="@+id/profile_pic"
             android:layout_width="match_parent"
@@ -97,18 +91,8 @@
         </LinearLayout>
     </FrameLayout>
 
-    <ImageButton
-        android:id="@+id/feb_button"
-        android:layout_width="@dimen/FEB_size"
-        android:layout_height="@dimen/FEB_size"
-        android:layout_gravity="bottom|right"
-        android:layout_marginRight="@dimen/FEB_margin"
-        android:layout_marginBottom="@dimen/FEB_margin_bottom"
-        android:scaleType="centerInside"
-        android:elevation="@dimen/FEB_elevation"
-        android:background="@drawable/oval_btn"
-        android:src="@drawable/plus"
-        />
+    <include layout="@layout/profile_help_screen"></include>
+
     <RelativeLayout
         android:layout_height="50dp"
         android:layout_width="match_parent"
@@ -116,23 +100,23 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         >
-    <ImageView
-        android:id="@+id/drinking_icon"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="@dimen/icons_margin"
-        android:layout_marginBottom="@dimen/icons_margin"
-        android:layout_marginRight="40dp"
-        android:src="@drawable/drinking_g"/>
-    <ImageView
-        android:id="@+id/smoking_icon"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="@dimen/icons_margin"
-        android:layout_marginBottom="@dimen/icons_margin"
-        android:layout_marginRight="40dp"
-        android:layout_toRightOf="@+id/drinking_icon"
-        android:src="@drawable/smoking_g"/>
+        <ImageView
+            android:id="@+id/drinking_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="@dimen/icons_margin"
+            android:layout_marginBottom="@dimen/icons_margin"
+            android:layout_marginRight="40dp"
+            android:src="@drawable/drinking_g"/>
+        <ImageView
+            android:id="@+id/smoking_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="@dimen/icons_margin"
+            android:layout_marginBottom="@dimen/icons_margin"
+            android:layout_marginRight="40dp"
+            android:layout_toRightOf="@+id/drinking_icon"
+            android:src="@drawable/smoking_g"/>
         <ImageView
             android:id="@+id/religion_icon"
             android:layout_width="25dp"

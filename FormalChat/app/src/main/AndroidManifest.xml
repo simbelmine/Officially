@@ -73,6 +73,7 @@
         <activity android:name=".VideoShowActivity"/>
         <activity android:name=".ProfileViewGallery"/>
         <activity android:name=".ProfileGallery"/>
+        <activity android:name=".ProfileRemoteActivity"/>
 
         <service android:name=".VideoDownloadService"/>
         <service android:name=".VideoCompressService"/>

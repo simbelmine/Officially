@@ -8,17 +8,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <include
-            android:id="@+id/profile_header"
+            android:id="@+id/profile_header_remote"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            layout="@layout/profile_header">
+            layout="@layout/profile_header_remote">
         </include>
         <include
             android:id="@+id/info_user"
-            layout="@layout/profile_footer"
+            layout="@layout/profile_footer_remote"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/profile_header">
+            android:layout_below="@+id/profile_header_remote">
         </include>
     </RelativeLayout>
 </ScrollView>
