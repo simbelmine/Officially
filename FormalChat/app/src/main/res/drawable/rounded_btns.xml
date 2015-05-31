@@ -7,7 +7,7 @@
             android:endColor="@color/transp_white"
             android:angle="0"
             />
-        <corners android:radius="20dp"/>
+        <corners android:radius="4dp"/>
         <padding android:left="10dp"
             android:right="10dp"
             android:bottom="10dp"

@@ -24,7 +24,7 @@
     <application
         android:name="com.android.formalchat.ParseApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:theme="@style/AppThemeW"
         >
@@ -41,42 +41,40 @@
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:noHistory="true">
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".ProfileActivity"/>
-        <activity android:name=".UserInfoActivity"
-                  android:windowSoftInputMode="adjustPan|stateHidden"
-            android:noHistory="true"/>
-        <activity android:name=".MainQuestionsActivity"
-                  android:windowSoftInputMode="adjustPan|stateHidden"
-                  />
-        <activity android:name=".FullImageActivity"/>
-        <activity android:name=".QuestionaryActivity"
-                  android:noHistory="true"/>
-        <activity android:name=".DialogActivityInterestedIn"
-                  android:theme="@style/QuestionsDialogTheme"
-            />
-        <activity android:name=".DialogActivityLookingFor"
-            android:theme="@style/QuestionsDialogTheme"
-            />
-        <activity android:name=".DialogActivtyAboutMe"
-            android:theme="@style/QuestionsDialogTheme"
-            />
-        <activity android:name=".DialogActivityRelationship"
-            android:theme="@style/QuestionsDialogTheme"
-            />
-        <activity android:name=".DialogActivityBodyType"
-            android:theme="@style/QuestionsDialogTheme"
-            />
-        <activity android:name=".DialogActivityEthnicity"
-            android:theme="@style/QuestionsDialogTheme"
-            />
-        <activity android:name=".DialogActivityInterests"
-            android:theme="@style/QuestionsDialogTheme"
-            />
-        <activity android:name=".CropActivity" android:theme="@style/QuestionsDialogTheme"/>
-        <activity android:name=".CropImageActivity" android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".MainActivity"/>
+        <activity   android:name=".ProfileActivity"
+                    android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity   android:name=".UserInfoActivity"
+                    android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity   android:name=".MainQuestionsActivity"
+                    android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity   android:name=".FullImageActivity"/>
+        <activity   android:name=".QuestionaryActivity"
+                    android:noHistory="true"/>
+        <activity   android:name=".DialogActivityInterestedIn"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".DialogActivityLookingFor"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".DialogActivtyMultiText"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".DialogActivityRelationship"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".DialogActivityBodyType"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".DialogActivityEthnicity"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".DialogActivityInterests"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".CropActivity"
+                    android:theme="@style/QuestionsDialogTheme"/>
+        <activity   android:name=".CropImageActivity"
+                    android:theme="@style/QuestionsDialogTheme"/>
         <activity android:name=".VideoRecordActivity"/>
         <activity android:name=".VideoShowActivity"/>
+        <activity android:name=".ProfileViewGallery"/>
+        <activity android:name=".ProfileGallery"/>
+        <activity android:name=".ProfileRemoteActivity"/>
+
         <service android:name=".VideoDownloadService"/>
         <service android:name=".VideoCompressService"/>
     </application>

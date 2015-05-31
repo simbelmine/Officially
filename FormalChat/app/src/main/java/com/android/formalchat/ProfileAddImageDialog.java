@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.ParseException;
@@ -50,8 +51,10 @@ public class ProfileAddImageDialog extends DialogFragment {
     public static final int MEDIA_TYPE_IMAGE = 1;
 
     public String imageName = "IMG_"+ getTimeStamp() + ".jpg";
-    private ImageButton mTakePhotoImg;
-    private ImageButton mAttachPhotoImg;
+    private ImageView mTakePhotoImg;
+    private TextView mTakePhotoImgTxt;
+    private ImageView mAttachPhotoImg;
+    private TextView mAttachPhotoImgTxt;
     private Uri fileUri;
     private ProfileActivity callingActivity;
     private String imgCameraPath;
@@ -65,23 +68,33 @@ public class ProfileAddImageDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.add_img_dialog, container, false);
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        mTakePhotoImg = (ImageButton) view.findViewById(R.id.take_photo_img);
+        mTakePhotoImg = (ImageView) view.findViewById(R.id.take_photo_img);
         mTakePhotoImg.setOnClickListener(new View.OnClickListener() {
-        @Override
+            @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-                startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                onClickTakePhoto();
+            }
+        });
+        mTakePhotoImgTxt = (TextView) view.findViewById(R.id.take_photo_txt);
+        mTakePhotoImgTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickTakePhoto();
             }
         });
 
-        mAttachPhotoImg = (ImageButton) view.findViewById(R.id.attach_photo_img);
+        mAttachPhotoImg = (ImageView) view.findViewById(R.id.attach_photo_img);
         mAttachPhotoImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                startActivityForResult(intent, ACTIVITY_SELECT_IMAGE);
+               onClickAttachPhoto();
+            }
+        });
+        mAttachPhotoImgTxt = (TextView) view.findViewById(R.id.attach_photo_txt);
+        mAttachPhotoImgTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickAttachPhoto();
             }
         });
 
@@ -110,6 +123,18 @@ public class ProfileAddImageDialog extends DialogFragment {
 
             getDialog().dismiss();
         }
+    }
+
+    private void onClickTakePhoto() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+    private void onClickAttachPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(intent, ACTIVITY_SELECT_IMAGE);
     }
 
     private void saveToLocalStorage(Drawable drawable) {
@@ -191,7 +216,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             Log.e("formalchat", "Photo was saved Successfully !");
             //hide notification for uploading - or just show error on the same notification
             hideUploadNotification();
-            callingActivity.onImageUploaded();
+            //         callingActivity.onImageUploaded();
         } else {
             Log.e("formalchat", "Error saving: " + e.getMessage());
         }
@@ -206,18 +231,18 @@ public class ProfileAddImageDialog extends DialogFragment {
                 .setOngoing(true);
 
         new Thread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    int progress;
-                    // Do the operation 20 times
-                    for (progress = 0; progress <= 100; progress+= 5) {
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        int progress;
+                        // Do the operation 20 times
+                        for (progress = 0; progress <= 100; progress+= 5) {
                             // Set the progress indicator to (max value, current completition percentage, determinate state)
                             notificationBuilder.setProgress(100, progress, true);
                             notificationManager.notify(id, notificationBuilder.build());
+                        }
                     }
                 }
-            }
         ).start();
     }
 

@@ -3,8 +3,8 @@
    >
     <shape android:shape="rectangle">
         <gradient
-            android:startColor="@color/dark_purple_90"
-            android:endColor="@color/dark_purple_90"
+            android:startColor="@color/background"
+            android:endColor="@color/background"
             android:angle="0"
             />
         <corners android:radius="5dp"/>
@@ -13,8 +13,8 @@
             android:right="5dp"
             android:bottom="5dp"
             android:top="5dp"/>
-        <stroke
-            android:color="@color/gray"
-            android:width="3dp" />
+        <!--<stroke-->
+            <!--android:color="@color/items_40"-->
+            <!--android:width="3dp" />-->
     </shape>
 </inset>

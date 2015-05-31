@@ -3,6 +3,8 @@ package com.android.formalchat;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -22,6 +24,8 @@ import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -34,9 +38,9 @@ public class FullImageActivity extends Activity {
     private SharedPreferences.Editor editor;
     private ImageView fullScreenView;
     private RelativeLayout topBtnsLayout;
-    private ImageButton backBtn;
-    private ImageButton menuBtn;
-    private boolean isVisible = false;
+    private ImageView backBtn;
+    private ImageView menuBtn;
+    private boolean isVisible = true;
     private String url;
 
     @Override
@@ -55,8 +59,8 @@ public class FullImageActivity extends Activity {
                 .into(fullScreenView);
 
         topBtnsLayout = (RelativeLayout) findViewById(R.id.top_btns_layout);
-        backBtn = (ImageButton) findViewById(R.id.back_btn);
-        menuBtn = (ImageButton) findViewById(R.id.menu_btn);
+        backBtn = (ImageView) findViewById(R.id.back_btn);
+        menuBtn = (ImageView) findViewById(R.id.menu_btn);
 
         fullScreenView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +117,7 @@ public class FullImageActivity extends Activity {
         if(data != null) {
             if(resultCode == RESULT_OK) {
                 byte[] profileImg = data.getByteArrayExtra("profileImg");
+                saveProfileImgToLocal(profileImg);
                 setImageAsProfile(profileImg);
                 setFlagToSharedPrefs();
                 setProfPicNameToSharPrefs();
@@ -121,8 +126,28 @@ public class FullImageActivity extends Activity {
         }
     }
 
+    private void saveProfileImgToLocal(byte[] profileImg) {
+        Bitmap bitmap = BitmapFactory.decodeByteArray(profileImg, 0, profileImg.length);
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
+        BlurredImage bm = new BlurredImage();
+        Bitmap blurredBitmap = bm.getBlurredImage(bitmap, 50);
+
+        File dir = new File(path);
+        File profilePic = new File(dir, "blurred_profile.jpg");
+        try {
+            FileOutputStream out = new FileOutputStream(profilePic);
+            blurredBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        }
+        catch (IOException ex) {
+            Log.e("formalchat", ex.getMessage());
+        }
+    }
+
     private void setProfPicNameToSharPrefs() {
         editor.putString("profPic", url);
+        editor.putString("profPicName", getShortImageNameFromUri());
         editor.commit();
     }
 
@@ -138,6 +163,7 @@ public class FullImageActivity extends Activity {
         ParseUser user = ParseUser.getCurrentUser();
         ParseFile parseProfImg = new ParseFile(profileImg);
         user.put("profileImg", parseProfImg);
+        user.put("profileImgName", getShortImageNameFromUri());
         user.saveInBackground();
     }
 

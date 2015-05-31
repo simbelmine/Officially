@@ -28,6 +28,7 @@ import java.net.URL;
  * Created by Sve on 3/31/15.
  */
 public class CropActivity extends Activity {
+    private File dir;
     private ImageView cropMeasureView;
     private ZoomInOutImgView imgView;
     private Button doneEditing;
@@ -37,7 +38,8 @@ public class CropActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.crop_layout);
 
-        String url = getIntent().getStringExtra("url");
+        dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
+        final String url = getIntent().getStringExtra("url");
         final Drawable drawable = getDrawableFromUrl(url);
 
         final FrameLayout rl = (FrameLayout) findViewById(R.id.root_crop);
@@ -79,6 +81,8 @@ public class CropActivity extends Activity {
                         intent.putExtra("profileImg", profileImg);
                         setResult(RESULT_OK, intent);
 
+                        deleteSavedImg(url);
+
                         finish();
                     }
                 });
@@ -94,7 +98,6 @@ public class CropActivity extends Activity {
 
     private Drawable getDrawableFromUrl(String url) {
         String imgName = getShortName(url);
-        File dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         File imgFile = new File(dir, imgName);
 
         if(!isImgExists(imgFile)){
@@ -105,7 +108,6 @@ public class CropActivity extends Activity {
     }
 
     private void downloadImg(String img_url, File imgFile) {
-
         try {
             URL url = new URL(img_url);
             InputStream is = url.openStream();
@@ -123,6 +125,15 @@ public class CropActivity extends Activity {
         }
         catch (IOException ex) {
             Log.e("formalchat", ex.getMessage());
+        }
+    }
+
+    private void deleteSavedImg(String url) {
+        File[] files_list = dir.listFiles();
+        for(int f = 0; f < files_list.length; f++) {
+            if(getShortName(url).equals(files_list[f].getName())) {
+                files_list[f].delete();
+            }
         }
     }
 

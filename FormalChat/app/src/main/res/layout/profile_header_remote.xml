@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+        <!-- by placing the imageview inside the fragment we avoid overdraw when
+             doing the parallax effect -->
+
+        <ImageView
+            android:id="@+id/profile_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/background"
+            android:scaleType="centerCrop"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/blure"/>
+        <com.android.formalchat.RoundedImageView
+            android:id="@+id/small_prof_pic"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="60dp"
+            android:src="@drawable/profile_pic"/>
+        <TextView
+            android:id="@+id/name_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Name"
+            android:textColor="@color/white"
+            android:textSize="19sp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="120dp"
+            />
+        <ImageView
+            android:id="@+id/sex_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="100dp"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="80dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Age"/>
+            <TextView
+                android:id="@+id/age_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginLeft="10dp"
+                android:text="--"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/exclamation_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/transp_black"
+            android:layout_gravity="top"
+            android:gravity="center_vertical"
+            android:visibility="invisible"
+            >
+            <ImageView
+                android:id="@+id/exclamation_img"
+                android:layout_width="@dimen/exclamation_size"
+                android:layout_height="@dimen/exclamation_size"
+                android:layout_marginLeft="@dimen/exclamation_margin_left"
+                android:scaleType="fitXY"
+                android:src="@drawable/exclamation" />
+            <TextView
+                android:id="@+id/exclamation_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/exclamation_margin_left"
+                android:text="Send video to become visible to others"
+                android:textColor="@color/white"
+                android:textAllCaps="true"
+                />
+        </LinearLayout>
+    </FrameLayout>
+
+    <include layout="@layout/profile_help_screen"></include>
+
+    <RelativeLayout
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        >
+        <ImageView
+            android:id="@+id/drinking_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="@dimen/icons_margin"
+            android:layout_marginBottom="@dimen/icons_margin"
+            android:layout_marginRight="40dp"
+            android:src="@drawable/drinking_g"/>
+        <ImageView
+            android:id="@+id/smoking_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="@dimen/icons_margin"
+            android:layout_marginBottom="@dimen/icons_margin"
+            android:layout_marginRight="40dp"
+            android:layout_toRightOf="@+id/drinking_icon"
+            android:src="@drawable/smoking_g"/>
+        <ImageView
+            android:id="@+id/religion_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="@dimen/icons_margin"
+            android:layout_marginBottom="@dimen/icons_margin"
+            android:layout_toRightOf="@id/smoking_icon"
+            android:src="@drawable/religion_g"/>
+    </RelativeLayout>
+</FrameLayout>

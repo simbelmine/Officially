@@ -1,16 +1,11 @@
 package com.android.formalchat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,8 +30,10 @@ import java.util.List;
  */
 public class DrawerActivity extends FragmentActivity {
     public static final int NONE = 101;
+    public static final int PROFILE_ID = 202;
     private RoundedImageView profilePic;
     private TextView profileName;
+    private TextView email;
     private DrawerLayout drawerLayout;
     private RelativeLayout leftDrawerLayout;
     private ListView leftDrawerList;
@@ -60,11 +57,14 @@ public class DrawerActivity extends FragmentActivity {
         leftDrawerList = (ListView) findViewById(R.id.left_list_drawer);
         profilePic = (RoundedImageView) findViewById(R.id.profile_img);
         profileName = (TextView) findViewById(R.id.profile_name);
+        email = (TextView) findViewById(R.id.email);
         initDrawableToggle();
         initActionBar();
         setPic();
         setPicOnClickListenre();
-        setProfileName();
+        ParseUser user = ParseUser.getCurrentUser();
+        setProfileName(user);
+        setProfileEmail(user);
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
         drawerLayout.setDrawerListener(drawerToggle);
@@ -78,7 +78,7 @@ public class DrawerActivity extends FragmentActivity {
             Picasso.with(getApplicationContext()).load(profilePicUri).into(profilePic);
         }
         else {
-            Picasso.with(getApplicationContext()).load(R.drawable.profile_pic_).into(profilePic);
+            Picasso.with(getApplicationContext()).load(R.drawable.profile_pic).into(profilePic);
         }
     }
 
@@ -94,13 +94,13 @@ public class DrawerActivity extends FragmentActivity {
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchActivity(ProfileActivity.class, NONE);
+                drawerLayout.closeDrawer(leftDrawerLayout);
+                launchActivity(ProfileActivity.class, PROFILE_ID);
             }
         });
     }
 
-    private void setProfileName() {
-        final ParseUser user = ParseUser.getCurrentUser();
+    private void setProfileName(final ParseUser user) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserInfo");
         query.whereEqualTo("loginName", user.getUsername());
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -110,6 +110,10 @@ public class DrawerActivity extends FragmentActivity {
                 profileName.setText(userInfo.get("name").toString());
             }
         });
+    }
+
+    private void setProfileEmail(ParseUser user) {
+        email.setText(user.getEmail());
     }
 
     private void initActionBar() {
@@ -154,13 +158,13 @@ public class DrawerActivity extends FragmentActivity {
         drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
-                R.drawable.ic_drawer,
+                R.drawable.ic_drawer_g,
                 R.string.drawer_open,
                 R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                //updateTitle(title);
+                updateTitle(title);
             }
 
             @Override

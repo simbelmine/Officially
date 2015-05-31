@@ -9,24 +9,33 @@
     <string name="add_profile_img">Add</string>
     <string name="edit_profile">Edit</string>
 
-    <string name="name_lbl">Name</string>
-    <string name="gender_lbl">Gender</string>
-    <string name="age_lbl">Age</string>
-    <string name="location_lbl">Location</string>
-    <string name="interested_in_lbl">Interested In</string>
-    <string name="looking_for_lbl">Looking For</string>
-    <string name="about_me_lbl">About Me</string>
-    <string name="relationship_lbl">Relationship Status</string>
-    <string name="body_type_lbl">Body Type</string>
-    <string name="height_lbl">Height</string>
-    <string name="ethnicity_lbl">Ethnicity</string>
-    <string name="interests_lbl">Interests</string>
+    <string name="motto">What\'s the phrase you live by?</string>
+    <string name="name_lbl">My name is...</string>
+    <string name="gender_lbl">I define myself as...</string>
+    <string name="age_lbl">My age is...</string>
+    <string name="location_lbl">Now I\'m in...</string>
+    <string name="interested_in_lbl">I\'m interested in...</string>
+    <string name="looking_for_lbl">and I\'m looking for...</string>
+    <string name="about_me_lbl">About me:</string>
+    <string name="relationship_lbl">I\'m...</string>
+    <string name="body_type_lbl">I describe my body as...</string>
+    <string name="height_lbl">My height is...</string>
+    <string name="ethnicity_lbl">My ethnicity is...</string>
+    <string name="interests_lbl">My hobbies are...</string>
     <string name="choice_txt">Click to choose...</string>
+    <string name="change_txt">Click to change...</string>
+    <string name="none_txt">- - -</string>
     <string name="multy_txt">Click to start writing...</string>
     <string name="about_me_done">Done</string>
     <string name="user_info_save">Save</string>
+
     <string name="menu_delete">Delete</string>
     <string name="menu_set_as">Set As Profile</string>
+    <string name="menu_edit_profile">Edit Profile</string>
+    <string name="menu_view_gallery">View Gallery</string>
+    <string name="menu_add_pic">Add Picture</string>
+    <string name="menu_record_video">Record Video</string>
+    <string name="menu_profile_remote">Open Prof Remote</string>
 
     <string-array name="gender_values">
         <item>Man</item>

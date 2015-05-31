@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="profile">Profile</string>
     <string-array name="menu_list">
-        <item>Main</item>
-        <item>Profile</item>
+        <item>People</item>
+        <item>Chats</item>
         <item>Log Out</item>
         <item>Logged In</item>
+    </string-array>
+    <string-array name="menu_icon_list">
+        <item>people</item>
+        <item>chats</item>
+        <item>log_out</item>
+        <item>none</item>
     </string-array>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
