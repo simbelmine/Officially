@@ -19,6 +19,7 @@
             android:layout_marginLeft="70dp"
             android:src="@drawable/right_video_arrows"/>
         <ImageView
+            android:id="@+id/got_it_img"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
@@ -34,20 +35,9 @@
     <ImageView
         android:id="@+id/txt"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:layout_below="@id/arrows"
         android:src="@drawable/watch_txt"/>
-    <Button
-        android:id="@+id/got_it_btn"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/txt"
-        android:background="@drawable/rounded_btns_white"
-        android:text="Ok. Got It!"
-        android:textColor="@color/white"
-        android:gravity="top|center"/>
 </RelativeLayout>

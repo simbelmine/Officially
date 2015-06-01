@@ -11,18 +11,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,7 +53,7 @@ public class ProfileRemoteActivity extends DrawerActivity {
     private RoundedImageView smallProfilePic;
     private ImageView sexIcon;
     private  boolean isMale;
-    private Button got_it;
+    private ImageView got_it_img;
     private RelativeLayout help_video_leyout;
 
     private TextView motto;
@@ -123,8 +117,8 @@ public class ProfileRemoteActivity extends DrawerActivity {
         profilePic = (ImageView) findViewById(R.id.profile_pic);
         smallProfilePic = (RoundedImageView) findViewById(R.id.small_prof_pic);
         sexIcon = (ImageView) findViewById(R.id.sex_icon);
-        got_it = (Button) findViewById(R.id.got_it_btn);
         help_video_leyout = (RelativeLayout) findViewById(R.id.help_layout);
+        got_it_img = (ImageView) findViewById(R.id.got_it_img);
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
         name = (TextView) findViewById(R.id.name_edit);
@@ -157,10 +151,17 @@ public class ProfileRemoteActivity extends DrawerActivity {
     }
 
     private void setOnClickListeners() {
-        got_it.setOnClickListener(new View.OnClickListener() {
+        got_it_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((FrameLayout)help_video_leyout.getParent()).removeView(help_video_leyout);
+                if(isVideoExists()) {
+                    String videoPath = user.getParseFile("video").getUrl();
+                    startActivity(VideoShowActivity.class, "videoUri", videoPath);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Sorry, no video to show", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -183,8 +184,11 @@ public class ProfileRemoteActivity extends DrawerActivity {
         }
     }
 
-    private void startActivity(Class classToLoad) {
+    private void startActivity(Class classToLoad, String extraName, String extraValue) {
         Intent intent = new Intent(this, classToLoad);
+        if(extraName != null && extraName != null) {
+            intent.putExtra(extraName, extraValue);
+        }
         startActivity(intent);
     }
 

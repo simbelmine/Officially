@@ -1,10 +1,11 @@
 package com.android.formalchat;
 
 import android.app.Activity;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.File;
 public class VideoShowActivity extends Activity {
     private VideoView videoView;
     private File tmpFile;
+    private TextView textViewMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,16 +24,23 @@ public class VideoShowActivity extends Activity {
         setContentView(R.layout.video_show_layout);
 
         init();
-        Uri uri = Uri.parse(getIntent().getStringExtra("videoUri"));
+        hideTextViewMessage();
+        if(getIntent().hasExtra("videoUri")) {
+            Uri uri = Uri.parse(getIntent().getStringExtra("videoUri"));
 
-        tmpFile = new File(uri.toString());
-        if(tmpFile.exists()) {
-            loadVideo(uri);
+            tmpFile = new File(uri.toString());
+            if (tmpFile.exists()) {
+                loadVideo(uri);
+            }
+        }
+        else {
+            showTextViewMessage();
         }
     }
 
     private void init() {
         videoView = (VideoView) findViewById(R.id.video);
+        textViewMessage = (TextView) findViewById(R.id.vide_warning);
     }
 
     private void loadVideo(Uri uri) {
@@ -41,6 +50,14 @@ public class VideoShowActivity extends Activity {
         videoView.requestFocus();
         videoView.setMediaController(mediaController);
         videoView.start();
+    }
+
+    private void hideTextViewMessage() {
+        textViewMessage.setVisibility(View.GONE);
+    }
+
+    private void showTextViewMessage() {
+        textViewMessage.setVisibility(View.VISIBLE);
     }
 }
 
