@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.netcompss.ffmpeg4android.GeneralUtils;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -83,6 +84,9 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
         Intent intent = new Intent(this, VideoCompressService.class);
         intent.putExtra("destinationFolder", startFolder);
         intent.putExtra("videoName", videoName);
+
+        GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(this, startFolder);
+
         startService(intent);
     }
 

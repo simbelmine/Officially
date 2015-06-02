@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,7 +27,7 @@ import java.util.Collection;
  */
 public class VideoCompressService extends IntentService {
 
-    private String workFolder = null;
+    private String ffmpeg_workFolder = null;
     private String vkLogPath = null;
     private boolean commandValidationFailedFlag = false;
     private String destinationFolder;
@@ -56,8 +57,12 @@ public class VideoCompressService extends IntentService {
 //        GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(activity, workFolder);
 //        GeneralUtils.copyDemoVideoFromAssetsToSDIfNeeded(activity, demoVideoFolder);
 
-        workFolder = destinationFolder;
-        vkLogPath = workFolder + "vk.log";
+        //workFolder = destinationFolder;
+        //vkLogPath = workFolder + "vk.log";
+        ffmpeg_workFolder = getApplicationContext().getFilesDir() + "/";
+        vkLogPath = ffmpeg_workFolder + "vk.log";
+        Log.v("formalchat", "### vkLogPath = " + vkLogPath);
+
 
         if (GeneralUtils.checkIfFileExistAndNotEmpty(destinationVideoPath)) {
             new TranscdingBackground().execute();
@@ -66,7 +71,7 @@ public class VideoCompressService extends IntentService {
             Toast.makeText(getApplicationContext(), destinationFolder + " not found", Toast.LENGTH_LONG).show();
         }
 
-        int rc = GeneralUtils.isLicenseValid(getApplicationContext(), workFolder);
+        int rc = GeneralUtils.isLicenseValid(getApplicationContext(), getApplicationContext().getFilesDir() + "/");
         Log.i("formalchat", "License check RC: " + rc);
     }
 
@@ -85,7 +90,7 @@ public class VideoCompressService extends IntentService {
 
             // delete previous log
             //GeneralUtils.deleteFileUtil(workFolder + "/vk.log");
-            GeneralUtils.deleteFileUtil(destinationFolder + "/vk.log");
+//            GeneralUtils.deleteFileUtil(destinationFolder + "/vk.log");
 
             PowerManager powerManager = (PowerManager)getApplicationContext().getSystemService(Activity.POWER_SERVICE);
             PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VK_LOCK");
@@ -108,13 +113,13 @@ public class VideoCompressService extends IntentService {
             try {
 
                 //vk.run(complexCommand, workFolder, getApplicationContext());
-                vk.run(GeneralUtils.utilConvertToComplex(commandStr), workFolder, getApplicationContext());
+                vk.run(GeneralUtils.utilConvertToComplex(commandStr), ffmpeg_workFolder, getApplicationContext());
 
                 // running without command validation
                 //vk.run(complexCommand, workFolder, getApplicationContext(), false);
 
                 // copying vk.log (internal native log) to the videokit folder
-                    //GeneralUtils.copyFileToFolder(vkLogPath, destinationFolder);
+                GeneralUtils.copyFileToFolder(vkLogPath, destinationFolder);
 
             } catch (CommandValidationException e) {
                 Log.e("formalchat", "vk run exeption.", e);
@@ -152,12 +157,14 @@ public class VideoCompressService extends IntentService {
             // finished Toast
             String rc = null;
             if (commandValidationFailedFlag) {
-                rc = "Command Vaidation Failed";
+                rc = "Command validation failed.";
             }
             else {
                 rc = GeneralUtils.getReturnCodeFromLog(vkLogPath);
             }
             final String status = rc;
+
+            Log.v("formalchat", "### status = " + status);
 
 
             if (status.equals("Transcoding Status: Failed")) {
