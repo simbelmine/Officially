@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +44,8 @@ public class ProfileRemoteActivity extends DrawerActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final String PREFS_INFO = "FormalChatUserInfo";
     public static final int NONE = 101;
+    private File dir = Environment.getExternalStorageDirectory();
+    private String filePath = "/.formal_chat/";
     private SharedPreferences sharedPreferences;
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
@@ -55,6 +60,7 @@ public class ProfileRemoteActivity extends DrawerActivity {
     private  boolean isMale;
     private ImageView got_it_img;
     private RelativeLayout help_video_leyout;
+    private String shortName;
 
     private TextView motto;
     private TextView name;
@@ -155,20 +161,64 @@ public class ProfileRemoteActivity extends DrawerActivity {
             @Override
             public void onClick(View v) {
                 ((FrameLayout)help_video_leyout.getParent()).removeView(help_video_leyout);
-                if(isVideoExists()) {
-                    String videoPath = user.getParseFile("video").getUrl();
-                    startActivity(VideoShowActivity.class, "videoUri", videoPath);
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "Sorry, no video to show", Toast.LENGTH_SHORT).show();
-                }
+                startVideo();
+            }
+        });
+
+        smallProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startVideo();
             }
         });
     }
 
+    private void startVideo() {
+        if(isVideoExists()) {
+            downloadVideoIfNotExists();
+            String videoPath = dir + filePath + shortName;
+            startActivity(VideoShowActivity.class, "videoUri", videoPath);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Sorry, no video to show", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     private void applyLayoutTransition() {
         LayoutTransition transition = new LayoutTransition();
         help_video_leyout.setLayoutTransition(transition);
+    }
+
+    private void downloadVideoIfNotExists() {
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseFile videoFile = user.getParseFile("video");
+        String fileName = videoFile.getName();
+        shortName = getShortImageNameFromUri(fileName);
+
+        File targetFolder = new File(dir + filePath);
+        if(!targetFolder.exists()) {
+            targetFolder.mkdir();
+        }
+
+        File tmpFile = new File(dir, filePath + shortName);
+        if(!tmpFile.exists()) {
+            startVideoDownloadService();
+        }
+    }
+
+    private void startVideoDownloadService() {
+        Intent intent = new Intent(this, VideoDownloadService.class);
+        intent.putExtra(VideoDownloadService.DIRPATH, dir.getAbsolutePath());
+        intent.putExtra(VideoDownloadService.FILEPATH, filePath);
+
+        startService(intent);
+    }
+
+    private Bitmap getVideoThumbnail(Uri videoUri) {
+        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
+                MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+        return thumb;
     }
 
     @Override

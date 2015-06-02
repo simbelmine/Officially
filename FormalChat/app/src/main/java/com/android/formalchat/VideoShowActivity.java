@@ -3,6 +3,7 @@ package com.android.formalchat;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ public class VideoShowActivity extends Activity {
         hideTextViewMessage();
         if(getIntent().hasExtra("videoUri")) {
             Uri uri = Uri.parse(getIntent().getStringExtra("videoUri"));
+            Log.v("formalchat", "### videoUri = " + uri.toString());
 
             tmpFile = new File(uri.toString());
             if (tmpFile.exists()) {

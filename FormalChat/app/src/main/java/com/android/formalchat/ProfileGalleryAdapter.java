@@ -180,20 +180,25 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         ParseUser user = ParseUser.getCurrentUser();
         videoFile = user.getParseFile("video");
         fileName = videoFile.getName();
-        videoUri = Uri.parse(dir + filePath + fileName);
+        String shortName = getShortImageNameFromUri(fileName);
+        videoUri = Uri.parse(dir + filePath + shortName);
 
         File targetFolder = new File(dir + filePath);
         if(!targetFolder.exists()) {
             targetFolder.mkdir();
         }
 
-        tmpFile = new File(dir, filePath + fileName);
+        tmpFile = new File(dir, filePath + shortName);
         if(!tmpFile.exists()) {
             startVideoDownloadService();
         }
         else {
             thumbnail  = getVideoThumbnail();
         }
+    }
+
+    public String getShortImageNameFromUri(String url) {
+        return url.substring(url.lastIndexOf("-")+1);
     }
 
     private void startVideoDownloadService() {
