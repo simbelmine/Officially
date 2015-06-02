@@ -15,7 +15,6 @@ public class UserInfo extends ParseObject{
     public String getLoginName() {
         return getString("loginName");
     }
-
     public void setLoginName(String loginName) {
         put("loginName", loginName);
     }
@@ -23,7 +22,6 @@ public class UserInfo extends ParseObject{
     public String getName() {
         return getString("name");
     }
-
     public void setName(String name) {
         put("name", name);
     }
@@ -31,7 +29,6 @@ public class UserInfo extends ParseObject{
     public int getGender() {
         return getInt("gender");
     }
-
     public void setGender(int gender) {
         put("gender", gender);
     }
@@ -39,34 +36,52 @@ public class UserInfo extends ParseObject{
     public String getAge() {
         return getString("age");
     }
-
     public void setAge(String age) {
         put("age", age);
     }
 
+
+
+    public String getMotto() {return getString("motto");}
+    public void setMotto(String motto) {put("motto", motto);}
+
     public String getLocation() {
         return getString("location");
     }
-
     public void setLocation(String location) {
         put("location", location);
     }
 
-    public int getInterestedIn() {
-        return getInt("interestedIn");
+    public String getDrinking() {
+        return getString("drinking");
+    }
+    public void setDrinking(String drinking) {
+        put("drinking", drinking);
     }
 
-    public void setInterestedIn(int interestedIn) {
-        put("interestedIn", interestedIn);
+    public String getSmoking() {
+        return getString("smoking");
+    }
+    public void setSmoking(String smoking) {
+        put("location", smoking);
     }
 
-    public int getLookingFor() {
-        return getInt("lookingFor");
+    public String getReligion() {
+        return getString("religion");
+    }
+    public void setReligion(String religion) {
+        put("religion", religion);
     }
 
-    public void setLookingFor(int lookingFor) {
-        put("lookingFor", lookingFor);
+    public String getHeight() {
+        return getString("height");
     }
+    public void setHeight(String height) {
+        put("height", height);
+    }
+
+
+    // ......... //
 
     public String getAboutMe() {
         return getString("aboutMe");
@@ -106,5 +121,25 @@ public class UserInfo extends ParseObject{
 
     public void setInterests(int interests) {
         put("interests", interests);
+    }
+
+
+
+
+
+    public int getInterestedIn() {
+        return getInt("interestedIn");
+    }
+
+    public void setInterestedIn(int interestedIn) {
+        put("interestedIn", interestedIn);
+    }
+
+    public int getLookingFor() {
+        return getInt("lookingFor");
+    }
+
+    public void setLookingFor(int lookingFor) {
+        put("lookingFor", lookingFor);
     }
 }

@@ -58,18 +58,29 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private ImageView sexIcon;
     private  boolean isMale;
 
-    private TextView motto;
     private TextView name;
     private TextView gender;
     private TextView age;
+
+    private TextView motto;
     private TextView location;
-    private TextView interestedIn;
-    private TextView lookingFor;
-    private TextView aboutMe;
-    private TextView relationship;
+    private TextView drinking;
+    private TextView smoking;
+    private TextView religion;
+    private TextView height;
     private TextView bodyType;
+    private TextView relationship;
+    private TextView children;
     private TextView ethnicity;
+    private TextView education;
+    private TextView aboutMe;
+    private TextView perfectSmn;
+    private TextView perfectDate;
     private TextView interests;
+
+    //private TextView interestedIn;
+    //private TextView lookingFor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,19 +134,29 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         edit_feb_btn = (ImageButton) findViewById(R.id.feb_button);
         profilePic = (ImageView) findViewById(R.id.profile_pic);
         smallProfilePic = (RoundedImageView) findViewById(R.id.small_prof_pic);
+        name = (TextView) findViewById(R.id.name_edit);
         sexIcon = (ImageView) findViewById(R.id.sex_icon);
+        age = (TextView) findViewById(R.id.age_edit);
+
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
-        name = (TextView) findViewById(R.id.name_edit);
-        age = (TextView) findViewById(R.id.age_edit);
         location = (TextView) findViewById(R.id.location_edit);
-        interestedIn = (TextView) findViewById(R.id.interested_in_edit);
-        lookingFor = (TextView) findViewById(R.id.looking_for_edit);
-        aboutMe = (TextView) findViewById(R.id.about_me_edit);
-        relationship = (TextView) findViewById(R.id.relationship_edit);
+        drinking = (TextView) findViewById(R.id.drinking_edit);
+        smoking = (TextView) findViewById(R.id.smoking_edit);
+        religion = (TextView) findViewById(R.id.religion_edit);
+        height = (TextView) findViewById(R.id.height_edit);
         bodyType = (TextView) findViewById(R.id.body_type_edit);
+        relationship = (TextView) findViewById(R.id.relationship_edit);
+        children = (TextView) findViewById(R.id.children_edit);
         ethnicity = (TextView) findViewById(R.id.ethnicity_edit);
+        education = (TextView) findViewById(R.id.education_edit);
+        aboutMe = (TextView) findViewById(R.id.about_me_edit);
+        perfectSmn = (TextView) findViewById(R.id.perfect_smn_edit);
+        perfectDate = (TextView) findViewById(R.id.perfect_date_edit);
         interests = (TextView) findViewById(R.id.interests_edit);
+
+//        interestedIn = (TextView) findViewById(R.id.interested_in_edit);
+//        lookingFor = (TextView) findViewById(R.id.looking_for_edit);
     }
 
     private void initVideoWarningMessage() {
@@ -307,8 +328,10 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
     private void getProfileImgPath() {
         // profileImgPath = sharedPreferences.getString("profPic", null);
-        ParseFile pic = user.getParseFile("profileImg");
-        profileImgPath = pic.getUrl();
+        if(user.has("profileImg")) {
+            ParseFile pic = user.getParseFile("profileImg");
+            profileImgPath = pic.getUrl();
+        }
     }
 
     private void populateInfoFromParse() {
@@ -321,18 +344,30 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
                     for (ParseObject parseObject : objects) {
-                        String motto_p = parseObject.getString("motto");
                         String name_p = parseObject.getString("name");
                         int gender_p = parseObject.getInt("gender");
                         String age_p = parseObject.getString("age");
+
+                        String motto_p = parseObject.getString("motto");
                         String location_p = parseObject.getString("location");
-                        int interestedIn_p = parseObject.getInt("interestedIn");
-                        int lookingFor_p = parseObject.getInt("lookingFor");
-                        String aboutMe_p = parseObject.getString("aboutMe");
-                        int relationship_p = parseObject.getInt("relationship");
+                        int drinking_p = parseObject.getInt("drinking");
+                        int smoking_p = parseObject.getInt("smoking");
+                        int religion_p = parseObject.getInt("religion");
+                        String height_p = parseObject.getString("height");
                         int bodyType_p = parseObject.getInt("bodyType");
+                        int relationship_p = parseObject.getInt("relationship");
+                        int children_p = parseObject.getInt("children");
                         int ethnicity_p = parseObject.getInt("ethnicity");
+                        int education_p = parseObject.getInt("education");
+                        String aboutMe_p = parseObject.getString("aboutMe");
+                        String perfect_smn_p = parseObject.getString("perfect_smn");
+                        String perfect_date_p = parseObject.getString("perfect_date");
                         int interests_p = parseObject.getInt("interests");
+//                        int interestedIn_p = parseObject.getInt("interestedIn");
+//                        int lookingFor_p = parseObject.getInt("lookingFor");
+
+                        name.setText(name_p);
+                        age.setText(age_p);
 
                         if(motto_p == null || "".equals(motto_p)) {
                             motto.setText(getResources().getString(R.string.motto));
@@ -340,29 +375,21 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         else {
                             motto.setText(motto_p);
                         }
-                        name.setText(name_p);
-//                        gender.setSelection(gender_p);
-                        // gender.setText(getNameByPosition(getResources().getStringArray(R.array.gender_values), gender_p));
-                        age.setText(age_p);
                         location.setText(location_p);
+                        // drinking, smoking and religion are coming from the Questionary
+                        Log.v("formalchat", "$$$ height = " + height + "   height_p = " + height_p);
+                        if(height_p == null || height_p.equals("")) {
+                            height.setText(getResources().getString(R.string.none_txt));
+                        }
+                        else {
+                            height.setText(height_p);
+                        }
 
-                        if(interestedIn_p == 0) {
-                            interestedIn.setText(getResources().getString(R.string.none_txt));
+                        if(bodyType_p == 0) {
+                            bodyType.setText(getResources().getString(R.string.none_txt));
                         }
                         else {
-                            interestedIn.setText(getNameByPosition(getResources().getStringArray(R.array.interested_in_values), interestedIn_p));
-                        }
-                        if(lookingFor_p == 0) {
-                            lookingFor.setText(getResources().getString(R.string.none_txt));
-                        }
-                        else {
-                            lookingFor.setText(getNameByPosition(getResources().getStringArray(R.array.looking_for_values), lookingFor_p));
-                        }
-                        if(aboutMe_p == null || "".equals(aboutMe_p)) {
-                            aboutMe.setText(getResources().getString(R.string.none_txt));
-                        }
-                        else {
-                            aboutMe.setText(aboutMe_p);
+                            bodyType.setText(getNameByPosition(getResources().getStringArray(R.array.body_type_values), bodyType_p));
                         }
                         if(relationship_p == 0) {
                             relationship.setText(getResources().getString(R.string.none_txt));
@@ -370,22 +397,58 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         else {
                             relationship.setText(getNameByPosition(getResources().getStringArray(R.array.relationship_values), relationship_p));
                         }
-                        if(bodyType_p == 0) {
-                            bodyType.setText(getResources().getString(R.string.none_txt));
+                        if(children_p == 0) {
+                            children.setText(getResources().getString(R.string.none_txt));
                         }
                         else {
-                            bodyType.setText(getNameByPosition(getResources().getStringArray(R.array.body_type_values), bodyType_p));
+                            children.setText(getNameByPosition(getResources().getStringArray(R.array.children_values), relationship_p));
                         }
                         if (ethnicity_p == 0) {
                             ethnicity.setText(getResources().getString(R.string.none_txt));
                         } else {
                             ethnicity.setText(getNameByPosition(getResources().getStringArray(R.array.ethnicity_values), ethnicity_p));
                         }
+                        if (education_p == 0) {
+                            education.setText(getResources().getString(R.string.none_txt));
+                        } else {
+                            education.setText(getNameByPosition(getResources().getStringArray(R.array.education_values), ethnicity_p));
+                        }
+                        if(aboutMe_p == null || "".equals(aboutMe_p)) {
+                            aboutMe.setText(getResources().getString(R.string.introduction_none_txt));
+                        }
+                        else {
+                            aboutMe.setText(aboutMe_p);
+                        }
+                        if(perfect_smn_p == null || "".equals(perfect_smn_p)) {
+                            perfectSmn.setText(getResources().getString(R.string.perfectSmn_none_txt));
+                        }
+                        else {
+                            perfectSmn.setText(perfect_smn_p);
+                        }
+                        if(perfect_date_p == null || "".equals(perfect_date_p)) {
+                            perfectDate.setText(getResources().getString(R.string.perfectDate_none_txt));
+                        }
+                        else {
+                            perfectDate.setText(perfect_date_p);
+                        }
                         if (interests_p == 0) {
                             interests.setText(getResources().getString(R.string.none_txt));
                         } else {
                             interests.setText(getNameByPosition(getResources().getStringArray(R.array.interests_values), interests_p));
                         }
+
+//                        if(interestedIn_p == 0) {
+//                            interestedIn.setText(getResources().getString(R.string.none_txt));
+//                        }
+//                        else {
+//                            interestedIn.setText(getNameByPosition(getResources().getStringArray(R.array.interested_in_values), interestedIn_p));
+//                        }
+//                        if(lookingFor_p == 0) {
+//                            lookingFor.setText(getResources().getString(R.string.none_txt));
+//                        }
+//                        else {
+//                            lookingFor.setText(getNameByPosition(getResources().getStringArray(R.array.looking_for_values), lookingFor_p));
+//                        }
 
                         setUserInfoToExtras();
                         setSexIcon(gender_p);
@@ -414,25 +477,34 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         SharedPreferences sharedInfoPreferences = getSharedPreferences(PREFS_INFO, 0);
         SharedPreferences.Editor editor = sharedInfoPreferences.edit();
 
-        editor.putString("motto", getRightText(motto.getText().toString()));
         editor.putString("name", getRightText(name.getText().toString()));
-
         if(isMale) {
             editor.putString("gender", getNameByPosition(getResources().getStringArray(R.array.gender_values), 0));
         }
         else {
             editor.putString("gender", getNameByPosition(getResources().getStringArray(R.array.gender_values), 1));
         }
-
         editor.putString("age", getRightText(age.getText().toString()));
+
+
+        editor.putString("motto", getRightText(motto.getText().toString()));
         editor.putString("location", getRightText(location.getText().toString()));
-        editor.putString("interestedIn", getRightText(interestedIn.getText().toString()));
-        editor.putString("lookingFor", getRightText(lookingFor.getText().toString()));
-        editor.putString("aboutMe", getRightText(aboutMe.getText().toString()));
-        editor.putString("relationship", getRightText(relationship.getText().toString()));
+        editor.putString("drinking", getRightText(drinking.getText().toString()));
+        editor.putString("smoking", getRightText(smoking.getText().toString()));
+        editor.putString("religion", getRightText(religion.getText().toString()));
+        editor.putString("height", getRightText(height.getText().toString()));
         editor.putString("bodyType", getRightText(bodyType.getText().toString()));
+        editor.putString("relationship", getRightText(relationship.getText().toString()));
+        editor.putString("children", getRightText(children.getText().toString()));
         editor.putString("ethnicity", getRightText(ethnicity.getText().toString()));
+        editor.putString("education", getRightText(education.getText().toString()));
+        editor.putString("aboutMe", getRightText(aboutMe.getText().toString()));
+        editor.putString("perfectSmn", getRightText(perfectSmn.getText().toString()));
+        editor.putString("perfectDate", getRightText(perfectDate.getText().toString()));
         editor.putString("interests", getRightText(interests.getText().toString()));
+
+//        editor.putString("interestedIn", getRightText(interestedIn.getText().toString()));
+//        editor.putString("lookingFor", getRightText(lookingFor.getText().toString()));
         editor.commit();
     }
 

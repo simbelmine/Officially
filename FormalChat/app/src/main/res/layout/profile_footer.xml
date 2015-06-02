@@ -148,7 +148,7 @@
             android:gravity="right"
             android:layout_toRightOf="@+id/about_me_lbl"
             android:textColor="@color/items"
-            android:text="@string/multy_txt"/>
+            android:text="@string/multi_txt"/>
     </RelativeLayout>
 
     <!-- Divider -->

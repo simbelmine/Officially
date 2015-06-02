@@ -205,7 +205,7 @@ public class MainQuestionsActivity extends Activity {
         userInfo.setInterestedIn(interestedIn_position);
         //userInfo.setLookingFor(looking_for.getSelectedItemPosition());
         userInfo.setLookingFor(lookingFor_position);
-        if(!getResources().getString(R.string.multy_txt).equals(about_me.getText().toString())) {
+        if(!getResources().getString(R.string.multi_txt).equals(about_me.getText().toString())) {
             userInfo.setAboutMe(about_me.getText().toString());
         }
 
@@ -241,7 +241,7 @@ public class MainQuestionsActivity extends Activity {
         parseObject.put("interestedIn", interestedIn_position);
         //parseObject.put("lookingFor", looking_for.getSelectedItemPosition());
         parseObject.put("lookingFor", lookingFor_position);
-        if(!getResources().getString(R.string.multy_txt).equals(about_me.getText().toString())) {
+        if(!getResources().getString(R.string.multi_txt).equals(about_me.getText().toString())) {
             parseObject.put("aboutMe", about_me.getText().toString());
         }
 

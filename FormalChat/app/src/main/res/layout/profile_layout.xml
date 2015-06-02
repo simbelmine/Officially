@@ -74,23 +74,23 @@
                         android:id="@+id/drinking_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/icons_margin"
-                        android:layout_marginBottom="@dimen/icons_margin"
+                        android:layout_marginTop="@dimen/icons_margin_left"
+                        android:layout_marginBottom="@dimen/icons_margin_left"
                         android:src="@drawable/drinking_g"/>
                     <ImageView
                         android:id="@+id/smoking_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/icons_margin"
-                        android:layout_marginBottom="@dimen/icons_margin"
+                        android:layout_marginTop="@dimen/icons_margin_left"
+                        android:layout_marginBottom="@dimen/icons_margin_left"
                         android:layout_toRightOf="@+id/drinking_icon"
                         android:src="@drawable/smoking_g"/>
                     <ImageView
                         android:id="@+id/religion_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/icons_margin"
-                        android:layout_marginBottom="@dimen/icons_margin"
+                        android:layout_marginTop="@dimen/icons_margin_left"
+                        android:layout_marginBottom="@dimen/icons_margin_left"
                         android:layout_toRightOf="@id/smoking_icon"
                         android:src="@drawable/religion_g"/>
                 </RelativeLayout>

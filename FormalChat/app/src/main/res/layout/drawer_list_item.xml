@@ -9,8 +9,7 @@
         android:id="@+id/drawer_list_icon"
         android:layout_width="@dimen/list_icon_size"
         android:layout_height="@dimen/list_icon_size"
-        android:layout_marginLeft="@dimen/icons_margin"
-        android:src="@drawable/ic_launcher"
+        android:layout_marginLeft="@dimen/icons_margin_left"
         />
     <TextView
         android:id="@+id/drawertxt"

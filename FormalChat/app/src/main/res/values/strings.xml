@@ -16,16 +16,23 @@
     <string name="location_lbl">Now I\'m in...</string>
     <string name="interested_in_lbl">I\'m interested in...</string>
     <string name="looking_for_lbl">and I\'m looking for...</string>
-    <string name="about_me_lbl">About me:</string>
-    <string name="relationship_lbl">I\'m...</string>
+    <string name="about_me_lbl">Introduction</string>
+    <string name="perfect_smn_lbl">The Perfect Someone</string>
+    <string name="perfect_date_lbl">The Perfect Date</string>
+    <string name="relationship_lbl">Relationship Status</string>
+    <string name="children_lbl">Children</string>
+    <string name="education_lbl">Education</string>
     <string name="body_type_lbl">I describe my body as...</string>
     <string name="height_lbl">My height is...</string>
-    <string name="ethnicity_lbl">My ethnicity is...</string>
-    <string name="interests_lbl">My hobbies are...</string>
+    <string name="ethnicity_lbl">Ethnicity</string>
+    <string name="interests_lbl">Hobbies</string>
     <string name="choice_txt">Click to choose...</string>
     <string name="change_txt">Click to change...</string>
     <string name="none_txt">- - -</string>
-    <string name="multy_txt">Click to start writing...</string>
+    <string name="multi_txt">Click to start writing...</string>
+    <string name="introduction_none_txt">Fill your introduction and improve your matches.</string>
+    <string name="perfectSmn_none_txt">Describe your perfect someone and improve your matches.</string>
+    <string name="perfectDate_none_txt">Describe your perfect date and improve your matches.</string>
     <string name="about_me_done">Done</string>
     <string name="user_info_save">Save</string>
 
@@ -107,6 +114,18 @@
         <item>Bars</item>
         <item>Dancing</item>
         <item>Games</item>
+    </string-array>
+    <string-array name="children_values">
+        <item>No</item>
+        <item>Yes, at home with me</item>
+        <item>Yes, but not living with me</item>
+    </string-array>
+    <string-array name="education_values">
+        <item>No degree</item>
+        <item>High school graduate</item>
+        <item>Attended college</item>
+        <item>College graduate</item>
+        <item>Advanced degree</item>
     </string-array>
 
 </resources>
