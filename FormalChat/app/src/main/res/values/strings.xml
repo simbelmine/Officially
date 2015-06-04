@@ -10,9 +10,9 @@
     <string name="edit_profile">Edit</string>
 
     <string name="motto">What\'s the phrase you live by?</string>
-    <string name="name_lbl">My name is...</string>
+    <string name="name_lbl">Name</string>
     <string name="gender_lbl">I define myself as...</string>
-    <string name="age_lbl">My age is...</string>
+    <string name="age_lbl">Age</string>
     <string name="location_lbl">Now I\'m in...</string>
     <string name="interested_in_lbl">I\'m interested in...</string>
     <string name="looking_for_lbl">and I\'m looking for...</string>

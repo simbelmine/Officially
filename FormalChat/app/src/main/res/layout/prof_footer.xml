@@ -15,6 +15,7 @@
         android:src="@drawable/divider"/>
     <!-- /Divider -->
 
+    <!-- ##########   Motto    ########### -->
     <TextView
         android:id="@+id/motto"
         android:layout_width="match_parent"
@@ -295,7 +296,7 @@
             android:id="@+id/about_me_edit"
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height_multi"
-            android:gravity="center"
+            android:gravity="left"
             android:layout_below="@+id/about_me_lbl"
             android:textColor="@color/items"
             android:text="@string/multi_txt"/>
@@ -317,7 +318,7 @@
             android:id="@+id/perfect_smn_edit"
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height_multi"
-            android:gravity="center"
+            android:gravity="left"
             android:layout_below="@+id/perfect_smn_lbl"
             android:textColor="@color/items"
             android:text="@string/multi_txt"/>
@@ -339,7 +340,7 @@
             android:id="@+id/perfect_date_edit"
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height_multi"
-            android:gravity="center"
+            android:gravity="left"
             android:layout_below="@+id/perfect_date_lbl"
             android:textColor="@color/items"
             android:text="@string/multi_txt"/>

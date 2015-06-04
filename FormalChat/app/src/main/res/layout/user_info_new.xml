@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+        <!-- Divider -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_info_height"
+            android:layout_marginBottom="@dimen/divider_info_margin"
+            android:layout_marginLeft="@dimen/divider_info_margin"
+            android:layout_marginRight="@dimen/divider_info_margin"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/divider"/>
+        <!-- /Divider -->
+
+        <!-- ##########   Motto    ########### -->
+        <TextView
+            android:id="@+id/motto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/dotted_line"
+            android:textColor="@color/items"
+            android:textStyle="italic"
+            android:layout_margin="@dimen/motto_margin"
+            android:text="@string/motto"/>
+
+        <!-- Divider -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_info_height"
+            android:layout_margin="@dimen/divider_info_margin"
+            android:src="@drawable/divider"/>
+        <!-- /Divider -->
+
+
+        <!-- ##########   Drink / Smoke / Religion    ########### -->
+        <RelativeLayout
+            android:layout_height="@dimen/icons_size"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:gravity="left"
+            android:layout_marginLeft="@dimen/icons_margin_left"
+            android:layout_marginBottom="@dimen/icons_margin_bottom"
+            >
+            <ImageView
+                android:id="@+id/drinking_icon"
+                android:layout_width="@dimen/icons_size"
+                android:layout_height="match_parent"
+                android:src="@drawable/drinking_g"/>
+            <TextView
+                android:id="@+id/drinking_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/drinking_icon"
+                android:paddingLeft="@dimen/label_padding"
+                android:gravity="left"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft ="@dimen/dashed_line_margin_l"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_height="@dimen/icons_size"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:gravity="left"
+            android:layout_marginLeft="@dimen/icons_margin_left"
+            android:layout_marginBottom="@dimen/icons_margin_bottom">
+            <ImageView
+                android:id="@+id/smoking_icon"
+                android:layout_width="@dimen/icons_size"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/drinking_icon"
+                android:src="@drawable/smoking_g"/>
+            <TextView
+                android:id="@+id/smoking_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/smoking_icon"
+                android:paddingLeft="@dimen/label_padding"
+                android:gravity="left"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft ="@dimen/dashed_line_margin_l"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_height="@dimen/icons_size"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:gravity="left"
+            android:layout_marginLeft="@dimen/icons_margin_left"
+            android:layout_marginBottom="@dimen/icons_margin_bottom">
+            <ImageView
+                android:id="@+id/religion_icon"
+                android:layout_width="@dimen/icons_size"
+                android:layout_height="match_parent"
+                android:src="@drawable/religion_g"/>
+            <TextView
+                android:id="@+id/religion_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/religion_icon"
+                android:paddingLeft="@dimen/label_padding"
+                android:gravity="left"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft ="@dimen/dashed_line_margin_l"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_height="@dimen/icons_size"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:gravity="left"
+            android:layout_marginLeft="@dimen/icons_margin_left"
+            android:layout_marginBottom="@dimen/icons_margin_bottom">
+            <ImageView
+                android:id="@+id/height_icon"
+                android:layout_width="@dimen/icons_size"
+                android:layout_height="match_parent"
+                android:src="@drawable/meter_g"/>
+            <TextView
+                android:id="@+id/height_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/height_icon"
+                android:paddingLeft="@dimen/label_padding"
+                android:gravity="left"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft ="@dimen/dashed_line_margin_l"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_height="@dimen/icons_size"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:gravity="left"
+            android:layout_marginLeft="@dimen/icons_margin_left"
+            android:layout_marginBottom="@dimen/icons_margin_bottom">
+            <ImageView
+                android:id="@+id/body_icon"
+                android:layout_width="@dimen/icons_size"
+                android:layout_height="match_parent"
+                android:src="@drawable/body_g"/>
+            <TextView
+                android:id="@+id/body_type_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/body_icon"
+                android:paddingLeft="@dimen/label_padding"
+                android:gravity="left"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft ="@dimen/dashed_line_margin_l"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+
+        <!-- Divider -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_info_height"
+            android:layout_margin="@dimen/divider_info_margin"
+            android:src="@drawable/divider"/>
+        <!-- /Divider -->
+
+        <!-- ##########   Name    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/label_height"
+            android:layout_marginBottom="@dimen/label_margin_bottom"
+            >
+            <TextView
+                android:id="@+id/name_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/label_padding"
+                android:text="@string/name_lbl"
+                android:textColor="@color/action_bar"
+                />
+            <TextView
+                android:id="@+id/name_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/name_lbl"
+                android:gravity="right"
+                android:paddingRight="@dimen/label_padding"
+                android:textColor="@color/items"
+                android:textStyle="italic"
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+
+        <!-- ##########   Age    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/label_height"
+            android:layout_marginBottom="@dimen/label_margin_bottom">
+            <TextView
+                android:id="@+id/age_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/label_padding"
+                android:textColor="@color/action_bar"
+                android:text="@string/age_lbl"
+                />
+            <TextView
+                android:id="@+id/age_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/age_lbl"
+                android:paddingRight="@dimen/label_padding"
+                android:gravity="right"
+                android:textColor="@color/items"
+                />
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+
+        <!-- ##########   Relationship    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/label_height"
+            android:layout_marginBottom="@dimen/label_margin_bottom">
+            <TextView
+                android:id="@+id/relationship_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/relationship_lbl"
+                android:paddingLeft="@dimen/label_padding"
+                android:textColor="@color/action_bar" />
+            <TextView
+                android:id="@+id/relationship_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/relationship_lbl"
+                android:layout_marginBottom="@dimen/label_margin_bottom"
+                android:paddingRight="@dimen/label_padding"
+                android:gravity="right"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+
+        <!-- ##########   Children    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/label_height"
+            android:layout_marginBottom="@dimen/label_margin_bottom">
+            <TextView
+                android:id="@+id/children_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/children_lbl"
+                android:paddingLeft="@dimen/label_padding"
+                android:textColor="@color/action_bar" />
+            <TextView
+                android:id="@+id/children_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/children_lbl"
+                android:layout_marginBottom="@dimen/label_margin_bottom"
+                android:paddingRight="@dimen/label_padding"
+                android:gravity="right"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+
+        <!-- ##########   Ethnicity    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/label_height"
+            android:layout_marginBottom="@dimen/label_margin_bottom">
+            <TextView
+                android:id="@+id/ethnicity_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/ethnicity_lbl"
+                android:paddingLeft="@dimen/label_padding"
+                android:textColor="@color/action_bar" />
+            <TextView
+                android:id="@+id/ethnicity_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/ethnicity_lbl"
+                android:layout_marginBottom="@dimen/label_margin_bottom"
+                android:paddingRight="@dimen/label_padding"
+                android:gravity="right"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+
+        <!-- ##########   Education    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/label_height"
+            android:layout_marginBottom="@dimen/label_margin_bottom"
+            >
+            <TextView
+                android:id="@+id/education_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/education_lbl"
+                android:paddingLeft="@dimen/label_padding"
+                android:textColor="@color/action_bar" />
+            <TextView
+                android:id="@+id/education_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/education_lbl"
+                android:layout_marginBottom="@dimen/label_margin_bottom"
+                android:paddingRight="@dimen/label_padding"
+                android:gravity="right"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
+        </RelativeLayout>
+
+        <!-- ##########   Introduction    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/label_padding"
+            android:layout_marginBottom="@dimen/label_margin_bottom">
+            <TextView
+                android:id="@+id/about_me_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/label_height"
+                android:textColor="@color/action_bar"
+                android:text="@string/about_me_lbl" />
+            <TextView
+                android:id="@+id/about_me_edit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/label_height_multi"
+                android:gravity="left"
+                android:layout_below="@+id/about_me_lbl"
+                android:background="@drawable/dotted_line"
+                android:textColor="@color/items"
+                android:text="@string/introduction_none_txt"/>
+        </RelativeLayout>
+
+        <!-- ##########   The Perfect Someone    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/label_padding"
+            android:layout_marginBottom="@dimen/label_margin_bottom">
+            <TextView
+                android:id="@+id/perfect_smn_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/label_height"
+                android:textColor="@color/action_bar"
+                android:text="@string/perfect_smn_lbl" />
+            <TextView
+                android:id="@+id/perfect_smn_edit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/label_height_multi"
+                android:gravity="left"
+                android:layout_below="@+id/perfect_smn_lbl"
+                android:background="@drawable/dotted_line"
+                android:textColor="@color/items"
+                android:text="@string/multi_txt"/>
+        </RelativeLayout>
+
+        <!-- ##########   The Perfect Date    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/label_padding"
+            android:layout_marginBottom="@dimen/label_margin_bottom">
+            <TextView
+                android:id="@+id/perfect_date_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/label_height"
+                android:textColor="@color/action_bar"
+                android:text="@string/perfect_date_lbl" />
+            <TextView
+                android:id="@+id/perfect_date_edit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/label_height_multi"
+                android:gravity="left"
+                android:layout_below="@+id/perfect_date_lbl"
+                android:background="@drawable/dotted_line"
+                android:textColor="@color/items"
+                android:text="@string/multi_txt"/>
+        </RelativeLayout>
+
+        <!-- ##########   Hobbies    ########### -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/label_padding"
+            android:layout_marginBottom="@dimen/label_margin_bottom">
+            <TextView
+                android:id="@+id/interests_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/label_height"
+                android:text="@string/interests_lbl"
+                android:textColor="@color/action_bar" />
+            <TextView
+                android:id="@+id/interests_edit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/label_height_multi"
+                android:layout_below="@+id/interests_lbl"
+                android:layout_marginBottom="@dimen/label_margin_bottom"
+                android:paddingRight="@dimen/label_padding"
+                android:gravity="left"
+                android:background="@drawable/dotted_line"
+                android:textColor="@color/items"
+                android:text="@string/choice_txt"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|center_vertical">
+            <Button
+                android:id="@+id/save_btn"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/aboutMe_btn_margin"
+                android:layout_marginBottom="@dimen/aboutMe_btn_margin"
+                android:text="@string/user_info_save"
+                android:textColor="@color/white"
+                android:background="@color/items"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+</ScrollView>
