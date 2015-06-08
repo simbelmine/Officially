@@ -306,61 +306,66 @@ public class UserInfoActivity extends Activity {
             case resultCode_motto:
                 if(!isExtraEmpty(EXTRA_MOTTO)) {
                     ArrayList<String> motto_txt = data.getStringArrayListExtra(EXTRA_MOTTO);
-                    motto.setText(motto_txt.get(0).toString());
+                    if(motto_txt != null) {
+                        motto.setText(motto_txt.get(0).toString());
+                    }
                 }
                 break;
             case resultCode_drinking:
-                drinking_position = data.getIntExtra("drinking_position", 11);
+                drinking_position = data.getIntExtra("drinking_position", 0);
                 String value_d = data.getStringExtra("drinking_value");
                 drinking.setText(value_d);
                 editor.putInt("drinking", drinking_position);
                 break;
             case resultCode_smoking:
-                smoking_position = data.getIntExtra("smoking_position", 11);
+                smoking_position = data.getIntExtra("smoking_position", 0);
                 String value_s = data.getStringExtra("smoking_value");
                 smoking.setText(value_s);
                 editor.putInt("smoking", smoking_position);
                 break;
             case resultCode_religion:
-                religion_position = data.getIntExtra("religion_position", 11);
+                religion_position = data.getIntExtra("religion_position", 0);
                 String value_re = data.getStringExtra("religion_value");
                 religion.setText(value_re);
                 editor.putInt("religion", religion_position);
                 break;
             case resultCode_bodyType:
-                bodyType_position = data.getIntExtra("bodyType_position", 11);
+                bodyType_position = data.getIntExtra("bodyType_position", 0);
                 String value_bt = data.getStringExtra("bodyType_value");
                 body_type.setText(value_bt);
                 editor.putInt("bodyType", bodyType_position);
                 break;
             case resultCode_relationship:
-                relationship_position = data.getIntExtra("relationship_position", 11);
+                relationship_position = data.getIntExtra("relationship_position", 0);
                 String value_r = data.getStringExtra("relationship_value");
                 relationship.setText(value_r);
                 editor.putInt("relationship", relationship_position);
                 break;
             case resultCode_children:
-                children_position = data.getIntExtra("children_position", 11);
+                children_position = data.getIntExtra("children_position", 0);
                 String value_c = data.getStringExtra("children_value");
                 children.setText(value_c);
                 editor.putInt("children", children_position);
                 break;
             case resultCode_ethnicity:
-                ethnicity_position = data.getIntExtra("ethnicity_position", 11);
+                ethnicity_position = data.getIntExtra("ethnicity_position", 0);
                 String value_e = data.getStringExtra("ethnicity_value");
                 ethnicity.setText(value_e);
                 editor.putInt("ethnicity", ethnicity_position);
                 break;
             case resultCode_education:
-                education_position = data.getIntExtra("education_position", 11);
+                education_position = data.getIntExtra("education_position", 0);
                 String value_ed = data.getStringExtra("education_value");
                 education.setText(value_ed);
                 editor.putInt("ethnicity", education_position);
                 break;
             case resultCode_aboutMe:
                 if(!isExtraEmpty(EXTRA_ABOUT_ME)) {
+                    Log.v("formalchat", data + " : " + data.getStringArrayListExtra(EXTRA_ABOUT_ME));
                     ArrayList<String> aboutMe_txt = data.getStringArrayListExtra(EXTRA_ABOUT_ME);
-                    about_me.setText(aboutMe_txt.get(0).toString());
+                    if(aboutMe_txt != null) {
+                        about_me.setText(aboutMe_txt.get(0).toString());
+                    }
                 }
                 break;
             case resultCode_perfectSmn:
@@ -372,24 +377,26 @@ public class UserInfoActivity extends Activity {
             case resultCode_perfectDate:
                 if(!isExtraEmpty(EXTRA_PERFECT_DATE)) {
                     ArrayList<String> perfectSmn_txt = data.getStringArrayListExtra(EXTRA_PERFECT_DATE);
-                    perfectDate.setText(perfectSmn_txt.get(0).toString());
+                    if(perfectSmn_txt != null) {
+                        perfectDate.setText(perfectSmn_txt.get(0).toString());
+                    }
                 }
                 break;
             case resultCode_interests:
-                interests_position = data.getIntExtra("interests_position", 11);
+                interests_position = data.getIntExtra("interests_position", 0);
                 String value_i = data.getStringExtra("interests_value");
                 interests.setText(value_i);
                 editor.putInt("interests", interests_position);
                 break;
 
 //            case resultCode_interestedIn:
-//                interestedIn_position = data.getIntExtra("interestedIn_position", 11);
+//                interestedIn_position = data.getIntExtra("interestedIn_position", 0);
 //                String value_ii = data.getStringExtra("interestedIn_value");
 //                interested_in.setText(value_ii);
 //                editor.putInt("interestedIn", interestedIn_position);
 //                break;
 //            case resultCode_lookingFor:
-//                lookingFor_position = data.getIntExtra("lookingFor_position", 11);
+//                lookingFor_position = data.getIntExtra("lookingFor_position", 0);
 //                String value_lf = data.getStringExtra("lookingFor_value");
 //                looking_for.setText(value_lf);
 //                editor.putInt("lookingFor", lookingFor_position);
@@ -444,6 +451,9 @@ public class UserInfoActivity extends Activity {
         else {
             parseObject.put("aboutMe", about_me.getText().toString());
         }
+        parseObject.put("perfectSmn", perfectSmn.getText().toString());
+        parseObject.put("perfectDate", perfectDate.getText().toString());
+
         parseObject.put("name", name.getText().toString());
         parseObject.put("age", age.getText().toString());
 

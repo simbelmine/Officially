@@ -86,10 +86,24 @@ public class UserInfo extends ParseObject{
     public String getAboutMe() {
         return getString("aboutMe");
     }
-
     public void setAboutMe(String aboutMe) {
         put("aboutMe", aboutMe);
     }
+
+    public String getPerfectSmn() {
+        return getString("perfectSmn");
+    }
+    public void setPerfectSmn(String perfectSmn) {
+        put("perfectSmn", perfectSmn);
+    }
+
+    public String getPerfectDate() {
+        return getString("perfectDate");
+    }
+    public void setPerfectDate(String perfectDate) {
+        put("perfectDate", perfectDate);
+    }
+
 
     public int getRelationship() {
         return getInt("relationship");

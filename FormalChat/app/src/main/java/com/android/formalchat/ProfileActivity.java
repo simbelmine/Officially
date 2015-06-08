@@ -360,8 +360,8 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         int ethnicity_p = parseObject.getInt("ethnicity");
                         int education_p = parseObject.getInt("education");
                         String aboutMe_p = parseObject.getString("aboutMe");
-                        String perfect_smn_p = parseObject.getString("perfect_smn");
-                        String perfect_date_p = parseObject.getString("perfect_date");
+                        String perfect_smn_p = parseObject.getString("perfectSmn");
+                        String perfect_date_p = parseObject.getString("perfectDate");
                         int interests_p = parseObject.getInt("interests");
 //                        int interestedIn_p = parseObject.getInt("interestedIn");
 //                        int lookingFor_p = parseObject.getInt("lookingFor");

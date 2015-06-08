@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -101,16 +102,16 @@ public class DialogActivtyMultiText extends Activity {
     }
 
     private String getExtraName() {
-        if(title.equals(getResources().getString(R.string.motto))) {
+        if((title.toString()).equals(getResources().getString(R.string.motto))) {
             return EXTRA_MOTTO;
         }
-        else if(title.equals(getResources().getString(R.string.about_me_lbl))) {
+        else if((title.toString()).equals(getResources().getString(R.string.about_me_lbl))) {
             return EXTRA_ABOUT_ME;
         }
-        else if(title.equals(getResources().getString(R.string.perfect_smn_lbl))) {
+        else if((title.toString()).equals(getResources().getString(R.string.perfect_smn_lbl))) {
             return EXTRA_PERFECT_SMN;
         }
-        else if(title.equals(getResources().getString(R.string.perfect_date_lbl))) {
+        else if((title.toString()).equals(getResources().getString(R.string.perfect_date_lbl))) {
             return EXTRA_PERFECT_DATE;
         }
 
