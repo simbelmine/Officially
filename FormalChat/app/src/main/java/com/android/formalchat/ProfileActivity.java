@@ -377,7 +377,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         }
                         location.setText(location_p);
                         // drinking, smoking and religion are coming from the Questionary
-                        Log.v("formalchat", "$$$ height = " + height + "   height_p = " + height_p);
                         if(height_p == null || height_p.equals("")) {
                             height.setText(getResources().getString(R.string.none_txt));
                         }

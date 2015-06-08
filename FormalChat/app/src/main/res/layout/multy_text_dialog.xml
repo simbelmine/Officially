@@ -10,7 +10,8 @@
         android:layout_height="@dimen/about_me_height"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
-        android:maxLength="140"/>
+        android:maxLength="140"
+        />
     <Button
         android:id="@+id/done"
         android:layout_width="match_parent"
@@ -18,5 +19,5 @@
         android:layout_margin="@dimen/aboutMe_btn_margin"
         android:text="@string/about_me_done"
         android:background="@drawable/rounded_btns"
-    />
+        />
 </LinearLayout>

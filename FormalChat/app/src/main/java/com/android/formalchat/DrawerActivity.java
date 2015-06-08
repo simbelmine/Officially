@@ -102,14 +102,16 @@ public class DrawerActivity extends FragmentActivity {
 
     private void setProfileName(final ParseUser user) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserInfo");
-        query.whereEqualTo("loginName", user.getUsername());
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                ParseObject userInfo = parseObjects.get(0);
-                profileName.setText(userInfo.get("name").toString());
-            }
-        });
+        if(user.has("loginName") && user.getUsername() != null ) {
+            query.whereEqualTo("loginName", user.getUsername());
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, ParseException e) {
+                    ParseObject userInfo = parseObjects.get(0);
+                    profileName.setText(userInfo.get("name").toString());
+                }
+            });
+        }
     }
 
     private void setProfileEmail(ParseUser user) {

@@ -51,20 +51,14 @@
         <activity   android:name=".FullImageActivity"/>
         <activity   android:name=".QuestionaryActivity"
                     android:noHistory="true"/>
-        <activity   android:name=".DialogActivityInterestedIn"
-                    android:theme="@style/QuestionsDialogTheme"/>
-        <activity   android:name=".DialogActivityLookingFor"
-                    android:theme="@style/QuestionsDialogTheme"/>
+
+
         <activity   android:name=".DialogActivtyMultiText"
                     android:theme="@style/QuestionsDialogTheme"/>
-        <activity   android:name=".DialogActivityRelationship"
+        <activity   android:name=".DialogActivity"
                     android:theme="@style/QuestionsDialogTheme"/>
-        <activity   android:name=".DialogActivityBodyType"
-                    android:theme="@style/QuestionsDialogTheme"/>
-        <activity   android:name=".DialogActivityEthnicity"
-                    android:theme="@style/QuestionsDialogTheme"/>
-        <activity   android:name=".DialogActivityInterests"
-                    android:theme="@style/QuestionsDialogTheme"/>
+
+
         <activity   android:name=".CropActivity"
                     android:theme="@style/QuestionsDialogTheme"/>
         <activity   android:name=".CropImageActivity"

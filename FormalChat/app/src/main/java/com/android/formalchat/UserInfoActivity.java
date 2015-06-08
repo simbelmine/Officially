@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +19,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -108,116 +111,194 @@ public class UserInfoActivity extends Activity {
         motto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mottoText = motto.getText().toString();
-                startDialogActivity(resultCode_motto, DialogActivtyMultiText.class, EXTRA_MOTTO, mottoText);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.motto));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title", title);
+                extras.put("dialog_result_code", resultCode_motto);
+                extras.put("dialog_multi_txt", motto.getText().toString());
+                startDialogActivity(resultCode_motto, extras);
             }
         });
         drinking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_drinking, DialogActivityRelationship.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.drinking_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title",title);
+                extras.put("dialog_result_code", resultCode_drinking);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.a_your_drinking));
+
+                startDialogActivity(resultCode_drinking, extras);
             }
         });
         smoking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_smoking, DialogActivityRelationship.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.smoking_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title",title);
+                extras.put("dialog_result_code", resultCode_smoking);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.a_your_smoking));
+
+                startDialogActivity(resultCode_smoking, extras);
             }
         });
         religion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_religion, DialogActivityRelationship.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.religion_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title",title);
+                extras.put("dialog_result_code", resultCode_religion);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.a_your_religion));
+
+                startDialogActivity(resultCode_religion, extras);
             }
         });
         height.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_height, DialogActivityRelationship.class, null, null);
+                ///**************
+               // TO DO: like spinner with numbers or something like that
+                //****************
             }
         });
         body_type.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_bodyType, DialogActivityBodyType.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.body_type_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title",title);
+                extras.put("dialog_result_code", resultCode_bodyType);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.body_type_values));
+
+                startDialogActivity(resultCode_bodyType, extras);
             }
         });
         relationship.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_relationship, DialogActivityRelationship.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.relationship_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title", title);
+                extras.put("dialog_result_code", resultCode_relationship);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.relationship_values));
+
+                startDialogActivity(resultCode_relationship, extras);
             }
         });
         children.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_children, DialogActivityRelationship.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.children_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title", title);
+                extras.put("dialog_result_code", resultCode_children);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.children_values));
+
+                startDialogActivity(resultCode_children, extras);
             }
         });
         ethnicity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_ethnicity, DialogActivityEthnicity.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.ethnicity_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title",title);
+                extras.put("dialog_result_code", resultCode_ethnicity);
+                extras.put("dialog_layout_id", R.layout.choice_dialog);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.ethnicity_values));
+
+                startDialogActivity(resultCode_ethnicity, extras);
             }
         });
         education.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_education, DialogActivityEthnicity.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.education_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title",title);
+                extras.put("dialog_result_code", resultCode_education);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.education_values));
+
+                startDialogActivity(resultCode_education, extras);
             }
         });
         about_me.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String aboutMeTxt = about_me.getText().toString();
-                startDialogActivity(resultCode_aboutMe, DialogActivtyMultiText.class, EXTRA_ABOUT_ME, aboutMeTxt);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.about_me_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title", title);
+                extras.put("dialog_result_code", resultCode_aboutMe);
+                extras.put("dialog_multi_txt", about_me.getText().toString());
+                startDialogActivity(resultCode_aboutMe, extras);
             }
         });
         perfectSmn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String perfectSmnTxt = perfectSmn.getText().toString();
-                startDialogActivity(resultCode_perfectSmn, DialogActivtyMultiText.class, EXTRA_PERFECT_SMN, perfectSmnTxt);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.perfect_smn_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title", title);
+                extras.put("dialog_result_code", resultCode_perfectSmn);
+                extras.put("dialog_multi_txt", perfectSmn.getText().toString());
+                startDialogActivity(resultCode_perfectSmn, extras);
             }
         });
         perfectDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String perfectDateTxt = perfectDate.getText().toString();
-                startDialogActivity(resultCode_perfectDate, DialogActivtyMultiText.class, EXTRA_PERFECT_DATE, perfectDateTxt);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.perfect_date_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title", title);
+                extras.put("dialog_result_code", resultCode_perfectDate);
+                extras.put("dialog_multi_txt", perfectDate.getText().toString());
+                startDialogActivity(resultCode_perfectDate, extras);
             }
         });
         interests.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_interests, DialogActivityInterests.class, null, null);
+                HashMap<String, Object> extras = new HashMap<>();
+                SpannableString title = new SpannableString(getResources().getString(R.string.interests_lbl));
+                title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
+                extras.put("dialog_title", title);
+                extras.put("dialog_result_code", resultCode_interests);
+                extras.put("dialog_list_items", getResources().getStringArray(R.array.interests_values));
+
+                startDialogActivity(resultCode_interests, extras);
             }
         });
-
-
-//        interested_in.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startDialogActivity(resultCode_interestedIn, DialogActivityInterestedIn.class, null, null);
-//            }
-//        });
-//        looking_for.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startDialogActivity(resultCode_lookingFor, DialogActivityLookingFor.class, null, null);
-//            }
-//        });
     }
 
-    private void startDialogActivity(int resultCode, Class className, String extraName, String extraText) {
-        Intent intent = new Intent(getApplicationContext(), className);
-        if(extraText != null) {
-            ArrayList<String> extrasList = new ArrayList<>();
-            extrasList.add(extraText);
-            intent.putStringArrayListExtra(extraName, extrasList);
+    private void startDialogActivity(int resultCode, HashMap<String, Object> extras) {
+        Intent intent;
+        if(resultCode == resultCode_motto || resultCode == resultCode_aboutMe ||
+                resultCode == resultCode_perfectSmn || resultCode == resultCode_perfectDate) {
+            intent = new Intent(getApplicationContext(), DialogActivtyMultiText.class);
         }
+        else {
+            intent = new Intent(getApplicationContext(), DialogActivity.class);
+        }
+
+        intent.putExtra("extras", extras);
+
         startActivityForResult(intent, resultCode);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -357,7 +438,7 @@ public class UserInfoActivity extends Activity {
         }
 
         parseObject.put("motto", motto.getText().toString());
-        if(getResources().getString(R.string.change_txt).equals(about_me.getText().toString())) {
+        if(getResources().getString(R.string.introduction_none_txt).equals(about_me.getText().toString())) {
             parseObject.put("aboutMe", "");
         }
         else {

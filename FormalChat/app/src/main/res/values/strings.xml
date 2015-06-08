@@ -26,6 +26,9 @@
     <string name="height_lbl">My height is...</string>
     <string name="ethnicity_lbl">Ethnicity</string>
     <string name="interests_lbl">Hobbies</string>
+    <string name="drinking_lbl">Drinking</string>
+    <string name="smoking_lbl">Smoking</string>
+    <string name="religion_lbl">Religion</string>
     <string name="choice_txt">Click to choose...</string>
     <string name="change_txt">Click to change...</string>
     <string name="none_txt">- - -</string>
