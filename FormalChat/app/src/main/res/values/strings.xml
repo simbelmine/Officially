@@ -70,6 +70,7 @@
         <item>Relationship</item>
     </string-array>
     <string-array name="relationship_values">
+        <item>None</item>
         <item>In a Relationship</item>
         <item>Married</item>
         <item>It\'s Complicated</item>
@@ -79,6 +80,7 @@
         <item>In a Civil Union</item>
     </string-array>
     <string-array name="body_type_values">
+        <item>None</item>
         <item>Slim</item>
         <item>Petite</item>
         <item>Slender</item>
@@ -119,11 +121,13 @@
         <item>Games</item>
     </string-array>
     <string-array name="children_values">
+        <item>None</item>
         <item>No</item>
         <item>Yes, at home with me</item>
         <item>Yes, but not living with me</item>
     </string-array>
     <string-array name="education_values">
+        <item>None</item>
         <item>No degree</item>
         <item>High school graduate</item>
         <item>Attended college</item>

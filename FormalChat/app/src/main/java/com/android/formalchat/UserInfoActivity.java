@@ -40,7 +40,7 @@ public class UserInfoActivity extends Activity {
     private static final int resultCode_perfectSmn = 111;
     private static final int resultCode_perfectDate = 112;
     private static final int resultCode_interests = 113;
-//    private static final int resultCode_interestedIn = 101;
+    //    private static final int resultCode_interestedIn = 101;
 //    private static final int resultCode_lookingFor = 102;
     private static final String EXTRA_MOTTO = "mottoText";
     private static final String EXTRA_ABOUT_ME = "aboutMeText";
@@ -48,6 +48,7 @@ public class UserInfoActivity extends Activity {
     private static final String EXTRA_PERFECT_DATE = "perfectDateText";
     private static final String PREFS_INFO = "FormalChatUserInfo";
     private static final String PREFS_INFO_LOCAL = "FormalChatUserInfoLocal";
+    private static final String PREFS_QUESTIONARY_LOCAL = "FormalChatUserQuestionaryLocal";
     private static TextView name;
     private static TextView age;
 
@@ -77,20 +78,24 @@ public class UserInfoActivity extends Activity {
     private int interests_position;
 
     private static Button saveBtn;
-//    private static TextView interested_in;
+    //    private static TextView interested_in;
 //    private static TextView looking_for;
 //    private int interestedIn_position;
 //    private int lookingFor_position;
-    private SharedPreferences sharedInfoPreferences_local;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences infoPrefs_local;
+    private SharedPreferences.Editor infoEditor;
+    private SharedPreferences questionaryPrefs_local;
+    private SharedPreferences.Editor questionaryEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_info_new);
 
-        sharedInfoPreferences_local = getSharedPreferences(PREFS_INFO_LOCAL, 0);
-        editor = sharedInfoPreferences_local.edit();
+        infoPrefs_local = getSharedPreferences(PREFS_INFO_LOCAL, 0);
+        infoEditor = infoPrefs_local.edit();
+        questionaryPrefs_local = getSharedPreferences(PREFS_QUESTIONARY_LOCAL, 0);
+        questionaryEditor = questionaryPrefs_local.edit();
 
         initialiseViewItems();
         populateInfoFromExtras();
@@ -106,7 +111,6 @@ public class UserInfoActivity extends Activity {
     }
 
     private void setOnClickListeners() {
-
         // *** Multi Choice *** //
         motto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +167,7 @@ public class UserInfoActivity extends Activity {
             @Override
             public void onClick(View v) {
                 ///**************
-               // TO DO: like spinner with numbers or something like that
+                // TO DO: like spinner with numbers or something like that
                 //****************
             }
         });
@@ -173,7 +177,7 @@ public class UserInfoActivity extends Activity {
                 HashMap<String, Object> extras = new HashMap<>();
                 SpannableString title = new SpannableString(getResources().getString(R.string.body_type_lbl));
                 title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
-                extras.put("dialog_title",title);
+                extras.put("dialog_title", title);
                 extras.put("dialog_result_code", resultCode_bodyType);
                 extras.put("dialog_list_items", getResources().getStringArray(R.array.body_type_values));
 
@@ -305,106 +309,149 @@ public class UserInfoActivity extends Activity {
         switch(resultCode) {
             case resultCode_motto:
                 if(!isExtraEmpty(EXTRA_MOTTO)) {
-                    ArrayList<String> motto_txt = data.getStringArrayListExtra(EXTRA_MOTTO);
+                    String motto_txt = getExtraText(EXTRA_MOTTO, data);
                     if(motto_txt != null) {
-                        motto.setText(motto_txt.get(0).toString());
+                        //motto.setText(motto_txt);
+                        setText(EXTRA_MOTTO, motto_txt);
+                        infoEditor.putString("motto", motto_txt);
+                        infoEditor.commit();
                     }
                 }
                 break;
             case resultCode_drinking:
-                drinking_position = data.getIntExtra("drinking_position", 0);
-                String value_d = data.getStringExtra("drinking_value");
+                drinking_position = data.getIntExtra("dialog_list_position", 0);
+                String value_d = data.getStringExtra("dialog_list_value");
                 drinking.setText(value_d);
-                editor.putInt("drinking", drinking_position);
+                questionaryEditor.putInt("yourDrinking", drinking_position);
+                questionaryEditor.commit();
                 break;
             case resultCode_smoking:
-                smoking_position = data.getIntExtra("smoking_position", 0);
-                String value_s = data.getStringExtra("smoking_value");
+                smoking_position = data.getIntExtra("dialog_list_position", 0);
+                String value_s = data.getStringExtra("dialog_list_value");
                 smoking.setText(value_s);
-                editor.putInt("smoking", smoking_position);
+                questionaryEditor.putInt("yourSmoking", smoking_position);
+                questionaryEditor.commit();
                 break;
             case resultCode_religion:
-                religion_position = data.getIntExtra("religion_position", 0);
-                String value_re = data.getStringExtra("religion_value");
+                religion_position = data.getIntExtra("dialog_list_position", 0);
+                String value_re = data.getStringExtra("dialog_list_value");
                 religion.setText(value_re);
-                editor.putInt("religion", religion_position);
+                questionaryEditor.putInt("yourReligion", religion_position);
+                questionaryEditor.commit();
                 break;
             case resultCode_bodyType:
-                bodyType_position = data.getIntExtra("bodyType_position", 0);
-                String value_bt = data.getStringExtra("bodyType_value");
+                bodyType_position = data.getIntExtra("dialog_list_position", 0);
+                String value_bt = data.getStringExtra("dialog_list_value");
                 body_type.setText(value_bt);
-                editor.putInt("bodyType", bodyType_position);
+                infoEditor.putInt("bodyType", bodyType_position);
+                infoEditor.commit();
                 break;
             case resultCode_relationship:
-                relationship_position = data.getIntExtra("relationship_position", 0);
-                String value_r = data.getStringExtra("relationship_value");
+                relationship_position = data.getIntExtra("dialog_list_position", 0);
+                String value_r = data.getStringExtra("dialog_list_value");
                 relationship.setText(value_r);
-                editor.putInt("relationship", relationship_position);
+                infoEditor.putInt("relationship", relationship_position);
+                infoEditor.commit();
                 break;
             case resultCode_children:
-                children_position = data.getIntExtra("children_position", 0);
-                String value_c = data.getStringExtra("children_value");
+                children_position = data.getIntExtra("dialog_list_position", 0);
+                String value_c = data.getStringExtra("dialog_list_value");
                 children.setText(value_c);
-                editor.putInt("children", children_position);
+                infoEditor.putInt("children", children_position);
+                infoEditor.commit();
                 break;
             case resultCode_ethnicity:
-                ethnicity_position = data.getIntExtra("ethnicity_position", 0);
-                String value_e = data.getStringExtra("ethnicity_value");
+                ethnicity_position = data.getIntExtra("dialog_list_position", 0);
+                String value_e = data.getStringExtra("dialog_list_value");
                 ethnicity.setText(value_e);
-                editor.putInt("ethnicity", ethnicity_position);
+                questionaryEditor.putInt("yourEthnicity", ethnicity_position);
+                questionaryEditor.commit();
                 break;
             case resultCode_education:
-                education_position = data.getIntExtra("education_position", 0);
-                String value_ed = data.getStringExtra("education_value");
+                education_position = data.getIntExtra("dialog_list_position", 0);
+                String value_ed = data.getStringExtra("dialog_list_value");
                 education.setText(value_ed);
-                editor.putInt("ethnicity", education_position);
+                infoEditor.putInt("education", education_position);
+                infoEditor.commit();
                 break;
             case resultCode_aboutMe:
                 if(!isExtraEmpty(EXTRA_ABOUT_ME)) {
-                    Log.v("formalchat", data + " : " + data.getStringArrayListExtra(EXTRA_ABOUT_ME));
-                    ArrayList<String> aboutMe_txt = data.getStringArrayListExtra(EXTRA_ABOUT_ME);
+                    String aboutMe_txt = getExtraText(EXTRA_ABOUT_ME, data);
                     if(aboutMe_txt != null) {
-                        about_me.setText(aboutMe_txt.get(0).toString());
+                        about_me.setText(aboutMe_txt);
+                        infoEditor.putString("aboutMe", aboutMe_txt);
+                        infoEditor.commit();
                     }
                 }
                 break;
             case resultCode_perfectSmn:
                 if(!isExtraEmpty(EXTRA_PERFECT_SMN)) {
-                    ArrayList<String> perfectSmn_txt = data.getStringArrayListExtra(EXTRA_PERFECT_SMN);
-                    perfectSmn.setText(perfectSmn_txt.get(0).toString());
+                    String perfectSmn_txt = getExtraText(EXTRA_PERFECT_SMN, data);
+                    perfectSmn.setText(perfectSmn_txt);
+                    infoEditor.putString("perfectSmn", perfectSmn_txt);
+                    infoEditor.commit();
                 }
                 break;
             case resultCode_perfectDate:
                 if(!isExtraEmpty(EXTRA_PERFECT_DATE)) {
-                    ArrayList<String> perfectSmn_txt = data.getStringArrayListExtra(EXTRA_PERFECT_DATE);
-                    if(perfectSmn_txt != null) {
-                        perfectDate.setText(perfectSmn_txt.get(0).toString());
+                    String perfectDate_txt = getExtraText(EXTRA_PERFECT_DATE, data);
+                    if(perfectDate_txt != null) {
+                        perfectDate.setText(perfectDate_txt);
+                        infoEditor.putString("perfectDate", perfectDate_txt);
+                        infoEditor.commit();
                     }
                 }
                 break;
             case resultCode_interests:
-                interests_position = data.getIntExtra("interests_position", 0);
-                String value_i = data.getStringExtra("interests_value");
+                interests_position = data.getIntExtra("dialog_list_position", 0);
+                String value_i = data.getStringExtra("dialog_list_value");
                 interests.setText(value_i);
-                editor.putInt("interests", interests_position);
+                infoEditor.putInt("interests", interests_position);
+                infoEditor.commit();
                 break;
-
-//            case resultCode_interestedIn:
-//                interestedIn_position = data.getIntExtra("interestedIn_position", 0);
-//                String value_ii = data.getStringExtra("interestedIn_value");
-//                interested_in.setText(value_ii);
-//                editor.putInt("interestedIn", interestedIn_position);
-//                break;
-//            case resultCode_lookingFor:
-//                lookingFor_position = data.getIntExtra("lookingFor_position", 0);
-//                String value_lf = data.getStringExtra("lookingFor_value");
-//                looking_for.setText(value_lf);
-//                editor.putInt("lookingFor", lookingFor_position);
-//                break;
             default:
                 break;
         }
-        editor.commit();
+    }
+
+    private void setText(String extra, String txt) {
+        switch (extra) {
+            case EXTRA_MOTTO:
+                if(txt.equals("\t"))
+                    motto.setText(getResources().getString(R.string.motto));
+                else
+                    motto.setText(txt);
+                break;
+            case EXTRA_ABOUT_ME:
+                if(txt.equals(""))
+                    about_me.setText(getResources().getString(R.string.introduction_none_txt));
+                else
+                    about_me.setText(txt);
+                break;
+            case EXTRA_PERFECT_SMN:
+                if(txt.equals(""))
+                    perfectSmn.setText(getResources().getString(R.string.perfectSmn_none_txt));
+                else
+                    perfectSmn.setText(txt);
+                break;
+            case EXTRA_PERFECT_DATE:
+                if(txt.equals(""))
+                    perfectDate.setText(getResources().getString(R.string.perfectDate_none_txt));
+                else
+                    perfectDate.setText(txt);
+                break;
+        }
+    }
+
+    private String getExtraText(String extra, Intent data) {
+        ArrayList<String> aboutMe_list = data.getStringArrayListExtra(extra);
+        String stringValue = "";
+
+        for (String s : aboutMe_list) {
+            stringValue += s + "\t"; // *** can use \b to go one position back, if it's necessary
+        }
+
+        return stringValue;
     }
 
     private boolean isExtraEmpty(String extra) {
@@ -417,45 +464,34 @@ public class UserInfoActivity extends Activity {
     }
 
     private void saveChangesToParse() {
-        ParseUser parseUser = ParseUser.getCurrentUser();
-        final String userName = parseUser.getUsername();
+        ParseQuery<ParseObject> queryQuestionary = ParseQuery.getQuery("UserQuestionary");
+        Map<String, ?> mapQuestionary = questionaryPrefs_local.getAll();
+        save(mapQuestionary, queryQuestionary);
 
-        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
+        ParseQuery<ParseObject> queryUserInfo = ParseQuery.getQuery("UserInfo");
+        Map<String, ?> sharedPrefsMap = infoPrefs_local.getAll();
+        save(sharedPrefsMap, queryUserInfo);
+    }
+
+    private void save(final Map<String, ?> sharedPrefsMap, ParseQuery<ParseObject> parseQuery) {
         parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if(e == null) {
-                    Log.e("formalchat", "EXISTS...." + parseObject.getString("name"));
-
-                    saveToExistingUserInfo(parseObject, userName);
+                    saveToExistingUserInfo(sharedPrefsMap, parseObject);
                 }
                 else {
-                    Log.e("formalchat", "DOESN/'T EXISTS");
+                    Log.e("formalchat", "User Info: No result from search");
                 }
             }
         });
     }
 
-    private void saveToExistingUserInfo(ParseObject parseObject, String userName) {
-        Map<String, ?> sharedPrefsMap = sharedInfoPreferences_local.getAll();
-
+    private void saveToExistingUserInfo(Map<String, ?> sharedPrefsMap, ParseObject parseObject) {
         for(Map.Entry<String, ?> entry : sharedPrefsMap.entrySet()) {
-            Log.v("formalchat", entry.getKey() + " : " + entry.getValue());
-            parseObject.put(entry.getKey(), entry.getValue());
+//            Log.v("formalchat", entry.getKey() + " : " + entry.getValue());
+            parseObject.put(entry.getKey().toString(), entry.getValue());
         }
-
-        parseObject.put("motto", motto.getText().toString());
-        if(getResources().getString(R.string.introduction_none_txt).equals(about_me.getText().toString())) {
-            parseObject.put("aboutMe", "");
-        }
-        else {
-            parseObject.put("aboutMe", about_me.getText().toString());
-        }
-        parseObject.put("perfectSmn", perfectSmn.getText().toString());
-        parseObject.put("perfectDate", perfectDate.getText().toString());
-
-        parseObject.put("name", name.getText().toString());
-        parseObject.put("age", age.getText().toString());
 
         parseObject.saveInBackground(new SaveCallback() {
             @Override
@@ -508,17 +544,18 @@ public class UserInfoActivity extends Activity {
 
     private void populateInfoFromExtras() {
         SharedPreferences sharedInfoPreferences = getSharedPreferences(PREFS_INFO, 0);
+
         name.setText(sharedInfoPreferences.getString("name", getResources().getString(R.string.change_txt)));
         age.setText(sharedInfoPreferences.getString("age", getResources().getString(R.string.choice_txt)));
 
         motto.setText(sharedInfoPreferences.getString("motto", getResources().getString(R.string.motto)));
-        drinking.setText(sharedInfoPreferences.getString("drinking", getResources().getString(R.string.choice_txt)));
-        smoking.setText(sharedInfoPreferences.getString("smoking", getResources().getString(R.string.choice_txt)));
-        religion.setText(sharedInfoPreferences.getString("religion", getResources().getString(R.string.choice_txt)));
+        drinking.setText(sharedInfoPreferences.getString("yourDrinking", getResources().getString(R.string.choice_txt)));
+        smoking.setText(sharedInfoPreferences.getString("yourSmoking", getResources().getString(R.string.choice_txt)));
+        religion.setText(sharedInfoPreferences.getString("yourReligion", getResources().getString(R.string.choice_txt)));
         body_type.setText(sharedInfoPreferences.getString("bodyType", getResources().getString(R.string.choice_txt)));
         relationship.setText(sharedInfoPreferences.getString("relationship", getResources().getString(R.string.choice_txt)));
         children.setText(sharedInfoPreferences.getString("children", getResources().getString(R.string.choice_txt)));
-        ethnicity.setText(sharedInfoPreferences.getString("ethnicity", getResources().getString(R.string.choice_txt)));
+        ethnicity.setText(sharedInfoPreferences.getString("yourEthnicity", getResources().getString(R.string.choice_txt)));
         education.setText(sharedInfoPreferences.getString("education", getResources().getString(R.string.choice_txt)));
         about_me.setText(sharedInfoPreferences.getString("aboutMe", getResources().getString(R.string.introduction_none_txt)));
         perfectSmn.setText(sharedInfoPreferences.getString("perfectSmn", getResources().getString(R.string.perfectSmn_none_txt)));

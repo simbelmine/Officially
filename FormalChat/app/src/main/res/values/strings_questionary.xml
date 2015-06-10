@@ -6,6 +6,7 @@
     <string name="q_match_religion">How important is your match\'s religion?</string>
 
     <string-array name="a_match_religion">
+        <item>None</item>
         <item>Not at all important</item>
         <item>Somewhat important</item>
         <item>Very important</item>
@@ -16,6 +17,7 @@
     <string name="q_match_smoking">The most my match can smoke is...</string>
 
     <string-array name="a_match_smoking">
+        <item>None</item>
         <item>Never</item>
         <item>Socially</item>
         <item>Once a week</item>
@@ -28,6 +30,7 @@
     <string name="q_match_drinking">The most my match can drink is...</string>
 
     <string-array name="a_match_drinking">
+        <item>None</item>
         <item>Never</item>
         <item>On special ocasions</item>
         <item>Once a week</item>
@@ -40,10 +43,11 @@
     <string name="q_your_ethnicity">What\'s your ethnicity</string>
 
     <string-array name="a_your_ethnicity">
+        <item>None</item>
         <item>White</item>
         <item>Hispanic / Latino</item>
         <item>Black / African descent</item>
-        <item>Asian / Pcific Islander</item>
+        <item>Asian / Pacific Islander</item>
         <item>East Indian</item>
         <item>Chinese</item>
         <item>Native American</item>
@@ -55,6 +59,7 @@
     <string name="q_your_religion">What best describes your religious beliefs or spirituality?</string>
 
     <string-array name="a_your_religion">
+        <item>None</item>
         <item>Christian</item>
         <item>Jewish</item>
         <item>Muslim</item>
@@ -70,6 +75,7 @@
     <string name="q_your_smoking">How often do you smoke?</string>
 
     <string-array name="a_your_smoking">
+        <item>None</item>
         <item>Never</item>
         <item>Socially</item>
         <item>Once a week</item>
@@ -82,6 +88,7 @@
     <string name="q_your_drinking">How often do you drink?</string>
 
     <string-array name="a_your_drinking">
+        <item>None</item>
         <item>Never</item>
         <item>On special occasions</item>
         <item>Once a week</item>

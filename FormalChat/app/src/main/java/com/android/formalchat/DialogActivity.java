@@ -38,8 +38,8 @@ public class DialogActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent returnIntent = new Intent(getApplicationContext(), MainQuestionsActivity.class);
-                returnIntent.putExtra("ethnicity_position", position);
-                returnIntent.putExtra("ethnicity_value", getValueOnPosition(position));
+                returnIntent.putExtra("dialog_list_position", position);
+                returnIntent.putExtra("dialog_list_value", getValueOnPosition(position));
                 setResult(getResultCode(), returnIntent);
                 finish();
             }

@@ -226,6 +226,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private boolean onItemClicked(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.edit_profile:
+                setUserInfoToExtras();
                 startActivity(UserInfoActivity.class);
                 return true;
             case R.id.view_gallery:
@@ -337,6 +338,53 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private void populateInfoFromParse() {
         String currentUser = getCurrentUser();
 
+        populateFromUserInfo(currentUser);
+        populateFromQuestionary(currentUser);
+    }
+
+    private void populateFromQuestionary(String currentUser) {
+        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserQuestionary");
+        parseQuery.whereEqualTo("loginName", currentUser);
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> listObjects, ParseException e) {
+                if(e == null) {
+                    for (ParseObject parseObject : listObjects) {
+                        int drinking_p = parseObject.getInt("yourDrinking");
+                        int smoking_p = parseObject.getInt("yourSmoking");
+                        int religion_p = parseObject.getInt("yourReligion");
+                        int ethnicity_p = parseObject.getInt("yourEthnicity");
+
+                        if (drinking_p == 0) {
+                            drinking.setText(getResources().getString(R.string.none_txt));
+                        } else {
+                            drinking.setText(getNameByPosition(getResources().getStringArray(R.array.a_your_drinking), drinking_p));
+                        }
+                        if (smoking_p == 0) {
+                            smoking.setText(getResources().getString(R.string.none_txt));
+                        } else {
+                            smoking.setText(getNameByPosition(getResources().getStringArray(R.array.a_your_smoking), smoking_p));
+                        }
+                        if (religion_p == 0) {
+                            religion.setText(getResources().getString(R.string.none_txt));
+                        } else {
+                            religion.setText(getNameByPosition(getResources().getStringArray(R.array.a_your_religion), religion_p));
+                        }
+                        if (ethnicity_p == 0) {
+                            ethnicity.setText(getResources().getString(R.string.none_txt));
+                        } else {
+                            ethnicity.setText(getNameByPosition(getResources().getStringArray(R.array.ethnicity_values), ethnicity_p));
+                        }
+                    }
+                }
+                else {
+                    Log.e("formalchat", "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void populateFromUserInfo(String currentUser) {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
         parseQuery.whereEqualTo("loginName", currentUser);
         parseQuery.findInBackground(new FindCallback<ParseObject>() {
@@ -350,33 +398,27 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
                         String motto_p = parseObject.getString("motto");
                         String location_p = parseObject.getString("location");
-                        int drinking_p = parseObject.getInt("drinking");
-                        int smoking_p = parseObject.getInt("smoking");
-                        int religion_p = parseObject.getInt("religion");
+
                         String height_p = parseObject.getString("height");
                         int bodyType_p = parseObject.getInt("bodyType");
                         int relationship_p = parseObject.getInt("relationship");
                         int children_p = parseObject.getInt("children");
-                        int ethnicity_p = parseObject.getInt("ethnicity");
                         int education_p = parseObject.getInt("education");
                         String aboutMe_p = parseObject.getString("aboutMe");
                         String perfect_smn_p = parseObject.getString("perfectSmn");
                         String perfect_date_p = parseObject.getString("perfectDate");
                         int interests_p = parseObject.getInt("interests");
-//                        int interestedIn_p = parseObject.getInt("interestedIn");
-//                        int lookingFor_p = parseObject.getInt("lookingFor");
 
                         name.setText(name_p);
                         age.setText(age_p);
 
-                        if(motto_p == null || "".equals(motto_p)) {
+                        if(motto_p == null || "\t".equals(motto_p)) {
                             motto.setText(getResources().getString(R.string.motto));
                         }
                         else {
                             motto.setText(motto_p);
                         }
                         location.setText(location_p);
-                        // drinking, smoking and religion are coming from the Questionary
                         if(height_p == null || height_p.equals("")) {
                             height.setText(getResources().getString(R.string.none_txt));
                         }
@@ -402,29 +444,24 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                         else {
                             children.setText(getNameByPosition(getResources().getStringArray(R.array.children_values), relationship_p));
                         }
-                        if (ethnicity_p == 0) {
-                            ethnicity.setText(getResources().getString(R.string.none_txt));
-                        } else {
-                            ethnicity.setText(getNameByPosition(getResources().getStringArray(R.array.ethnicity_values), ethnicity_p));
-                        }
                         if (education_p == 0) {
                             education.setText(getResources().getString(R.string.none_txt));
                         } else {
-                            education.setText(getNameByPosition(getResources().getStringArray(R.array.education_values), ethnicity_p));
+                            education.setText(getNameByPosition(getResources().getStringArray(R.array.education_values), education_p));
                         }
-                        if(aboutMe_p == null || "".equals(aboutMe_p)) {
+                        if(aboutMe_p == null || "\t".equals(aboutMe_p)) {
                             aboutMe.setText(getResources().getString(R.string.introduction_none_txt));
                         }
                         else {
                             aboutMe.setText(aboutMe_p);
                         }
-                        if(perfect_smn_p == null || "".equals(perfect_smn_p)) {
+                        if(perfect_smn_p == null || "\t".equals(perfect_smn_p)) {
                             perfectSmn.setText(getResources().getString(R.string.perfectSmn_none_txt));
                         }
                         else {
                             perfectSmn.setText(perfect_smn_p);
                         }
-                        if(perfect_date_p == null || "".equals(perfect_date_p)) {
+                        if(perfect_date_p == null || "\t".equals(perfect_date_p)) {
                             perfectDate.setText(getResources().getString(R.string.perfectDate_none_txt));
                         }
                         else {
@@ -436,20 +473,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                             interests.setText(getNameByPosition(getResources().getStringArray(R.array.interests_values), interests_p));
                         }
 
-//                        if(interestedIn_p == 0) {
-//                            interestedIn.setText(getResources().getString(R.string.none_txt));
-//                        }
-//                        else {
-//                            interestedIn.setText(getNameByPosition(getResources().getStringArray(R.array.interested_in_values), interestedIn_p));
-//                        }
-//                        if(lookingFor_p == 0) {
-//                            lookingFor.setText(getResources().getString(R.string.none_txt));
-//                        }
-//                        else {
-//                            lookingFor.setText(getNameByPosition(getResources().getStringArray(R.array.looking_for_values), lookingFor_p));
-//                        }
-
-                        setUserInfoToExtras();
+                        //setUserInfoToExtras();
                         setSexIcon(gender_p);
                     }
                 } else {
@@ -488,14 +512,14 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
         editor.putString("motto", getRightText(motto.getText().toString()));
         editor.putString("location", getRightText(location.getText().toString()));
-        editor.putString("drinking", getRightText(drinking.getText().toString()));
-        editor.putString("smoking", getRightText(smoking.getText().toString()));
-        editor.putString("religion", getRightText(religion.getText().toString()));
+        editor.putString("yourDrinking", getRightText(drinking.getText().toString()));
+        editor.putString("yourSmoking", getRightText(smoking.getText().toString()));
+        editor.putString("yourReligion", getRightText(religion.getText().toString()));
         editor.putString("height", getRightText(height.getText().toString()));
         editor.putString("bodyType", getRightText(bodyType.getText().toString()));
         editor.putString("relationship", getRightText(relationship.getText().toString()));
         editor.putString("children", getRightText(children.getText().toString()));
-        editor.putString("ethnicity", getRightText(ethnicity.getText().toString()));
+        editor.putString("yourEthnicity", getRightText(ethnicity.getText().toString()));
         editor.putString("education", getRightText(education.getText().toString()));
         editor.putString("aboutMe", getRightText(aboutMe.getText().toString()));
         editor.putString("perfectSmn", getRightText(perfectSmn.getText().toString()));
