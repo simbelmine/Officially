@@ -102,7 +102,7 @@ public class DrawerActivity extends FragmentActivity {
 
     private void setProfileName(final ParseUser user) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserInfo");
-        if(user.has("loginName") && user.getUsername() != null ) {
+        if(user.has("username") && user.getUsername() != null ) {
             query.whereEqualTo("loginName", user.getUsername());
             query.findInBackground(new FindCallback<ParseObject>() {
                 @Override
