@@ -246,7 +246,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 startActivity(VideoRecordActivity.class);
                 return true;
             case R.id.profile_remote:
-                startActivity(ProfileRemoteActivity.class);
+                startActivity(ProfileActivityRemote.class);
                 return true;
             default:
                 return false;

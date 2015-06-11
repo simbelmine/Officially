@@ -100,30 +100,5 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         >
-        <ImageView
-            android:id="@+id/drinking_icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="@dimen/icons_margin_left"
-            android:layout_marginBottom="@dimen/icons_margin_left"
-            android:layout_marginRight="40dp"
-            android:src="@drawable/drinking_g"/>
-        <ImageView
-            android:id="@+id/smoking_icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="@dimen/icons_margin_left"
-            android:layout_marginBottom="@dimen/icons_margin_left"
-            android:layout_marginRight="40dp"
-            android:layout_toRightOf="@+id/drinking_icon"
-            android:src="@drawable/smoking_g"/>
-        <ImageView
-            android:id="@+id/religion_icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="@dimen/icons_margin_left"
-            android:layout_marginBottom="@dimen/icons_margin_left"
-            android:layout_toRightOf="@id/smoking_icon"
-            android:src="@drawable/religion_g"/>
     </RelativeLayout>
 </FrameLayout>

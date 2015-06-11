@@ -15,7 +15,7 @@
         </include>
         <include
             android:id="@+id/info_user"
-            layout="@layout/prof_footer"
+            layout="@layout/profile_footer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/profile_header">
