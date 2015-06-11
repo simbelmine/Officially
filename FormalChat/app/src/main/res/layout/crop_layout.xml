@@ -3,33 +3,27 @@
     android:id="@+id/root_crop"
     android:layout_width="300dp"
     android:layout_height="400dp"
-    android:background="@color/pink"
+    android:background="@color/items"
     android:orientation="vertical"
     android:layout_gravity="center_vertical|center_horizontal"
     android:foregroundGravity="center"
->
+    >
     <ImageView
         android:id="@+id/mesureRect"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:scaleType="fitXY"
         android:layout_gravity="center"
-        android:background="@color/transp_black"
- />
-
-    <!--<View-->
-        <!--android:id="@+id/dragRect"-->
-        <!--android:layout_width="100dp"-->
-        <!--android:layout_height="100dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:background="@color/transp_black"-->
-        <!--/>-->
+        android:background="@drawable/rounded_btns_white"
+        />
 
     <Button
         android:id="@+id/done_editing"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:background="@drawable/rounded_btns"
-        android:text="Done"/>
+        android:layout_gravity="bottom"
+        android:layout_margin="10dp"
+        android:text="@string/about_me_done"
+        android:textColor="@color/items"
+        android:background="@color/action_bar"/>
 </FrameLayout>

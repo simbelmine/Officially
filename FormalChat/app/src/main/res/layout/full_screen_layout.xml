@@ -40,7 +40,7 @@
             android:layout_width="@dimen/menu_icon_size"
             android:layout_height="@dimen/menu_icon_size"
             android:layout_alignParentRight="true"
-            android:src="@drawable/menu_icon"
+            android:src="@drawable/menu"
             android:visibility="visible"
             android:scaleType="fitCenter"
             android:layout_centerVertical="true"
