@@ -28,7 +28,6 @@ public class VideoShowActivity extends Activity {
         hideTextViewMessage();
         if(getIntent().hasExtra("videoUri")) {
             Uri uri = Uri.parse(getIntent().getStringExtra("videoUri"));
-            Log.v("formalchat", "### videoUri = " + uri.toString());
 
             tmpFile = new File(uri.toString());
             if (tmpFile.exists()) {

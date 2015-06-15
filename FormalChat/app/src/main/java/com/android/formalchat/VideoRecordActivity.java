@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.netcompss.ffmpeg4android.GeneralUtils;
@@ -71,8 +72,13 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
             Uri videoUri = data.getData();
             videoName = getVideoName(videoUri);
             compressVideo(destinationFolder, videoName);
+            showCompleteMessage();
             finish();
         }
+    }
+
+    private void showCompleteMessage() {
+        Toast.makeText(this, "Your Video will appear shortly in your Gallery.", Toast.LENGTH_LONG).show();
     }
 
     private String getVideoName(Uri videoUri) {

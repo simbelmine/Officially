@@ -33,6 +33,7 @@ public class VideoCompressService extends IntentService {
     private String destinationFolder;
     private String destinationVideoPath;
     private String videoName;
+    private String out_videoName;
 
     private String destinationVideoPathOut;
 
@@ -43,10 +44,11 @@ public class VideoCompressService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         videoName = intent.getStringExtra("videoName");
+        out_videoName = "out_" + videoName;
 
         destinationFolder = intent.getStringExtra("destinationFolder");
         destinationVideoPath = destinationFolder + videoName;
-        destinationVideoPathOut = destinationFolder + "out_" + videoName;
+        destinationVideoPathOut = destinationFolder + out_videoName;
 
         Log.i("formalchat", getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
 //        workFolder = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
@@ -172,10 +174,10 @@ public class VideoCompressService extends IntentService {
             }
             else if(status.equals("Transcoding Status: Finished OK")) {
                 //Toast.makeText(VideoCompressService.this, status, Toast.LENGTH_LONG).show();
-                Toast.makeText(VideoCompressService.this, "Your Video will appear shortly on your wall.", Toast.LENGTH_LONG).show();
+//                Toast.makeText(VideoCompressService.this, "Your Video will appear shortly on your wall.", Toast.LENGTH_LONG).show();
 
                 File videoFile = getVideoFile(destinationFolder);
-                saveVideoToParse(videoFile, videoName);
+                saveVideoToParse(videoFile, out_videoName);
             }
         }
 

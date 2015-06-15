@@ -37,6 +37,8 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private Context context;
     /////// ***** For the Video File *****
     private static final int RESULT_OK = -1;
+    private static final String OUT_VID_EXTENSION = "out_VID";
+    private static final int OUT_VID_EXT_SHIFT = 7;
     private File dir = Environment.getExternalStorageDirectory();
     private String filePath = "/.formal_chat/";
     private String fileName;
@@ -76,12 +78,13 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.e("formalchat", "position....  " + position + "    " + images.get(position));
 
         // **************************//
         //**** To Do: Recycle grid views DOESN'T work ****//
         // *************************//
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.viewpager_item, parent, false);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = inflater.inflate(R.layout.viewpager_item, parent, false);
 
         ProgressBar progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
         VideoView videoView = (VideoView) convertView.findViewById(R.id.video);
@@ -93,15 +96,15 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     private void addImageOnClickListener(ImageView img, final int position) {
-     img.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-             Intent i = new Intent(context, FullImageActivity.class);
-             i.putExtra("url", images.get(position));
-             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-             context.startActivity(i);
-         }
-     });
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, FullImageActivity.class);
+                i.putExtra("url", images.get(position));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            }
+        });
     }
 
     private void populateImages(final View view, final ImageView img, final ProgressBar progressBar, final int position) {
@@ -136,7 +139,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private boolean isVideo(int position) {
         String path = images.get(position);
         String extension = getExtention(path);
-        if("VID".equals(extension)) {
+        if(OUT_VID_EXTENSION.equals(extension)) {
             return true;
         }
         return false;
@@ -144,7 +147,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     private String getExtention(String path) {
         int startIdx = path.lastIndexOf("-")+1;
-        int endIdx = startIdx + 3;
+        int endIdx = startIdx + OUT_VID_EXT_SHIFT;
         return path.substring(startIdx, endIdx);
     }
 
@@ -170,12 +173,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         };
     }
 
-    private Bitmap getVideoThumbnail() {
-        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
-                MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
-        return thumb;
-    }
-
     private void downloadVideoIfNotExists() {
         ParseUser user = ParseUser.getCurrentUser();
         videoFile = user.getParseFile("video");
@@ -195,6 +192,12 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         else {
             thumbnail  = getVideoThumbnail();
         }
+    }
+
+    private Bitmap getVideoThumbnail() {
+        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
+                MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+        return thumb;
     }
 
     public String getShortImageNameFromUri(String url) {
