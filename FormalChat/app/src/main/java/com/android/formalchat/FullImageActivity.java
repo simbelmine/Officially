@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -46,6 +51,8 @@ public class FullImageActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initActionBar();
         setContentView(R.layout.full_screen_layout);
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
@@ -66,50 +73,61 @@ public class FullImageActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if(!isVisible) {
-                    topBtnsLayout.setVisibility(View.VISIBLE);
-                    backBtn.setVisibility(View.VISIBLE);
-                    menuBtn.setVisibility(View.VISIBLE);
+//                    topBtnsLayout.setVisibility(View.VISIBLE);
+//                    backBtn.setVisibility(View.VISIBLE);
+//                    menuBtn.setVisibility(View.VISIBLE);
+                    getActionBar().hide();
                     isVisible = true;
                 }
                 else {
-                    topBtnsLayout.setVisibility(View.GONE);
-                    backBtn.setVisibility(View.GONE);
-                    menuBtn.setVisibility(View.GONE);
+//                    topBtnsLayout.setVisibility(View.GONE);
+//                    backBtn.setVisibility(View.GONE);
+//                    menuBtn.setVisibility(View.GONE);
+                    getActionBar().show();
                     isVisible = false;
                 }
             }
         });
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+//        backBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                finish();
+//            }
+//        });
 
-        menuBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(FullImageActivity.this, menuBtn);
-                popupMenu.getMenuInflater().inflate(R.menu.pop_up, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.delete:
-                                deleteImage();
-                                return true;
-                            case R.id.set_as:
-                                startCropActivity();
-                                return true;
-                            default:
-                                return false;
-                        }
-                    }
-                });
-                popupMenu.show();
-            }
-        });
+//        menuBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                PopupMenu popupMenu = new PopupMenu(FullImageActivity.this, menuBtn);
+//                popupMenu.getMenuInflater().inflate(R.menu.pop_up, popupMenu.getMenu());
+//                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                    @Override
+//                    public boolean onMenuItemClick(MenuItem item) {
+//                        switch (item.getItemId()) {
+//                            case R.id.delete:
+//                                deleteImage();
+//                                return true;
+//                            case R.id.set_as:
+//                                startCropActivity();
+//                                return true;
+//                            default:
+//                                return false;
+//                        }
+//                    }
+//                });
+//                popupMenu.show();
+//            }
+//        });
+    }
+
+    private void initActionBar() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.transp_black_20)));
+        getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -123,6 +141,30 @@ public class FullImageActivity extends Activity {
                 setProfPicNameToSharPrefs();
                 finish();
             }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.pop_up, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete:
+                deleteImage();
+                return true;
+            case R.id.set_as:
+                startCropActivity();
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return false;
         }
     }
 
