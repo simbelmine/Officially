@@ -54,34 +54,10 @@ public class ProfileGallery extends Activity {
             if (videoExists) {
                 addVideoToPaths();
             }
-
-            ParseUser user = ParseUser.getCurrentUser();
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("UserImages");
-            query.whereEqualTo("userName", user.getUsername());
-            query.orderByAscending("createdAt");
-            query.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> list, ParseException e) {
-                    if (list.size() > 0) {
-                        for (ParseObject po : list) {
-                            String picUrl = ((ParseFile) po.get("photo")).getUrl();
-                            imagePaths.add(picUrl);
-                        }
-
-                        //gridView.setAdapter(new ProfileGalleryAdapter(activity, getApplicationContext(), imagePaths));
-                        initAdapter();
-
-                    } else {
-                        Log.v("formalchat", "listsize is 0 ");
-                    }
-
-                    if (e != null) {
-                        Log.v("formalchat", "e = " + e.getMessage());
-                    }
-                }
-            });
+            getImagesFromParse();
         }
     }
+
 
     @Override
     protected void onResume() {
@@ -91,38 +67,43 @@ public class ProfileGallery extends Activity {
     @Override
     protected void onRestart() {
         super.onRestart();
-
         if(sharedPreferences.contains("refresh") && sharedPreferences.getBoolean("refresh", false)) {
-            File dir = Environment.getExternalStorageDirectory();
-            String filePath = "/.formal_chat";
-
-            File dir_folder = new File(dir, filePath);
-            File[] files = dir_folder.listFiles();
-            Arrays.sort(files, new Comparator<File>() {
-                @Override
-                public int compare(File file1, File file2) {
-                    if (file1.lastModified() > file2.lastModified()) {
-                        return 1;
-                    }
-                    else if (file1.lastModified() < file2.lastModified()) {
-                        return -1;
-                    }
-                    else {
-                        return 0;
-                    }
+            imagePaths.clear();
+            if(isNetworkAvailable()) {
+                if (videoExists) {
+                    addVideoToPaths();
                 }
-            });
-
-            ArrayList<String> imagePaths = new ArrayList<>();
-            for(File f : files) {
-                if("IMG".equals(f.getName().substring(0, 3))) {
-                    imagePaths.add("file:" + f.getAbsolutePath());
-                }
+                getImagesFromParse();
             }
-
-            galleryAdapter.updateImages(imagePaths);
             sharedPreferences.edit().putBoolean("refresh", false).commit();
         }
+    }
+
+    private void getImagesFromParse() {
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("UserImages");
+        query.whereEqualTo("userName", user.getUsername());
+        query.orderByAscending("createdAt");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (list.size() > 0) {
+                    for (ParseObject po : list) {
+                        String picUrl = ((ParseFile) po.get("photo")).getUrl();
+                        imagePaths.add(picUrl);
+                    }
+                    //gridView.setAdapter(new ProfileGalleryAdapter(activity, getApplicationContext(), imagePaths));
+                    initAdapter();
+
+                } else {
+                    Log.v("formalchat", "listsize is 0 ");
+                }
+
+                if (e != null) {
+                    Log.v("formalchat", "e = " + e.getMessage());
+                }
+            }
+        });
     }
 
     private void initAdapter() {

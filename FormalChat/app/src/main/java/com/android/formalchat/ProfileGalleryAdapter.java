@@ -27,6 +27,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,8 +39,8 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private Context context;
     /////// ***** For the Video File *****
     private static final int RESULT_OK = -1;
-    private static final String OUT_VID_EXTENSION = "out_VID";
-    private static final int OUT_VID_EXT_SHIFT = 7;
+    private static final String OUT_VID_EXTENSION = "VID";
+    private static final int OUT_VID_EXT_SHIFT = 3;
     private File dir = Environment.getExternalStorageDirectory();
     private String filePath = "/.formal_chat/";
     private String fileName;
@@ -56,8 +58,9 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     public void updateImages(List<String> paths) {
-        this.images.clear();
-        this.images.addAll(paths);
+        //this.images.clear();
+        //this.images.addAll(paths_);
+        this.images = paths;
         this.notifyDataSetChanged();
     }
 
@@ -78,7 +81,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.e("formalchat", "position....  " + position + "    " + images.get(position));
+//        Log.e("formalchat", "position....  " + position + "    " + images.get(position));
 
         // **************************//
         //**** To Do: Recycle grid views DOESN'T work ****//
@@ -146,7 +149,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     private String getExtention(String path) {
-        int startIdx = path.lastIndexOf("-")+1;
+        int startIdx = path.indexOf("_")+1;
         int endIdx = startIdx + OUT_VID_EXT_SHIFT;
         return path.substring(startIdx, endIdx);
     }
