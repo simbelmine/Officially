@@ -57,7 +57,7 @@
                     android:theme="@style/QuestionsDialogTheme"
                     android:windowSoftInputMode="adjustPan|stateVisible"/>
         <activity   android:name=".DialogActivity"
-                    android:theme="@style/QuestionsDialogTheme"/>
+                    android:theme="@style/QuestionsDialogThemeList"/>
 
 
         <activity   android:name=".CropActivity"

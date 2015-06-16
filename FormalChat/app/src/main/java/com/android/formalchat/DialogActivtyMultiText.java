@@ -1,13 +1,16 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
-import android.util.Log;
+import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +40,10 @@ public class DialogActivtyMultiText extends Activity {
 //        hasMotto = isExtraExists(EXTRA_MOTTO);
 //        hasAboutMe = isExtraExists(EXTRA_ABOUT_ME);
         getTitleFromExtras();
-        setTitle(title);
+        //setTitle(title);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.multy_text_dialog);
-
+        setTitle();
         textToEdit = new ArrayList<>();
         editField = (EditText) findViewById(R.id.edit_aboutMe);
         doneBtn = (Button) findViewById(R.id.done);
@@ -54,6 +57,19 @@ public class DialogActivtyMultiText extends Activity {
             }
         });
 
+    }
+
+    private void setTitle() {
+        TextView titleTextView = (TextView) findViewById(R.id.title_header);
+        removeUnderline();
+        titleTextView.setText(title);
+    }
+
+    private void removeUnderline() {
+        UnderlineSpan[] uspans = title.getSpans(0, title.length(), UnderlineSpan.class);
+        for(UnderlineSpan us : uspans) {
+            title.removeSpan(us);
+        }
     }
 
     private void getTitleFromExtras() {
@@ -89,7 +105,14 @@ public class DialogActivtyMultiText extends Activity {
         returnIntent = new Intent();
 
         setIntentResult();
+        hideKeyboard();
         finish();
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(doneBtn.getWindowToken(), 0);
     }
 
     private void setIntentResult() {

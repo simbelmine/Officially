@@ -4,16 +4,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
-    <Button
-        android:id="@+id/done"
-        android:layout_width="60dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_margin="@dimen/aboutMe_btn_margin"
-        android:text="@string/about_me_done"
-        android:layout_gravity="right|top"
-        android:background="@color/items"
-        android:textColor="@color/white"
-        />
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:gravity="top">
+        <TextView
+            android:id="@+id/title_header"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="@dimen/divider_info_margin"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            />
+        <Button
+            android:id="@+id/done"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/divider_info_margin"
+            android:text="@string/about_me_done"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="@color/items"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            />
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_info_height"
+        android:layout_margin="@dimen/divider_info_margin"
+        android:src="@drawable/divider"/>
     <EditText
         android:id="@+id/edit_aboutMe"
         android:layout_width="@dimen/about_me_width"

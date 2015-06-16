@@ -39,6 +39,11 @@
     </style>
 
     <style name="QuestionsDialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transp_black</item>
+    </style>
+    <style name="QuestionsDialogThemeList" parent="Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">false</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@color/transp_black</item>
