@@ -12,6 +12,7 @@
         <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
         <item name="android:spinnerDropDownItemStyle">@style/mySpinnerItemStyle</item>
         <item name="android:spinnerItemStyle">@style/MySpinnerItem</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
     </style>
     <!-- ActionBar styles -->
     <style name="MyActionBar"
@@ -61,6 +62,9 @@
         <item name="android:textColor">@color/items</item>
     </style>
 
+    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/abc_ic_menu_moreoverflow_mtrl_alpha</item>
+    </style>
 
     <style name="QuestionStyle">
         <item name="android:textSize">30sp</item>

@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.AndroidCharacter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -125,9 +128,10 @@ public class FullImageActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.transp_black_20)));
-        getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setDisplayShowHomeEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         getActionBar().setDisplayShowTitleEnabled(false);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
