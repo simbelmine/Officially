@@ -4,6 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
+    <Button
+        android:id="@+id/done"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_margin="@dimen/aboutMe_btn_margin"
+        android:text="@string/about_me_done"
+        android:layout_gravity="right|top"
+        android:background="@color/items"
+        android:textColor="@color/white"
+        />
     <EditText
         android:id="@+id/edit_aboutMe"
         android:layout_width="@dimen/about_me_width"
@@ -11,13 +21,6 @@
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
         android:maxLength="140"
-        />
-    <Button
-        android:id="@+id/done"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/aboutMe_btn_margin"
-        android:text="@string/about_me_done"
-        android:background="@drawable/rounded_btns"
+        android:gravity="left"
         />
 </LinearLayout>

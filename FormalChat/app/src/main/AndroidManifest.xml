@@ -54,7 +54,8 @@
 
 
         <activity   android:name=".DialogActivtyMultiText"
-                    android:theme="@style/QuestionsDialogTheme"/>
+                    android:theme="@style/QuestionsDialogTheme"
+                    android:windowSoftInputMode="adjustPan|stateVisible"/>
         <activity   android:name=".DialogActivity"
                     android:theme="@style/QuestionsDialogTheme"/>
 
