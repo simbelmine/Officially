@@ -27,16 +27,30 @@
             android:layout_gravity="center"
             android:layout_marginBottom="60dp"
             android:src="@drawable/profile_pic"/>
-        <TextView
-            android:id="@+id/name_edit"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Name"
-            android:textColor="@color/white"
-            android:textSize="19sp"
             android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="120dp"
-            />
+            android:layout_marginBottom="120dp">
+            <ImageView
+                android:id="@+id/online_dot"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/oval_btn"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                />
+            <TextView
+                android:id="@+id/name_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User Name"
+                android:textColor="@color/white"
+                android:textSize="19sp"
+                android:layout_toRightOf="@+id/online_dot"
+                android:layout_marginRight="5dp"
+                />
+        </RelativeLayout>
         <ImageView
             android:id="@+id/sex_icon"
             android:layout_width="20dp"
@@ -89,16 +103,39 @@
                 android:textAllCaps="true"
                 />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/photos_button"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|left"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="@dimen/FEB_margin"
+            android:layout_marginBottom="30dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:scaleType="centerInside"
+            android:elevation="@dimen/FEB_elevation"
+            android:background="@drawable/photos_btn"
+            android:textColor="@color/white"
+            android:clickable="true"
+            />
+
+        <RelativeLayout
+            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            >
+        </RelativeLayout>
+
     </FrameLayout>
 
-    <include layout="@layout/profile_help_screen"></include>
-
-    <RelativeLayout
-        android:layout_height="50dp"
+    <include layout="@layout/profile_help_screen"
+        android:layout_gravity="top"
         android:layout_width="match_parent"
-        android:background="@color/white"
-        android:layout_gravity="bottom"
-        android:gravity="center"
-        >
-    </RelativeLayout>
+        android:layout_height="250dp"></include>
+
+
 </FrameLayout>

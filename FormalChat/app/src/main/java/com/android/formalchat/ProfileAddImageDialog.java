@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -50,6 +51,8 @@ public class ProfileAddImageDialog extends DialogFragment {
     private static final int ACTIVITY_SELECT_IMAGE = 321;
     public static final int MEDIA_TYPE_IMAGE = 1;
 
+    private static final String PREFS_NAME = "FormalChatPrefs";
+    private SharedPreferences sharedPreferences;
     public String imageName = "IMG_"+ getTimeStamp() + ".jpg";
     private ImageView mTakePhotoImg;
     private TextView mTakePhotoImgTxt;
@@ -67,6 +70,8 @@ public class ProfileAddImageDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_img_dialog, container, false);
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, 0);
 
         mTakePhotoImg = (ImageView) view.findViewById(R.id.take_photo_img);
         mTakePhotoImg.setOnClickListener(new View.OnClickListener() {
@@ -217,6 +222,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             //hide notification for uploading - or just show error on the same notification
             hideUploadNotification();
             //         callingActivity.onImageUploaded();
+            ProfileActivity.startPhotosCounter();
         } else {
             Log.e("formalchat", "Error saving: " + e.getMessage());
         }

@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentManager;
@@ -61,6 +62,8 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private TextView name;
     private TextView gender;
     private TextView age;
+    private static TextView photos_btn;
+    private static int photos_btn_counter;
 
     private TextView motto;
     private TextView location;
@@ -100,6 +103,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         videoExists = isVideoExists();
 
         init();
+        startPhotosCounter();
         getProfileImgPath();
         if(isNetworkAvailable()) {
             loadBigProfilePicFromParse();
@@ -114,6 +118,12 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         super.onRestart();
         if (videoExists) {
             exclamationLayout.setVisibility(View.INVISIBLE);
+        }
+        if(sharedPreferences.contains("photo_num_changed")) {
+            if(sharedPreferences.getBoolean("photo_num_changed", false)) {
+                startPhotosCounter();
+                sharedPreferences.edit().putBoolean("photo_num_changed", false);
+            }
         }
     }
 
@@ -137,6 +147,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         name = (TextView) findViewById(R.id.name_edit);
         sexIcon = (ImageView) findViewById(R.id.sex_icon);
         age = (TextView) findViewById(R.id.age_edit);
+        photos_btn = (TextView) findViewById(R.id.photos_button);
 
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
@@ -188,6 +199,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private void addViewListeners() {
         exclamationLayout.setOnClickListener(this);
         edit_feb_btn.setOnClickListener(this);
+        photos_btn.setOnClickListener(this);
     }
 
     @Override
@@ -220,6 +232,10 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                     }
                 });
                 popupMenu.show();
+                break;
+            case R.id.photos_button:
+                startActivity(ProfileGallery.class);
+                break;
         }
     }
 
@@ -228,9 +244,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             case R.id.edit_profile:
                 setUserInfoToExtras();
                 startActivity(UserInfoActivity.class);
-                return true;
-            case R.id.view_gallery:
-                startActivity(ProfileGallery.class);
                 return true;
             case R.id.add_pic:
                 if(isNetworkAvailable()){
@@ -264,6 +277,60 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+    public static void startPhotosCounter() {
+        new PhotosCounterAsyncTask().execute();
+    }
+
+    private static class PhotosCounterAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                countUserImages();
+            } catch (Exception e) {
+                Log.e("formalchat", e.getMessage());
+            }
+            return "Executed";
+        }
+    }
+
+    private static void countUserImages() {
+        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+        parseQuery.whereEqualTo("userName", getCurrentUser());
+        Log.v("formalchat", "User Name = " + getCurrentUser());
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if(e == null) {
+                    photos_btn_counter = list.size();
+                    Log.v("formalchat", "find OK = " + photos_btn_counter);
+                }
+                else {
+                    photos_btn_counter = 0;
+                    Log.v("formalchat", "find NOK = " + photos_btn_counter);
+                }
+
+                updateUserImagesCounter();
+            }
+        });
+    }
+
+    private static void updateUserImagesCounter() {
+        String photosBtnTxt = getPhotosBtnTxt();
+        Log.v("formalchat", "photosBtnTxt = " + photosBtnTxt);
+        photos_btn.setText(photosBtnTxt);
+    }
+
+    private static String getPhotosBtnTxt() {
+        String photosNum = String.valueOf(photos_btn_counter);
+        Log.v("formalchat", "photosNum = " + photosNum);
+        switch (photos_btn_counter) {
+            case 0: return "No photos";
+            case 1: return photosNum + " photo";
+            default: return photosNum + " photos";
+        }
+    }
+
 
     private void loadBigProfilePicFromParse() {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
@@ -483,7 +550,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         });
     }
 
-    private String getCurrentUser() {
+    private static String getCurrentUser() {
         ParseUser currentUser = ParseUser.getCurrentUser();
         return currentUser.getUsername();
     }

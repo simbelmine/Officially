@@ -251,6 +251,7 @@ public class FullImageActivity extends Activity {
 
     private void setFlagToSharedPrefs() {
         editor.putBoolean("refresh", true);
+        editor.putBoolean("photo_num_changed", true);
         editor.commit();
     }
 

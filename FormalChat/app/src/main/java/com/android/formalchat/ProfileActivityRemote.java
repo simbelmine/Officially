@@ -11,6 +11,7 @@ import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -65,6 +66,8 @@ public class ProfileActivityRemote extends DrawerActivity {
     private TextView name;
     private TextView gender;
     private TextView age;
+    private TextView photos_btn;
+    private int photos_btn_counter;
 
     private TextView motto;
     private TextView location;
@@ -100,6 +103,7 @@ public class ProfileActivityRemote extends DrawerActivity {
         videoExists = isVideoExists();
 
         init();
+        startPhotosCounter();
         setOnClickListeners();
         applyLayoutTransition();
         getProfileImgPath();
@@ -134,6 +138,7 @@ public class ProfileActivityRemote extends DrawerActivity {
         age = (TextView) findViewById(R.id.age_edit);
         help_video_leyout = (RelativeLayout) findViewById(R.id.help_layout);
         got_it_img = (ImageView) findViewById(R.id.got_it_img);
+        photos_btn = (TextView) findViewById(R.id.photos_button);
 
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
@@ -183,6 +188,12 @@ public class ProfileActivityRemote extends DrawerActivity {
             @Override
             public void onClick(View v) {
                 startVideo();
+            }
+        });
+        photos_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(ProfileGallery.class, null, null);
             }
         });
     }
@@ -261,6 +272,54 @@ public class ProfileActivityRemote extends DrawerActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public void startPhotosCounter() {
+        new PhotosCounterAsyncTask().execute();
+    }
+
+    private class PhotosCounterAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                countUserImages();
+            } catch (Exception e) {
+                Log.e("formalchat", e.getMessage());
+            }
+            return "Executed";
+        }
+    }
+
+    private void countUserImages() {
+        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+        parseQuery.whereEqualTo("userName", getCurrentUser());
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if(e == null) {
+                    photos_btn_counter = list.size();
+                }
+                else {
+                    photos_btn_counter = 0;
+                }
+
+                updateUserImagesCounter();
+            }
+        });
+    }
+
+    private void updateUserImagesCounter() {
+        String photosBtnTxt = getPhotosBtnTxt();
+        photos_btn.setText(photosBtnTxt);
+    }
+
+    private String getPhotosBtnTxt() {
+        String photosNum = String.valueOf(photos_btn_counter);
+        switch (photos_btn_counter) {
+            case 0: return "No photos";
+            case 1: return photosNum + " photo";
+            default: return photosNum + " photos";
+        }
     }
 
     private void loadBigProfilePicFromParse() {
