@@ -4,12 +4,6 @@
         android:id="@+id/edit_profile"
         android:title="@string/menu_edit_profile"/>
     <item
-        android:id="@+id/add_pic"
-        android:title="@string/menu_add_pic"/>
-    <item
-        android:id="@+id/record_video"
-        android:title="@string/menu_record_video"/>
-    <item
         android:id="@+id/profile_remote"
         android:title="@string/menu_profile_remote"/>
 </menu>

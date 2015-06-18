@@ -2,14 +2,24 @@ package com.android.formalchat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.GridView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -18,16 +28,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
  * Created by Sve on 5/21/15.
  */
-public class ProfileGallery extends Activity {
+public class ProfileGallery extends DrawerActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
     private SharedPreferences sharedPreferences;
     private Activity activity;
@@ -36,12 +43,19 @@ public class ProfileGallery extends Activity {
     private  ParseUser user;
     private ArrayList<String> imagePaths;
     private ProfileGalleryAdapter galleryAdapter;
+    private ProfileAddImageDialog addImgWithDialog;
+    private DrawerLayout drawerLayout;
+    private ListView leftDrawerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_gallery);
-        getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        //setContentView(R.layout.profile_gallery);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View contentView = inflater.inflate(R.layout.profile_gallery, null, false);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.addView(contentView, 0);
+//        getActionBar().setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
         activity = this;
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
@@ -50,6 +64,7 @@ public class ProfileGallery extends Activity {
         user = ParseUser.getCurrentUser();
         videoExists = isVideoExists();
 
+        setTitle();
         if(isNetworkAvailable()) {
             if (videoExists) {
                 addVideoToPaths();
@@ -76,6 +91,56 @@ public class ProfileGallery extends Activity {
                 getImagesFromParse();
             }
             sharedPreferences.edit().putBoolean("refresh", false).commit();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.gallery_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_pic:
+                if(isNetworkAvailable()){
+                    addImgWithDialog = new ProfileAddImageDialog();
+                    FragmentManager manager = getSupportFragmentManager();
+                    addImgWithDialog.show(manager, "add_img_dialog");
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
+                }
+                return true;
+            case R.id.record_video:
+                startActivity(new Intent(this, VideoRecordActivity.class));
+                return true;
+            case android.R.id.home:
+                if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                }
+                else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void setTitle() {
+        int title_position = getIntent().getIntExtra("title_position", NONE);
+        if(title_position == DrawerActivity.PROFILE_ID) {
+            setTitle(getResources().getString(R.string.gallery));
+        }
+        else
+        if(title_position != NONE) {
+            setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+        }
+        else if (title_position == NONE) {
+            setTitle(getResources().getString(R.string.gallery));
         }
     }
 

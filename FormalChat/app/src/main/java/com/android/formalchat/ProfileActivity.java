@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -130,11 +131,11 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private void setTitle() {
         int title_position = getIntent().getIntExtra("title_position", NONE);
         if(title_position == DrawerActivity.PROFILE_ID) {
-            getActionBar().setTitle(getResources().getString(R.string.profile));
+            setTitle(getResources().getString(R.string.profile));
         }
         else
         if(title_position != NONE) {
-            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+            setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
         }
     }
 
@@ -245,19 +246,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 setUserInfoToExtras();
                 startActivity(UserInfoActivity.class);
                 return true;
-            case R.id.add_pic:
-                if(isNetworkAvailable()){
-                    addImgWithDialog = new ProfileAddImageDialog();
-                    FragmentManager manager = getSupportFragmentManager();
-                    addImgWithDialog.show(manager, "add_img_dialog");
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "You are Offline", Toast.LENGTH_LONG).show();
-                }
-                return true;
-            case R.id.record_video:
-                startActivity(VideoRecordActivity.class);
-                return true;
             case R.id.profile_remote:
                 startActivity(ProfileActivityRemote.class);
                 return true;
@@ -297,17 +285,14 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private static void countUserImages() {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
         parseQuery.whereEqualTo("userName", getCurrentUser());
-        Log.v("formalchat", "User Name = " + getCurrentUser());
         parseQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if(e == null) {
                     photos_btn_counter = list.size();
-                    Log.v("formalchat", "find OK = " + photos_btn_counter);
                 }
                 else {
                     photos_btn_counter = 0;
-                    Log.v("formalchat", "find NOK = " + photos_btn_counter);
                 }
 
                 updateUserImagesCounter();
@@ -317,13 +302,11 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 
     private static void updateUserImagesCounter() {
         String photosBtnTxt = getPhotosBtnTxt();
-        Log.v("formalchat", "photosBtnTxt = " + photosBtnTxt);
         photos_btn.setText(photosBtnTxt);
     }
 
     private static String getPhotosBtnTxt() {
         String photosNum = String.valueOf(photos_btn_counter);
-        Log.v("formalchat", "photosNum = " + photosNum);
         switch (photos_btn_counter) {
             case 0: return "No photos";
             case 1: return photosNum + " photo";
