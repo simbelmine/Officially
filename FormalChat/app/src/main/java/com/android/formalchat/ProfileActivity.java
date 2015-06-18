@@ -1,8 +1,10 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,7 +13,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,9 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.SlidingDrawer;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
@@ -63,8 +63,8 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private TextView name;
     private TextView gender;
     private TextView age;
-    private static TextView photos_btn;
-    private static int photos_btn_counter;
+    private TextView photos_btn;
+    private int photos_btn_counter;
 
     private TextView motto;
     private TextView location;
@@ -81,10 +81,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
     private TextView perfectSmn;
     private TextView perfectDate;
     private TextView interests;
-
-    //private TextView interestedIn;
-    //private TextView lookingFor;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +110,13 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         addViewListeners();
     }
 
+    private BroadcastReceiver uploadMsgReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startPhotosCounter();
+        }
+    };
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -125,6 +128,51 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
                 startPhotosCounter();
                 sharedPreferences.edit().putBoolean("photo_num_changed", false);
             }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        registerBroadcastReceiver();
+
+        if(isNetworkAvailable()) {
+            initVideoWarningMessage();
+            populateInfoFromParse();
+        }
+        else {
+            // Get from local
+            //getImagesFromLocalStorage();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterBroadcastReceiver();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.exclamation_layout:
+                startActivity(VideoRecordActivity.class);
+                break;
+            case R.id.feb_button:
+                PopupMenu popupMenu = new PopupMenu(ProfileActivity.this, edit_feb_btn);
+                popupMenu.getMenuInflater().inflate(R.menu.profile_edit_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return onItemClicked(item);
+                    }
+                });
+                popupMenu.show();
+                break;
+            case R.id.photos_button:
+                startActivity(ProfileGallery.class);
+                break;
         }
     }
 
@@ -171,6 +219,15 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
 //        lookingFor = (TextView) findViewById(R.id.looking_for_edit);
     }
 
+    private void registerBroadcastReceiver() {
+        IntentFilter intentFilter = new IntentFilter(ProfileAddImageDialog.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(uploadMsgReceiver, intentFilter);
+    }
+
+    private void unregisterBroadcastReceiver() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(uploadMsgReceiver);
+    }
+
     private void initVideoWarningMessage() {
         if(!videoExists) {
             exclamationLayout.setVisibility(View.VISIBLE);
@@ -203,43 +260,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         photos_btn.setOnClickListener(this);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if(isNetworkAvailable()) {
-            initVideoWarningMessage();
-            populateInfoFromParse();
-        }
-        else {
-            // Get from local
-            //getImagesFromLocalStorage();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.exclamation_layout:
-                startActivity(VideoRecordActivity.class);
-                break;
-            case R.id.feb_button:
-                PopupMenu popupMenu = new PopupMenu(ProfileActivity.this, edit_feb_btn);
-                popupMenu.getMenuInflater().inflate(R.menu.profile_edit_menu, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        return onItemClicked(item);
-                    }
-                });
-                popupMenu.show();
-                break;
-            case R.id.photos_button:
-                startActivity(ProfileGallery.class);
-                break;
-        }
-    }
-
     private boolean onItemClicked(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.edit_profile:
@@ -266,11 +286,11 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public static void startPhotosCounter() {
+    public void startPhotosCounter() {
         new PhotosCounterAsyncTask().execute();
     }
 
-    private static class PhotosCounterAsyncTask extends AsyncTask<String, Void, String> {
+    private class PhotosCounterAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             try {
@@ -282,7 +302,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         }
     }
 
-    private static void countUserImages() {
+    private void countUserImages() {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
         parseQuery.whereEqualTo("userName", getCurrentUser());
         parseQuery.findInBackground(new FindCallback<ParseObject>() {
@@ -300,12 +320,12 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         });
     }
 
-    private static void updateUserImagesCounter() {
+    private void updateUserImagesCounter() {
         String photosBtnTxt = getPhotosBtnTxt();
         photos_btn.setText(photosBtnTxt);
     }
 
-    private static String getPhotosBtnTxt() {
+    private String getPhotosBtnTxt() {
         String photosNum = String.valueOf(photos_btn_counter);
         switch (photos_btn_counter) {
             case 0: return "No photos";
@@ -313,7 +333,6 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
             default: return photosNum + " photos";
         }
     }
-
 
     private void loadBigProfilePicFromParse() {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
@@ -533,7 +552,7 @@ public class ProfileActivity extends DrawerActivity implements View.OnClickListe
         });
     }
 
-    private static String getCurrentUser() {
+    private String getCurrentUser() {
         ParseUser currentUser = ParseUser.getCurrentUser();
         return currentUser.getUsername();
     }

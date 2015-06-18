@@ -20,6 +20,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -50,6 +51,7 @@ public class ProfileAddImageDialog extends DialogFragment {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int ACTIVITY_SELECT_IMAGE = 321;
     public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final String ACTION="UPLOAD_COMPLETE";
 
     private static final String PREFS_NAME = "FormalChatPrefs";
     private SharedPreferences sharedPreferences;
@@ -218,11 +220,15 @@ public class ProfileAddImageDialog extends DialogFragment {
             Log.e("formalchat", "Photo was saved Successfully !");
             //hide notification for uploading - or just show error on the same notification
             hideUploadNotification();
-            //         callingActivity.onImageUploaded();
-            ProfileActivity.startPhotosCounter();
+            sendBroadcastMessage();
         } else {
             Log.e("formalchat", "Error saving: " + e.getMessage());
         }
+    }
+
+    private void sendBroadcastMessage() {
+        Intent sender = new Intent(ACTION);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(sender);
     }
 
     private void showUploadNotification() {
