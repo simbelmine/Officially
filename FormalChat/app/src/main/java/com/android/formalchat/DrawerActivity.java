@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
@@ -139,7 +141,6 @@ public class DrawerActivity extends FragmentActivity {
         if(drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -172,10 +173,16 @@ public class DrawerActivity extends FragmentActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                //updateTitle(drawerTitle);
+                updateTitle(drawerTitle);
                 setPic();
             }
         };
+    }
+
+    @Override
+    public void setTitle(CharSequence title_) {
+        title = title_;
+        getActionBar().setTitle(title);
     }
 
     private void updateTitle(CharSequence title) {
@@ -225,3 +232,4 @@ public class DrawerActivity extends FragmentActivity {
         launchActivity(LoginActivity.class, NONE);
     }
 }
+

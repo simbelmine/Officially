@@ -121,10 +121,10 @@ public class MainActivity extends DrawerActivity {
     private void setTitle() {
         int title_position = getIntent().getIntExtra("title_position", NONE);
         if(title_position != NONE) {
-            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+            setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
         }
         else {
-            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[0]);
+            setTitle(getResources().getStringArray(R.array.menu_list)[0]);
         }
     }
 
