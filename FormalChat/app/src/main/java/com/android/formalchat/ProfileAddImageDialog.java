@@ -59,7 +59,6 @@ public class ProfileAddImageDialog extends DialogFragment {
     private ImageView mAttachPhotoImg;
     private TextView mAttachPhotoImgTxt;
     private Uri fileUri;
-    private ProfileActivity callingActivity;
     private String imgCameraPath;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder notificationBuilder;
@@ -111,8 +110,6 @@ public class ProfileAddImageDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         Drawable drawable;
-        callingActivity = (ProfileActivity) getActivity();
-        Random random = new Random();
 
         if(resultCode == Activity.RESULT_OK) {
             if (data != null) {
