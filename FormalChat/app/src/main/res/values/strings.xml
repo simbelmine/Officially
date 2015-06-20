@@ -36,8 +36,16 @@
     <string name="introduction_none_txt">Fill your introduction and improve your matches.</string>
     <string name="perfectSmn_none_txt">Describe your perfect someone and improve your matches.</string>
     <string name="perfectDate_none_txt">Describe your perfect date and improve your matches.</string>
-    <string name="about_me_done">Done</string>
+    <string name="done">Done</string>
     <string name="user_info_save">Save</string>
+
+    <!-- Main Info Questions -->
+    <string name="main_username_lbl">UserName</string>
+    <string name="main_details_lbl">Details</string>
+    <string name="main_birthday_lbl">Birthday</string>
+    <string name="main_location_lbl">Location</string>
+    
+
 
     <string name="menu_delete">Delete</string>
     <string name="menu_set_as">Set As Profile</string>

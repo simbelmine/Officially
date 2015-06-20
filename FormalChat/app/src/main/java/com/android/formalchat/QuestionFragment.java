@@ -109,7 +109,7 @@ public abstract class QuestionFragment extends Fragment {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         params.topMargin = (int) getResources().getDimension(R.dimen.question_padding_top);
-        btn.setText(getResources().getString(R.string.about_me_done));
+        btn.setText(getResources().getString(R.string.done));
         btn.setTextColor(getResources().getColor(R.color.black));
         btn.setBackgroundResource(R.drawable.rounded_btns);
         btn.setOnClickListener(new View.OnClickListener() {

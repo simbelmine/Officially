@@ -47,11 +47,10 @@
         <activity   android:name=".UserInfoActivity"
                     android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity   android:name=".MainQuestionsActivity"
-                    android:windowSoftInputMode="adjustPan|stateHidden"/>
+                    android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"/>
         <activity   android:name=".FullImageActivity"/>
         <activity   android:name=".QuestionaryActivity"
                     android:noHistory="true"/>
-
 
         <activity   android:name=".DialogActivtyMultiText"
                     android:theme="@style/QuestionsDialogTheme"

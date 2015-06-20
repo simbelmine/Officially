@@ -1,6 +1,8 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,26 +10,34 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.GetCallback;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Sve on 2/19/15.
@@ -37,22 +47,18 @@ public class MainQuestionsActivity extends Activity {
     private static final String EXTRA_ABOUT_ME = "aboutMeText";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private static final int resultCode_interestedIn = 101;
-    private static final int resultCode_lookingFor = 102;
-    private static final int resultCode_aboutMe = 103;
-    private static EditText name;
-    private static CheckBox gender_male;
-    private static CheckBox gender_female;
-    private static EditText age;
-    private static EditText location;
-    //private static Spinner interested_in;
-    private static TextView interested_in;
-    private int interestedIn_position;
-    //    private static Spinner looking_for;
-    private TextView looking_for;
-    private int lookingFor_position;
-    private static TextView about_me;
-    private static Button done_btn;
+    private EditText name;
+    private Button male_btn;
+    private Button female_btn;
+    private TextView age;
+    private EditText location;
+    private Button done_btn;
+    private Boolean isMaleClicked;
+    private ImageView name_check;
+    private ImageView age_check;
+    private DatePickerDialog datePickerDialog;
+    private SimpleDateFormat dateFormatter;
+    private Calendar currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,88 +68,61 @@ public class MainQuestionsActivity extends Activity {
         editor = sharedPreferences.edit();
 
         findAllById();
+        init();
+        initGenderButtons();
+        initDatePickerDialog();
         Log.v("formalchat", "Location: " + getCurrentLocation());
-        location.setText(getCurrentLocation());
         setOnClickListeners();
         onDoneBtnPressed();
     }
 
     private void setOnClickListeners() {
-        interested_in.setOnClickListener(new View.OnClickListener() {
+        male_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDialogActivity(resultCode_interestedIn, DialogActivityInterestedIn.class, null, null);
-            }
-        });
-        looking_for.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startDialogActivity(resultCode_lookingFor, DialogActivityLookingFor.class, null, null);
-            }
-        });
-        about_me.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String aboutMeTxt = about_me.getText().toString();
-                startDialogActivity(resultCode_aboutMe, DialogActivtyMultiText.class, EXTRA_ABOUT_ME, aboutMeTxt);
+                isMaleClicked = true;
+                initGenderButtons();
             }
         });
 
-        gender_male.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        female_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    gender_male.setChecked(true);
-                    gender_female.setChecked(false);
+            public void onClick(View v) {
+                isMaleClicked = false;
+                initGenderButtons();
+            }
+        });
+
+        name.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(name.getWindowToken(), 0);
+                    updateFields();
+                    return true;
+                }
+                return false;
+            }
+        });
+        name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    name_check.setVisibility(View.INVISIBLE);
                 }
             }
         });
-        gender_female.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        age.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    gender_male.setChecked(false);
-                    gender_female.setChecked(true);
-                }
+            public void onClick(View v) {
+                age.clearFocus();
+                age_check.setVisibility(View.INVISIBLE);
+                datePickerDialog.show();
             }
         });
-    }
 
-    private void startDialogActivity(int resultCode, Class className, String extraName, String extraText) {
-        Intent intent = new Intent(getApplicationContext(), className);
-        if(extraText != null) {
-            ArrayList<String> extrasList = new ArrayList<>();
-            extrasList.add(extraText);
-            intent.putStringArrayListExtra(extraName, extrasList);
-        }
-        startActivityForResult(intent, resultCode);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(resultCode) {
-            case resultCode_interestedIn:
-                interestedIn_position = data.getIntExtra("interestedIn_position", 11);
-                String value_ii = data.getStringExtra("interestedIn_value");
-                interested_in.setText(value_ii);
-                break;
-            case resultCode_lookingFor:
-                lookingFor_position = data.getIntExtra("lookingFor_position", 11);
-                String value_lf = data.getStringExtra("lookingFor_value");
-                looking_for.setText(value_lf);
-                break;
-            case resultCode_aboutMe:
-                if(!isAboutMeEmpty()) {
-                    ArrayList<String> aboutMe_txt = data.getStringArrayListExtra(EXTRA_ABOUT_ME);
-                    about_me.setText(aboutMe_txt.get(0).toString());
-                }
-            default:
-                break;
-        }
-    }
-
-    private boolean isAboutMeEmpty() {
-        return getIntent().hasExtra(EXTRA_ABOUT_ME);
     }
 
     private void onDoneBtnPressed() {
@@ -162,11 +141,31 @@ public class MainQuestionsActivity extends Activity {
         });
     }
 
+    private void updateFields() {
+        name.clearFocus();
+        age.clearFocus();
+        done_btn.requestFocusFromTouch();
+    }
+
+
     private boolean verifyVariables() {
-        if(gender_male.isChecked() || gender_female.isChecked()) {
+        Log.v("formalchat", age.getText().toString());
+        if(!TextUtils.isEmpty(name.getText()) && !TextUtils.isEmpty(age.getText())) {
             return true;
         }
+        updateChecks();
         return false;
+    }
+
+    private void updateChecks() {
+        if(TextUtils.isEmpty(name.getText())) {
+            name_check.setVisibility(View.VISIBLE);
+            name_check.setImageDrawable(getResources().getDrawable(R.drawable.wrong));
+        }
+        if(TextUtils.isEmpty(age.getText())) {
+            age_check.setVisibility(View.VISIBLE);
+            age_check.setImageDrawable(getResources().getDrawable(R.drawable.wrong));
+        }
     }
 
     private void startQuestionaryActivity() {
@@ -181,7 +180,7 @@ public class MainQuestionsActivity extends Activity {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
         parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
-            public void done(ParseObject parseObject, ParseException e) {
+            public void done(ParseObject parseObject, com.parse.ParseException e) {
                 if (e == null) {
                     saveToExistingUserInfo(parseObject, userName);
                 } else {
@@ -199,19 +198,12 @@ public class MainQuestionsActivity extends Activity {
 
         userInfo.setName(name.getText().toString());
         userInfo.setGender(getCorrectGender());
-        userInfo.setAge(age.getText().toString());
+        userInfo.setAge(getAge());
         userInfo.setLocation(location.getText().toString());
-        //userInfo.setInterestedIn(interested_in.getSelectedItemPosition());
-        userInfo.setInterestedIn(interestedIn_position);
-        //userInfo.setLookingFor(looking_for.getSelectedItemPosition());
-        userInfo.setLookingFor(lookingFor_position);
-        if(!getResources().getString(R.string.multi_txt).equals(about_me.getText().toString())) {
-            userInfo.setAboutMe(about_me.getText().toString());
-        }
 
         userInfo.saveInBackground(new SaveCallback() {
             @Override
-            public void done(ParseException e) {
+            public void done(com.parse.ParseException e) {
                 if (e == null) {
                     Log.e("formalchat", "Questionary was saved Successfully !");
                 } else {
@@ -222,32 +214,23 @@ public class MainQuestionsActivity extends Activity {
     }
 
     private int getCorrectGender() {
-        if(gender_male.isChecked()) {
+        if(isMaleClicked)
             return 0;
-        }
-        else if(gender_female.isChecked()) {
+        else
             return 1;
-        }
-        return 11;
     }
 
     private void saveToExistingUserInfo(ParseObject parseObject, String userName) {
         parseObject.put("loginName", userName);
         parseObject.put("name", name.getText().toString());
         parseObject.put("gender", getCorrectGender());
-        parseObject.put("age", age.getText().toString());
+        parseObject.put("age", getAge());
         parseObject.put("location", location.getText().toString());
-        // parseObject.put("interestedIn", interested_in.getSelectedItemPosition());
-        parseObject.put("interestedIn", interestedIn_position);
-        //parseObject.put("lookingFor", looking_for.getSelectedItemPosition());
-        parseObject.put("lookingFor", lookingFor_position);
-        if(!getResources().getString(R.string.multi_txt).equals(about_me.getText().toString())) {
-            parseObject.put("aboutMe", about_me.getText().toString());
-        }
 
         parseObject.saveInBackground(new SaveCallback() {
+
             @Override
-            public void done(ParseException e) {
+            public void done(com.parse.ParseException e) {
                 if (e == null) {
                     Log.e("formalchat", "Questionary was saved Successfully !");
                 } else {
@@ -255,6 +238,27 @@ public class MainQuestionsActivity extends Activity {
                 }
             }
         });
+    }
+
+    private int getAge() {
+        int currentYear = currentDate.get(Calendar.YEAR);
+        int year = getYear();
+
+        return currentYear - year;
+    }
+
+    private int getYear() {
+        Calendar calendar = Calendar.getInstance();
+        Date date;
+        try {
+            date = dateFormatter.parse(age.getText().toString());
+            calendar.setTime(date);
+            return calendar.get(Calendar.YEAR);
+        }
+        catch (ParseException ex) {
+            Log.v("formalchat", ex.getMessage());
+        }
+        return 0;
     }
 
     private String getCurrentLocation() {
@@ -334,21 +338,60 @@ public class MainQuestionsActivity extends Activity {
 
     private void findAllById() {
         name = (EditText) findViewById(R.id.name_edit);
-        //gender = (Spinner) findViewById(R.id.gender_edit);
-        gender_male = (CheckBox) findViewById(R.id.male_check);
-        gender_female = (CheckBox) findViewById(R.id.female_check);
-        age = (EditText) findViewById(R.id.age_edit);
+        male_btn = (Button) findViewById(R.id.male_btn);
+        female_btn = (Button) findViewById(R.id.female_btn);
+        age = (TextView) findViewById(R.id.age_edit);
         location = (EditText) findViewById(R.id.location_edit);
-        //interested_in = (Spinner) findViewById(R.id.interested_in_edit);
-        interested_in = (TextView) findViewById(R.id.interested_in_edit);
-        //looking_for = (Spinner) findViewById(R.id.looking_for_edit);
-        looking_for = (TextView) findViewById((R.id.looking_for_edit));
-        about_me = (TextView) findViewById(R.id.about_me_edit);
+        name_check = (ImageView) findViewById(R.id.name_check);
+        age_check = (ImageView) findViewById(R.id.age_check);
         done_btn = (Button) findViewById(R.id.done_btn);
+    }
+
+    private void init() {
+        isMaleClicked = true;
+        name.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        location.setText(getCurrentLocation());
+    }
+
+    private void initGenderButtons() {
+        if(isMaleClicked) {
+            male_btn.setBackgroundResource(R.drawable.rounded_btns_gray_active);
+            male_btn.setTextColor(getResources().getColor(R.color.white));
+            female_btn.setBackgroundResource(R.drawable.rounded_btns_gray);
+            female_btn.setTextColor(getResources().getColor(R.color.action_bar));
+        }
+        else {
+            male_btn.setBackgroundResource(R.drawable.rounded_btns_gray);
+            male_btn.setTextColor(getResources().getColor(R.color.action_bar));
+            female_btn.setBackgroundResource(R.drawable.rounded_btns_gray_active);
+            female_btn.setTextColor(getResources().getColor(R.color.white));
+        }
     }
 
     private void setDoneQuestions() {
         editor.putBoolean("questions_done", true);
         editor.commit();
+    }
+
+    private void initDatePickerDialog() {
+        currentDate = Calendar.getInstance();
+        dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+        datePickerDialog = new DatePickerDialog(this, new OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                age.setText(dateFormatter.format(newDate.getTime()));
+            }
+        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DAY_OF_MONTH));
+        if(isBeforeVersion21()) {
+            datePickerDialog.setTitle(dateFormatter.format(currentDate.getTime()));
+        }
+    }
+
+    private boolean isBeforeVersion21() {
+        if(Integer.valueOf(Build.VERSION.SDK_INT) < 21)
+            return true;
+        return false;
     }
 }

@@ -27,7 +27,7 @@
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:layout_marginRight="@dimen/divider_info_margin"
-            android:text="@string/about_me_done"
+            android:text="@string/done"
             android:layout_alignParentRight="true"
             android:gravity="center_vertical|center_horizontal"
             android:background="@color/items"

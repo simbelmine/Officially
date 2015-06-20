@@ -33,10 +33,10 @@ public class UserInfo extends ParseObject{
         put("gender", gender);
     }
 
-    public String getAge() {
-        return getString("age");
+    public int getAge() {
+        return getInt("age");
     }
-    public void setAge(String age) {
+    public void setAge(int age) {
         put("age", age);
     }
 

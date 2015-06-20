@@ -16,6 +16,8 @@
     <dimen name="padding_left_check">10dp</dimen>
     <dimen name="margin_right_check">30dp</dimen>
 
+    <dimen name="main_label_height">70dp</dimen>
+    <dimen name="main_label_padding">16dp</dimen>
     <dimen name="label_height">30dp</dimen>
     <dimen name="label_height_multi">40dp</dimen>
     <dimen name="aboutMe_height">40dp</dimen>
