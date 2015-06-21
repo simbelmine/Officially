@@ -67,8 +67,8 @@
     </style>
 
     <style name="QuestionStyle">
-        <item name="android:textSize">30sp</item>
-        <item name="android:textColor">@color/pink</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:typeface">serif</item>
     </style>
 

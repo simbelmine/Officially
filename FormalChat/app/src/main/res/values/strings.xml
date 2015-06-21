@@ -56,6 +56,7 @@
     <string name="menu_profile_remote">Open Prof Remote</string>
 
     <string name="video_warning" >This video is not available in the moment.</string>
+    <string name="none_account">Don\'t have an account?</string>
 
     <string-array name="gender_values">
         <item>Man</item>

@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -34,6 +36,8 @@ public abstract class QuestionFragment extends Fragment {
     protected View rootView;
     private TextView skip;
     private Button doneBtn;
+    private ScrollView scrollView;
+    private ImageView scrollDownImg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,6 +51,7 @@ public abstract class QuestionFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 question = position;
+                initScrollView();
                 if(isLastQuestion()) {
                     doneBtn = initButton();
                     layout.addView(doneBtn);
@@ -56,7 +61,6 @@ public abstract class QuestionFragment extends Fragment {
             public void onPageScrollStateChanged(int state) {
             }
         });
-
         questionaryPagerAdapter = new QuestionaryPagerAdapter(getFragmentManager(), getActivity().getApplicationContext(), getActivity());
         sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, 0);
         clicked = false;
@@ -82,7 +86,7 @@ public abstract class QuestionFragment extends Fragment {
     protected abstract String putQuestionText();
     protected abstract List<String> putAnswersList();
 
-    protected void init() {
+    private void init() {
         TextView questionView = (TextView) rootView.findViewById(R.id.question);
         questionView.setText(questionTxt);
 
@@ -104,14 +108,32 @@ public abstract class QuestionFragment extends Fragment {
         });
     }
 
+    private void initScrollView() {
+        scrollView = (ScrollView) rootView.findViewById(R.id.answers_scrollview);
+        scrollDownImg = (ImageView) rootView.findViewById(R.id.scroll_down_img);
+        if((scrollView.getMeasuredHeight() < scrollView.getChildAt(0).getHeight())) {
+            scrollDownImg.setBackgroundResource(R.drawable.down_scrollbar_arrow);
+            scrollDownImg.setVisibility(View.VISIBLE);
+        }
+        else {
+            scrollDownImg.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private Button initButton(){
         Button btn = new Button(getActivity().getApplicationContext());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.topMargin = (int) getResources().getDimension(R.dimen.question_padding_top);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                (int) getResources().getDimension(R.dimen.answers_done));
+//        params.topMargin = (int) getResources().getDimension(R.dimen.question_padding_top);
+        params.setMargins(
+                (int) getResources().getDimension(R.dimen.answer_margin_lr),
+                (int) getResources().getDimension(R.dimen.question_padding_top),
+                (int) getResources().getDimension(R.dimen.answer_margin_lr),
+                (int) getResources().getDimension(R.dimen.answer_margin_bottom));
         btn.setText(getResources().getString(R.string.done));
-        btn.setTextColor(getResources().getColor(R.color.black));
-        btn.setBackgroundResource(R.drawable.rounded_btns);
+        btn.setTextColor(getResources().getColor(R.color.action_bar));
+        // btn.setBackgroundResource(R.drawable.rounded_btns);
+        btn.setBackgroundColor(getResources().getColor(R.color.white));
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,10 +150,14 @@ public abstract class QuestionFragment extends Fragment {
         final String answer_str = String.valueOf(idx);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 (int) getResources().getDimension(R.dimen.answer_height));
-        params.bottomMargin = (int) getResources().getDimension(R.dimen.answer_margin_bottom);
+//        params.bottomMargin = (int) getResources().getDimension(R.dimen.answer_margin_bottom);
+        params.setMargins(
+                (int) getResources().getDimension(R.dimen.answer_margin_lr), 0,
+                (int) getResources().getDimension(R.dimen.answer_margin_lr),
+                (int) getResources().getDimension(R.dimen.answer_margin_bottom));
         textView.setGravity(Gravity.CENTER);
         textView.setText(answers.get(idx));
-        textView.setTextColor(getResources().getColor(R.color.dark_gray));
+        textView.setTextColor(getResources().getColor(R.color.white));
         textView.setTag(answer_str);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,14 +180,14 @@ public abstract class QuestionFragment extends Fragment {
         answerFromPrefs = getAnswerFromSharedPrefs();
         if(answerFromPrefs != null) {
             if(answerFromPrefs.equals(textView.getTag().toString())) {
-                putCorrectAnswerColor(textView, getResources().getColor(R.color.gray));
+                putCorrectAnswerColor(textView, getResources().getColor(R.color.gray), getResources().getColor(R.color.action_bar));
             }
             else {
-                putCorrectAnswerColor(textView,getResources().getColor(R.color.light_blue));
+                putCorrectAnswerColor(textView,getResources().getColor(R.color.items), getResources().getColor(R.color.white));
             }
             clicked = true;
         } else {
-            putCorrectAnswerColor(textView, getResources().getColor(R.color.light_blue));
+            putCorrectAnswerColor(textView, getResources().getColor(R.color.items), getResources().getColor(R.color.white));
         }
     }
 
@@ -186,13 +212,13 @@ public abstract class QuestionFragment extends Fragment {
 
     protected void changeColorOnClick(TextView answerTextView) {
         if(!clicked) {
-            putCorrectAnswerColor(answerTextView, getResources().getColor(R.color.gray));
+            putCorrectAnswerColor(answerTextView, getResources().getColor(R.color.gray), getResources().getColor(R.color.action_bar));
             clicked = true;
         }
         else {
-            putCorrectAnswerColor(answerTextView, getResources().getColor(R.color.gray));
+            putCorrectAnswerColor(answerTextView, getResources().getColor(R.color.gray), getResources().getColor(R.color.action_bar));
             TextView txtview = (TextView) rootView.findViewWithTag(getAnswerFromSharedPrefs());
-            putCorrectAnswerColor(txtview, getResources().getColor(R.color.light_blue));
+            putCorrectAnswerColor(txtview, getResources().getColor(R.color.items), getResources().getColor(R.color.white));
 
         }
     }
@@ -208,9 +234,10 @@ public abstract class QuestionFragment extends Fragment {
         return sharedPreferences.getString(getQuestionTag(), "");
     }
 
-    protected  void putCorrectAnswerColor(TextView view, int color) {
+    protected  void putCorrectAnswerColor(TextView view, int colorBackground, int colorText) {
         if(view != null) {
-            view.setBackgroundColor(color);
+            view.setBackgroundColor(colorBackground);
+            view.setTextColor(colorText);
         }
     }
 }

@@ -21,9 +21,11 @@
     <color name="dark_purple">#330033</color>
 
     <color name="action_bar">#004457</color>
+    <color name="action_bar_lighter">#408497</color>
     <color name="items">#00a5a5</color>
     <color name="items_40">#4000a5a5</color>
     <color name="border_green">#00b3b4</color>
     <color name="background">#002833</color>
     <color name="gray_green">#5e6573</color>
+    <color name="turquoise">#33b5e5</color>
 </resources>
