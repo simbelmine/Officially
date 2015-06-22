@@ -50,6 +50,7 @@
                     android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"/>
         <activity   android:name=".FullImageActivity"/>
         <activity   android:name=".questionary.QuestionaryActivity"
+                    android:theme="@style/ThemeQuestionary"
                     android:noHistory="true"/>
 
         <activity   android:name=".DialogActivtyMultiText"

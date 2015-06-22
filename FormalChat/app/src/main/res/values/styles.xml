@@ -14,9 +14,19 @@
         <item name="android:spinnerItemStyle">@style/MySpinnerItem</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
     </style>
+
+    <style name="ThemeQuestionary" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBarQuestionary</item>
+        <item name="android:scrollbarStyle">insideOverlay</item>
+    </style>
+
     <!-- ActionBar styles -->
     <style name="MyActionBar"
         parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/action_bar</item>
+    </style>
+    <style name="MyActionBarQuestionary"
+        parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/action_bar</item>
     </style>
 
@@ -64,6 +74,9 @@
 
     <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:src">@drawable/abc_ic_menu_moreoverflow_mtrl_alpha</item>
+    </style>
+    <style name="OverFlowQuestionary" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:showAsAction">never</item>
     </style>
 
     <style name="QuestionStyle">

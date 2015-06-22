@@ -7,33 +7,30 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.formalchat.MainActivity;
 import com.android.formalchat.R;
 import com.android.formalchat.UserQuestionary;
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Sve on 3/21/15.
@@ -42,8 +39,11 @@ public abstract class QuestionFragment extends Fragment {
 
     private static final String PREFS_NAME = "FormalChatQuestionAnswers";
     private static final String PREFS_NAME_ANSWERS = "FormalChatQuestionAnswers";
-    protected SharedPreferences sharedPreferences;
+    protected static final String ACTION_SHOW_HIDE = "ShowHideDoneBtn";
+    private static final int PAGER_SCROLLER_DURATION = 2;
 
+    protected SharedPreferences sharedPreferences;
+    protected SharedPreferences sharedPreferencesAnswers;
     protected ViewPager viewPager;
     protected List<String> answers;
     protected String questionTxt;
@@ -51,11 +51,11 @@ public abstract class QuestionFragment extends Fragment {
     protected String currentSelectedAnswer;
     protected View rootView;
     private TextView skip;
-    private Button doneBtn;
     private ScrollView scrollView;
     private ImageView scrollDownImg;
-
+    private int questionPosition;
     private boolean isLast = false;
+    private FixedViewPagerScroller mScroller;
 
     HashMap<Integer, TextView> answersToViews = new HashMap<>();
     private AnswerReadyListener answerReadyListener;
@@ -66,6 +66,7 @@ public abstract class QuestionFragment extends Fragment {
         viewPager = (ViewPager) container;
 
         sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        sharedPreferencesAnswers = getActivity().getSharedPreferences(PREFS_NAME_ANSWERS, 0);
 
         questionTxt = putQuestionText();
         answers = putAnswersList();
@@ -73,6 +74,7 @@ public abstract class QuestionFragment extends Fragment {
 
         init();
 
+        initViewPagerScroller();
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -80,7 +82,10 @@ public abstract class QuestionFragment extends Fragment {
             }
             @Override
             public void onPageSelected(int position) {
+                Log.v("formalchat", "position = " + position);
+                setQuestionPosition(position);
                 initScrollView();
+                sendBroadcastToActionDoneBtnOnPosition(position);
             }
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -100,6 +105,23 @@ public abstract class QuestionFragment extends Fragment {
 
     protected abstract String putQuestionText();
     protected abstract List<String> putAnswersList();
+
+
+    public int getQuestionPosition() {
+        int questionPos = sharedPreferencesAnswers.getInt("questionPosition", 0);
+        clearQuestionPosition();
+        return questionPos;
+    }
+
+    public void setQuestionPosition(int questionPosition) {
+        sharedPreferencesAnswers.edit().putInt("questionPosition", questionPosition).commit();
+    }
+
+    public void clearQuestionPosition() {
+        if(sharedPreferencesAnswers.contains("questionPosition")) {
+            sharedPreferencesAnswers.edit().remove("questionPosition").commit();
+        }
+    }
 
     private void init() {
         TextView questionView = (TextView) rootView.findViewById(R.id.question);
@@ -139,33 +161,22 @@ public abstract class QuestionFragment extends Fragment {
         }
     }
 
-    private Button initButton(){
-        Button btn = new Button(getActivity().getApplicationContext());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                (int) getResources().getDimension(R.dimen.answers_done));
-//        params.topMargin = (int) getResources().getDimension(R.dimen.question_padding_top);
-        params.setMargins(
-                (int) getResources().getDimension(R.dimen.answer_margin_lr),
-                (int) getResources().getDimension(R.dimen.question_padding_top),
-                (int) getResources().getDimension(R.dimen.answer_margin_lr),
-                (int) getResources().getDimension(R.dimen.answer_margin_bottom));
-        btn.setText(getResources().getString(R.string.done));
-        btn.setTextColor(getResources().getColor(R.color.action_bar));
-        // btn.setBackgroundResource(R.drawable.rounded_btns);
-        btn.setBackgroundColor(getResources().getColor(R.color.white));
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAllAnswersDone();
-            }
-        });
-        btn.setLayoutParams(params);
-        return btn;
-    }
-
     private TextView initTextView(final int idx) {
         TextView textView = createTextViewForAnswer(idx);
         return textView;
+    }
+
+    private void initViewPagerScroller() {
+        try {
+            Field field = ViewPager.class.getDeclaredField("mScroller");
+            field.setAccessible(true);
+
+            mScroller = new FixedViewPagerScroller(viewPager.getContext(), new AccelerateInterpolator());
+            field.set(viewPager, mScroller);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @NonNull
@@ -213,19 +224,30 @@ public abstract class QuestionFragment extends Fragment {
         saveAnswerToSharedPrefs(currentSelectedAnswer);
 
         updateTextViewColorsAccordingToSelectedAnswer();
-        //goToNextQuestion();
+        goToNextQuestion();
     }
 
     protected void saveAnswerToSharedPrefs(String answer) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        Log.e("formalchat", getQuestionTag() + " : " + answer);
+        SharedPreferences.Editor editor = sharedPreferencesAnswers.edit();
         editor.putString(getQuestionTag(), answer);
         editor.commit();
     }
 
     protected void saveAnswerToParse(int answer) {
         String questionTag = getQuestionTag();
-       updateQuestionary_(questionTag, answer);
+        updateQuestionary_(questionTag, answer);
+    }
+
+    protected void goToNextQuestion() {
+//        mScroller.setCurrentDuration(PAGER_SCROLLER_DURATION);
+        int questionPosition = getQuestionPosition();
+        int pagerLastPosition = viewPager.getAdapter().getCount()-1;
+
+        if(!isLast) {
+            if (questionPosition != pagerLastPosition) {
+                viewPager.setCurrentItem(questionPosition + 1);
+            }
+        }
     }
 
     protected abstract String getQuestionTag();
@@ -234,79 +256,11 @@ public abstract class QuestionFragment extends Fragment {
         return sharedPreferences.getString(getQuestionTag(), "");
     }
 
-
-
-
-
     public void skipQuestionary() {
         FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
         QuestionaryDialog questionaryDialog = new QuestionaryDialog();
         questionaryDialog.show(fragmentTransaction, "dialog");
     }
-
-    public void checkAllAnswersDone() {
-        ParseUser user = ParseUser.getCurrentUser();
-        String userName = user.getUsername();
-
-        ParseQuery<ParseObject> parseQuery = new ParseQuery<>("UserQuestionary");
-        parseQuery.whereEqualTo("loginName", userName);
-        parseQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                if(e == null) {
-                    if(parseObjects.size() > 0) {
-                        ParseObject po = parseObjects.get(0);
-                        List<String> answersList = getAnswersFromPrefs();
-                        int counter = 0;
-
-                        if(answersList!= null) {
-                            for (String answer : answersList) {
-                                if(po.get(answer) != null) {
-                                    counter++;
-                                }
-                            }
-
-                            // TO DO: getCount() doesn't work! ###############
-//                            if(counter == getCount()) {
-//                                setDoneQuestionary();
-//                                startMainActivity();
-//                            }
-//                            else {
-//                                Toast.makeText(getActivity().getApplicationContext(), "Please answer all Questions", Toast.LENGTH_SHORT).show();
-//                            }
-                        }
-                        else {
-                            Log.v("formalchat", "answerList from SharedPrefs is empty");
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    private List<String> getAnswersFromPrefs() {
-        List<String> answers = new ArrayList<>();
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME_ANSWERS, 0);
-        Map<String, ?> answersMap = sharedPreferences.getAll();
-        for(Map.Entry<String, ?> entry : answersMap.entrySet()) {
-            answers.add(entry.getKey());
-        }
-        return answers;
-    }
-
-    private void setDoneQuestionary() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("questionary_done", true);
-        editor.commit();
-    }
-
-    private void startMainActivity() {
-        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getActivity().getApplicationContext().startActivity(intent);
-    }
-
 
     public void updateQuestionary_(final String question, final int answer) {
         final ParseUser parseUser = ParseUser.getCurrentUser();
@@ -335,11 +289,26 @@ public abstract class QuestionFragment extends Fragment {
         questionary.saveInBackground();
     }
 
-    public void setIsLast(boolean isLast) {
-        this.isLast = isLast;
-    }
-
     public void setAnswerReadyListener(QuestionaryPagerAdapter answerReadyListener) {
         this.answerReadyListener = answerReadyListener;
+    }
+
+    private void sendBroadcastToActionDoneBtnOnPosition(int position) {
+        try {
+            Intent showDoneBtnIntent = new Intent(ACTION_SHOW_HIDE);
+            if (position == viewPager.getAdapter().getCount() - 1) {
+                showDoneBtnIntent.putExtra("isDoneBtnVisible", true);
+            } else {
+                showDoneBtnIntent.putExtra("isDoneBtnVisible", false);
+            }
+            LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(showDoneBtnIntent);
+        }
+        catch (Exception ex) {
+            Log.v("formalchat", "formalchat: " + ex.getMessage());
+        }
+    }
+
+    public void setIsLast(boolean isLast) {
+        this.isLast = isLast;
     }
 }

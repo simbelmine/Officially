@@ -1,28 +1,13 @@
 package com.android.formalchat.questionary;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.android.formalchat.MainActivity;
-import com.android.formalchat.UserQuestionary;
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Sve on 3/12/15.
@@ -42,6 +27,11 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter implement
     @Override
     public int getCount() {
         return 7;
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return super.getItemPosition(object);
     }
 
     @Override
@@ -81,14 +71,12 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter implement
 
     @Override
     public void onAnswerReady(QuestionFragment questionFragment) {
+
         int position = getItemPosition(questionFragment);
         if (position == getCount() - 1) {
             //todo done?
         } else {
             //todo move to next page?
-
         }
     }
-
-// TO DO : is last question and then show Done into Action Bar
 }
