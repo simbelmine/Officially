@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.formalchat.questionary.QuestionaryActivity;
 import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;

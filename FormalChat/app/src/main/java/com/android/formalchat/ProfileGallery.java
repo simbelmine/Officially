@@ -50,7 +50,7 @@ public class ProfileGallery extends DrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.profile_gallery);
+        //setContentView(R.answersHolder.profile_gallery);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View contentView = inflater.inflate(R.layout.profile_gallery, null, false);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

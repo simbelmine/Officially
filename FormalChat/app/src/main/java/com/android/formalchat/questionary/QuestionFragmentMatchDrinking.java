@@ -1,6 +1,6 @@
-package com.android.formalchat;
+package com.android.formalchat.questionary;
 
-import android.view.View;
+import com.android.formalchat.R;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,4 +25,5 @@ public class QuestionFragmentMatchDrinking extends QuestionFragment {
     protected List<String> putAnswersList() {
         return Arrays.asList(getResources().getStringArray(R.array.a_match_drinking));
     }
+
 }

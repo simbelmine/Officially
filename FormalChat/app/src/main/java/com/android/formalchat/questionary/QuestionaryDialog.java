@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.questionary;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,6 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import com.android.formalchat.MainActivity;
+import com.android.formalchat.R;
 
 /**
  * Created by Sve on 3/17/15.

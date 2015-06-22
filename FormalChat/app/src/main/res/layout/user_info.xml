@@ -11,7 +11,7 @@
     <!--android:layout_height="@dimen/dashed_line_margin_r"-->
     <!--android:background="@color/gray"></LinearLayout>-->
 
-    <!--<include layout="@layout/info_user"/>-->
+    <!--<include answersHolder="@answersHolder/info_user"/>-->
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"

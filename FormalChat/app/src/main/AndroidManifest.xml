@@ -49,7 +49,7 @@
         <activity   android:name=".MainQuestionsActivity"
                     android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"/>
         <activity   android:name=".FullImageActivity"/>
-        <activity   android:name=".QuestionaryActivity"
+        <activity   android:name=".questionary.QuestionaryActivity"
                     android:noHistory="true"/>
 
         <activity   android:name=".DialogActivtyMultiText"
