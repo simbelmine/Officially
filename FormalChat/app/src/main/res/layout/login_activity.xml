@@ -27,14 +27,33 @@
             android:orientation="vertical"
             android:weightSum="5">
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:background="@color/items"
                 android:layout_weight="3">
-
+                <RelativeLayout
+                    android:id="@+id/alert_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:visibility="invisible"
+                    android:animateLayoutChanges="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    >
+                    <TextView
+                        android:id="@+id/alert_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        />
+                </RelativeLayout>
                 <AutoCompleteTextView android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -45,7 +64,9 @@
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:textColor="@color/white"
-                    android:text="sve@sve.bg" />
+                    android:text="sve@sve.bg"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="195dp"/>
 
                 <EditText
                     android:id="@+id/password"
@@ -57,8 +78,10 @@
                     android:singleLine="true"
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_marginBottom="150dp"
                     android:textColor="@color/white"
                     android:text="123456"
+                    android:layout_gravity="bottom"
                     />
 
                 <Button
@@ -66,13 +89,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="50dp"
+                    android:layout_marginBottom="50dp"
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:text="@string/action_sign_in"
                     android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:background="@color/action_bar"/>
-            </LinearLayout>
+                    android:background="@color/action_bar"
+                    android:layout_gravity="bottom"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

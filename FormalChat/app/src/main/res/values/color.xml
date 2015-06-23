@@ -19,6 +19,7 @@
     <color name="purple">#990099</color>
     <color name="dark_purple_90">#90330033</color>
     <color name="dark_purple">#330033</color>
+    <color name="alert_red">#DB1F2A</color>
 
     <color name="action_bar">#004457</color>
     <color name="action_bar_lighter">#408497</color>
