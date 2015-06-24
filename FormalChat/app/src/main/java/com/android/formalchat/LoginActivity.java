@@ -5,11 +5,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -97,19 +100,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         editor = sharedPreferences.edit();
         exit = false;
-
-        // Set up the login form.
-
-//        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-//                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-//                    attemptLogin();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
 
         init();
         populateAutoComplete();
@@ -232,7 +222,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         if (focusView != null) {
             focusView.requestFocus();
         } else {
-            checkUserExistence(userName, email, password);
+            if(isNetworkAvailable()) {
+                checkUserExistence(userName, email, password);
+            }
+            else {
+                showAlertMsg(R.string.no_network, R.color.alert_red);
+            }
         }
     }
 
@@ -338,27 +333,37 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
 
-            parseUser.logInInBackground(userName, password, new LogInCallback() {
-                @Override
-                public void done(ParseUser parseUser, ParseException e) {
-                    if (parseUser != null) {
-                        Log.v(TAG, "emailVerified" + (parseUser.getBoolean("emailVerified")));
-                        if(isEmailAutorized(parseUser) || BuildConfig.DEBUG) {
-                            logInIfAccountExistsInParse(userName);
-                        }
-                        else {
-                            showAlertMsg(R.string.confirm_email, R.color.border_green);
-//                            Toast.makeText(getApplicationContext(), getString(R.string.confirm_email), Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        showAlertMsg(R.string.no_such_user, R.color.alert_red);
-//                        Toast.makeText(getApplicationContext(), getString(R.string.no_such_user), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+            if(isNetworkAvailable()) {
+                loginInBackground(userName, password);
+            }
+            else {
+                showAlertMsg(R.string.no_network, R.color.alert_red);
+            }
+
 //            mAuthTask = new UserLoginTask(email, password);
 //            mAuthTask.execute((Void) null);
         }
+    }
+
+    private void loginInBackground(final String userName, String password) {
+        parseUser.logInInBackground(userName, password, new LogInCallback() {
+            @Override
+            public void done(ParseUser parseUser, ParseException e) {
+                if (parseUser != null) {
+                    Log.v(TAG, "emailVerified" + (parseUser.getBoolean("emailVerified")));
+                    if(isEmailAutorized(parseUser) || BuildConfig.DEBUG) {
+                        logInIfAccountExistsInParse(userName);
+                    }
+                    else {
+                        showAlertMsg(R.string.confirm_email, R.color.border_green);
+//                            Toast.makeText(getApplicationContext(), getString(R.string.confirm_email), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    showAlertMsg(R.string.no_such_user, R.color.alert_red);
+//                        Toast.makeText(getApplicationContext(), getString(R.string.no_such_user), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void showAlertMsg(int textId, int colorId) {
@@ -617,6 +622,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 }
             }, 3 * 1000 );
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 

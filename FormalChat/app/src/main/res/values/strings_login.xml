@@ -21,4 +21,5 @@
     <string name="error_field_required">This field is required</string>
     <string name="error_sign_up">Sign up Error</string>
     <string name="something_wrong">Something went wrong. \nPlease try again or check your connectivity.</string>
+    <string name="no_network">Please check your connectivity.</string>
 </resources>
