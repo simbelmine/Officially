@@ -2,6 +2,7 @@ package com.android.formalchat;
 
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -26,13 +27,28 @@ public class TutorialPagerAdapter extends FragmentStatePagerAdapter {
         //fragment.setArguments(args);
         Log.v("formalchat", "........... Position = " + position);
 
+        Fragment fragmentToStart;
+        Bundle args = new Bundle();
+
         switch (position) {
             case 0:
-                return new TutorialFragmentFirst();
+                fragmentToStart = new TutorialFragment();
+                args.putInt("backgroundId", R.drawable.love1);
+                args.putInt("textId", R.string.done);
+                fragmentToStart.setArguments(args);
+                return fragmentToStart;
             case 1:
-                return new TutorialFragmentSecond();
+                fragmentToStart = new TutorialFragment();
+                args.putInt("backgroundId", R.drawable.love2);
+                args.putInt("textId", R.string.done);
+                fragmentToStart.setArguments(args);
+                return fragmentToStart;
             case 2:
-                return new TutorialFragmentThird();
+                fragmentToStart = new TutorialFragment();
+                args.putInt("backgroundId", R.drawable.love3);
+                args.putInt("textId", R.string.done);
+                fragmentToStart.setArguments(args);
+                return fragmentToStart;
         }
 
         return null;

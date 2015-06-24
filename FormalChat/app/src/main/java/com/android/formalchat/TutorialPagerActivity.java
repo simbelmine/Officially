@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 /**
  * Created by Sve on 1/29/15.
@@ -16,9 +17,12 @@ public class TutorialPagerActivity extends FragmentActivity {
     private TutorialPagerAdapter mTutorialPagerAdapter;
     private ViewPager mViewPager;
     private Button mLoginButton;
-    private Button btn1;
-    private Button btn2;
-    private Button btn3;
+    //    private Button btn1;
+//    private Button btn2;
+//    private Button btn3;
+    private ImageView btn1;
+    private ImageView btn2;
+    private ImageView btn3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +31,9 @@ public class TutorialPagerActivity extends FragmentActivity {
 
         mTutorialPagerAdapter = new TutorialPagerAdapter(getSupportFragmentManager(), this);
 
-        btn1 = (Button) findViewById(R.id.btn1);
-        btn2 = (Button) findViewById(R.id.btn2);
-        btn3 = (Button) findViewById(R.id.btn3);
+        btn1 = (ImageView) findViewById(R.id.btn1);
+        btn2 = (ImageView) findViewById(R.id.btn2);
+        btn3 = (ImageView) findViewById(R.id.btn3);
         mLoginButton = (Button) findViewById(R.id.login_redirect_btn);
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,29 +61,29 @@ public class TutorialPagerActivity extends FragmentActivity {
     }
 
     private void initButtons() {
-        btn1.setBackgroundColor(getResources().getColor(R.color.dark_gray));
-        btn2.setBackgroundColor(getResources().getColor(R.color.white));
-        btn3.setBackgroundColor(getResources().getColor(R.color.white));
-        mLoginButton.setVisibility(View.INVISIBLE);
+        btn1.setBackgroundColor(getResources().getColor(R.color.gray));
+        btn2.setBackgroundColor(getResources().getColor(R.color.items));
+        btn3.setBackgroundColor(getResources().getColor(R.color.items));
+        mLoginButton.setVisibility(View.VISIBLE);
     }
 
     private void buttonAction(int position) {
         switch (position) {
-            case 0: btn1.setBackgroundColor(getResources().getColor(R.color.dark_gray));
-                    btn2.setBackgroundColor(getResources().getColor(R.color.white));
-                    btn3.setBackgroundColor(getResources().getColor(R.color.white));
-                    mLoginButton.setVisibility(View.INVISIBLE);
-                    break;
-            case 1: btn1.setBackgroundColor(getResources().getColor(R.color.white));
-                    btn2.setBackgroundColor(getResources().getColor(R.color.dark_gray));
-                    btn3.setBackgroundColor(getResources().getColor(R.color.white));
-                    mLoginButton.setVisibility(View.INVISIBLE);
-                    break;
-            case 2: btn1.setBackgroundColor(getResources().getColor(R.color.white));
-                    btn2.setBackgroundColor(getResources().getColor(R.color.white));
-                    btn3.setBackgroundColor(getResources().getColor(R.color.dark_gray));
-                    mLoginButton.setVisibility(View.VISIBLE);
-                    break;
+            case 0: btn1.setBackgroundColor(getResources().getColor(R.color.gray));
+                btn2.setBackgroundColor(getResources().getColor(R.color.items));
+                btn3.setBackgroundColor(getResources().getColor(R.color.items));
+//                mLoginButton.setVisibility(View.INVISIBLE);
+                break;
+            case 1: btn1.setBackgroundColor(getResources().getColor(R.color.items));
+                btn2.setBackgroundColor(getResources().getColor(R.color.gray));
+                btn3.setBackgroundColor(getResources().getColor(R.color.items));
+//                mLoginButton.setVisibility(View.INVISIBLE);
+                break;
+            case 2: btn1.setBackgroundColor(getResources().getColor(R.color.items));
+                btn2.setBackgroundColor(getResources().getColor(R.color.items));
+                btn3.setBackgroundColor(getResources().getColor(R.color.gray));
+//                mLoginButton.setVisibility(View.VISIBLE);
+                break;
         }
     }
 
