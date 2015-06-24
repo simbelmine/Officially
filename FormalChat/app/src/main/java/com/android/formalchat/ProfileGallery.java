@@ -9,13 +9,11 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -83,15 +81,18 @@ public class ProfileGallery extends DrawerActivity {
     protected void onResume() {
         super.onResume();
 
-        IntentFilter intentFilter= new IntentFilter(VideoDownloadService.ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, intentFilter);
+        IntentFilter intentFilterUploadVideo= new IntentFilter(VideoUploadService.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeUploadVideo, intentFilterUploadVideo);
+        IntentFilter intentFilterDownloadVideo= new IntentFilter(VideoDownloadService.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeDownloadVideo, intentFilterDownloadVideo);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNoticeUploadVideo);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNoticeDownloadVideo);
     }
 
     @Override
@@ -159,7 +160,7 @@ public class ProfileGallery extends DrawerActivity {
         }
     }
 
-    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+    private BroadcastReceiver onNoticeDownloadVideo = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
@@ -171,6 +172,12 @@ public class ProfileGallery extends DrawerActivity {
             else {
                 Log.e("formalchat", "DoWnLoAd Failed .... !!!");
             }
+        }
+    };
+    private BroadcastReceiver onNoticeUploadVideo = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           galleryAdapter.notifyDataSetChanged();
         }
     };
 

@@ -176,33 +176,19 @@ public class VideoCompressService extends IntentService {
                 //Toast.makeText(VideoCompressService.this, status, Toast.LENGTH_LONG).show();
 //                Toast.makeText(VideoCompressService.this, "Your Video will appear shortly on your wall.", Toast.LENGTH_LONG).show();
 
-                File videoFile = getVideoFile(destinationFolder);
-                saveVideoToParse(videoFile, out_videoName);
+                startUploadService(destinationFolder, out_videoName);
+
+//                File videoFile = getVideoFile(destinationFolder);
+//                saveVideoToParse(videoFile, out_videoName);
             }
         }
 
-        private File getVideoFile(String destinationFolder) {
-            Collection<File> files =  FileUtils.listFiles(new File(destinationFolder), new PrefixFileFilter("out"), null);
-            if(files.size() != 0) {
-                return (File)files.toArray()[0];
-            }
-
-            return null;
+        private void startUploadService(String destinationFolder, String out_videoName) {
+            Intent intent = new Intent(VideoCompressService.this, VideoUploadService.class);
+            intent.putExtra("destinationFolder", destinationFolder);
+            intent.putExtra("out_videoName", out_videoName);
+            startService(intent);
         }
-
-        private void saveVideoToParse(File videoFile, String videoName) {
-            ParseUser user = ParseUser.getCurrentUser();
-            try {
-                byte[] data = FileUtils.readFileToByteArray(videoFile); //Convert any file, image or video into byte array
-                ParseFile parseFile = new ParseFile(videoName, data);
-                user.put("video", parseFile);
-                user.saveInBackground();
-
-            } catch (IOException e) {
-                Log.e("formalchat", e.getMessage());
-            }
-        }
-
     }
 
 }

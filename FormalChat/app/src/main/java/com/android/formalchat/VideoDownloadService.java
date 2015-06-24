@@ -21,7 +21,7 @@ import java.io.IOException;
  */
 public class VideoDownloadService extends IntentService {
     private int result = Activity.RESULT_CANCELED;
-    public static final String ACTION="VideoDownload";
+    public static final String ACTION = "VideoDownload";
     public static final String DIRPATH = "dirpath";
     public static final String FILEPATH = "filepath";
     public static final String RESULT = "result";

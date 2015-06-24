@@ -93,7 +93,7 @@ public class ProfileAddImageDialog extends DialogFragment {
         mAttachPhotoImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               onClickAttachPhoto();
+                onClickAttachPhoto();
             }
         });
         mAttachPhotoImgTxt = (TextView) view.findViewById(R.id.attach_photo_txt);
@@ -181,7 +181,12 @@ public class ProfileAddImageDialog extends DialogFragment {
                 @Override
                 public void done(ParseException e) {
                     saveToLocalStorage(drawableL);
-                    onDoneSaveTransaction(e);
+                    if(e == null) {
+                        onDoneSaveTransaction();
+                    }
+                    else {
+                        Log.e("formalchat", "Error saving: " + e.getMessage());
+                    }
                 }
             });
         }
@@ -215,15 +220,11 @@ public class ProfileAddImageDialog extends DialogFragment {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void onDoneSaveTransaction(ParseException e) {
-        if (e == null) {
-            Log.e("formalchat", "Photo was saved Successfully !");
-            //hide notification for uploading - or just show error on the same notification
-            hideUploadNotification();
-            sendBroadcastMessage();
-        } else {
-            Log.e("formalchat", "Error saving: " + e.getMessage());
-        }
+    private void onDoneSaveTransaction() {
+        Log.e("formalchat", "Photo was saved Successfully !");
+        //hide notification for uploading - or just show error on the same notification
+        hideUploadNotification();
+        sendBroadcastMessage();
     }
 
     private void sendBroadcastMessage() {
