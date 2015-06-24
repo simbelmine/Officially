@@ -76,6 +76,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
+    private TextView mForgotPassword;
     private View mLoginFormView;
     private Button mEmailSignInButton;
     private Button mSignUpButton;
@@ -128,7 +129,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 ////                }
         if (pUser != null) {
             if(!isQuestionsDone()) {
-               startActivityByClassName(MainQuestionsActivity.class);
+                startActivityByClassName(MainQuestionsActivity.class);
             }
             else if(!isQuestionaryDone()) {
                 startActivityByClassName(QuestionaryActivity.class);
@@ -156,8 +157,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
 
-        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mForgotPassword = (TextView) findViewById(R.id.forgot_pass);
 
+        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mSignUpButton = (Button) findViewById(R.id.email_log_in);
 
         mLoginFormView = findViewById(R.id.login_form);
@@ -193,6 +195,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 signUp();
             }
         });
+        mForgotPassword.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),
+                        "We will send you an email... DUMMY!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setOnEditoInfoListeners() {
@@ -222,13 +232,27 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         if (focusView != null) {
             focusView.requestFocus();
         } else {
-//            if(isValidData(userName, password)) {
-                saveDataToParse(userName, email, password);
-                Log.v("formalchat", "Sign Up in");
-                startActivityByClassName(MainQuestionsActivity.class);
-                setLogedInSharedPrefs();
-//            }
+            checkUserExistence(userName, email, password);
         }
+    }
+
+    private void checkUserExistence(final String userName, final String email, final String password) {
+        ParseQuery query = ParseUser.getQuery();
+        query.whereContains("username", userName);
+        query.getFirstInBackground(new GetCallback() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if(e == null || parseObject != null) {
+                    showAlertMsg(R.string.already_exists, R.color.alert_red);
+                }
+                else {
+                    Log.e("formalchat", e.getMessage());
+                    saveDataToParse(userName, email, password);
+                    startActivityByClassName(MainQuestionsActivity.class);
+                    setLogedInSharedPrefs();
+                }
+            }
+        });
     }
 
     private void startActivityByClassName(Class<?> activityToCall) {
@@ -238,7 +262,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     private boolean isValidData(String userName, String password) {
         if (userName.equals("") && password.equals("")) {
-            showAlertMsg(getString(R.string.please_complete_the_sign_up), getResources().getColor(R.color.alert_red));
+            showAlertMsg(R.string.please_complete_the_sign_up, R.color.alert_red);
 //            Toast.makeText(getApplicationContext(),
 //                    getResources().getString(R.string.please_complete_the_sign_up),
 //                    Toast.LENGTH_LONG).show();
@@ -265,7 +289,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     // Sign up didn't succeed. Look at the ParseException
                     // to figure out what went wrong
                     Log.v(TAG, "Nope :(    Error is: " + e);
-                    showAlertMsg(getString(R.string.something_wrong), getResources().getColor(R.color.alert_red));
+                    showAlertMsg(R.string.something_wrong, R.color.alert_red);
 //                    Toast.makeText(getApplicationContext(),
 //                            getString(R.string.something_wrong), Toast.LENGTH_SHORT)
 //                            .show();
@@ -323,11 +347,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                             logInIfAccountExistsInParse(userName);
                         }
                         else {
-                            showAlertMsg(getString(R.string.confirm_email), getResources().getColor(R.color.border_green));
+                            showAlertMsg(R.string.confirm_email, R.color.border_green);
 //                            Toast.makeText(getApplicationContext(), getString(R.string.confirm_email), Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        showAlertMsg(getString(R.string.no_such_user), getResources().getColor(R.color.alert_red));
+                        showAlertMsg(R.string.no_such_user, R.color.alert_red);
 //                        Toast.makeText(getApplicationContext(), getString(R.string.no_such_user), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -337,10 +361,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
     }
 
-    private void showAlertMsg(String stringResource, int colorResource) {
+    private void showAlertMsg(int textId, int colorId) {
+
         alertLayout.setVisibility(View.VISIBLE);
-        alertLayout.setBackgroundColor(colorResource);
-        alertMsg.setText(stringResource);
+        alertLayout.setBackgroundColor(getResources().getColor(colorId));
+        alertMsg.setText(getString(textId));
     }
 
     private void hideAlertMsg() {
@@ -361,7 +386,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     }
                 }
                 else {
-                    showAlertMsg(getString(R.string.something_wrong), getResources().getColor(R.color.alert_red));
+                    showAlertMsg(R.string.something_wrong, R.color.alert_red);
 //                    Toast.makeText(getApplicationContext(), getString(R.string.something_wrong), Toast.LENGTH_SHORT).show();
                     Log.e("formalchat", "Problem with finding: " + e.toString());
                 }

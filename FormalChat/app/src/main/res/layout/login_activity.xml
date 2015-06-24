@@ -83,6 +83,19 @@
                     android:text="123456"
                     android:layout_gravity="bottom"
                     />
+                <TextView
+                    android:id="@+id/forgot_pass"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_marginBottom="120dp"
+                    android:layout_gravity="bottom"
+                    android:clickable="true"
+                    android:textAllCaps="true"
+                    android:textColor="@color/gray_green"
+                    android:text="@string/forgot_pass"
+                    />
 
                 <Button
                     android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"

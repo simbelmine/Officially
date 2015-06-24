@@ -8,9 +8,11 @@
     <string name="action_log_in">Sign Up</string>
     <string name="sign_up_success">Successfully Signed up, please confirm by email.</string>
     <string name="no_such_user">No such user Exists, please Sign Up</string>
+    <string name="already_exists">This User already exists.</string>
     <string name="confirm_email">Please confirm by email before Log In</string>
     <string name="log_in">Log In</string>
     <string name="back_to_exit">"Press Back again to Exit."</string>
+    <string name="forgot_pass">Forgot Password?</string>
 
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
