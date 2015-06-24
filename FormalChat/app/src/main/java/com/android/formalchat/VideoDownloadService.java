@@ -3,6 +3,8 @@ package com.android.formalchat;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.parse.GetDataCallback;
@@ -19,6 +21,7 @@ import java.io.IOException;
  */
 public class VideoDownloadService extends IntentService {
     private int result = Activity.RESULT_CANCELED;
+    public static final String ACTION="VideoDownload";
     public static final String DIRPATH = "dirpath";
     public static final String FILEPATH = "filepath";
     public static final String RESULT = "result";
@@ -40,10 +43,12 @@ public class VideoDownloadService extends IntentService {
 
 
         ParseFile videoFile = getFileFromParse();
-        String fileName = getParseFileName(videoFile);
+        String parseFileName = getParseFileName(videoFile);
+        String fileName = getShortImageNameFromUri(parseFileName);
         File tmpFile = new File(dirPath + filePath + fileName);
 
         downloadVideo(videoFile, tmpFile);
+
     }
 
     private ParseFile getFileFromParse() {
@@ -55,6 +60,7 @@ public class VideoDownloadService extends IntentService {
     }
 
     private void downloadVideo(ParseFile videoFile, File tmpFile) {
+
         final FileOutputStream fileOutputStream;
         try {
             fileOutputStream = new FileOutputStream(tmpFile);
@@ -84,9 +90,15 @@ public class VideoDownloadService extends IntentService {
         }
     }
 
+    public String getShortImageNameFromUri(String url) {
+        return url.substring(url.lastIndexOf("-")+1);
+    }
+
     private void publishResults(int result) {
-        Intent intent = new Intent(NOTIFICATION);
-        intent.putExtra(RESULT, result);
-        sendBroadcast(intent);
+        Intent intent = new Intent(ACTION);
+        Bundle bundle = new Bundle();
+        bundle.putInt(RESULT, result);
+        intent.putExtras(bundle);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

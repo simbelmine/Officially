@@ -1,13 +1,17 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -36,6 +40,7 @@ import java.util.List;
  */
 public class ProfileGallery extends DrawerActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
+    public static final String RESULT = "result";
     private SharedPreferences sharedPreferences;
     private Activity activity;
     private GridView gridView;
@@ -77,6 +82,16 @@ public class ProfileGallery extends DrawerActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        IntentFilter intentFilter= new IntentFilter(VideoDownloadService.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNotice);
     }
 
     @Override
@@ -143,6 +158,21 @@ public class ProfileGallery extends DrawerActivity {
             setTitle(getResources().getString(R.string.gallery));
         }
     }
+
+    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if(bundle != null && bundle.containsKey(RESULT)) {
+                if(RESULT_OK == bundle.getInt(RESULT)) {
+                    galleryAdapter.notifyDataSetChanged();
+                }
+            }
+            else {
+                Log.e("formalchat", "DoWnLoAd Failed .... !!!");
+            }
+        }
+    };
 
     private void getImagesFromParse() {
         ParseUser user = ParseUser.getCurrentUser();

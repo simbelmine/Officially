@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,9 +95,11 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         ImageView img = (ImageView) convertView.findViewById(R.id.image);
 
         populateImages(convertView, img, progressBar, position);
+
         addImageOnClickListener(img, position);
         return convertView;
     }
+
 
     private void addImageOnClickListener(ImageView img, final int position) {
         img.setOnClickListener(new View.OnClickListener() {
@@ -121,8 +124,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             @Override
             public void onError() {
                 if (isVideo(position)) {
-                    initBroadcastReceiver();
-                    context.registerReceiver(broadcastReceiver, new IntentFilter(VideoDownloadService.NOTIFICATION));
                     downloadVideoIfNotExists();
 
                     float gallery_item_h = context.getResources().getDimension(R.dimen.gallery_item_h);
@@ -133,7 +134,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                     reCreateImageView(layoutParams, img);
                     setVideoImgOnClickListener(img);
                     progressBar.setVisibility(View.GONE);
-                    context.unregisterReceiver(broadcastReceiver);
                 }
             }
         });
@@ -157,24 +157,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     /////////////////////////////
     /// ***** For Video ***** ///
     /////////////////////////////
-
-    private void initBroadcastReceiver() {
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getExtras();
-                if(bundle != null) {
-                    int resultCode = bundle.getInt(VideoDownloadService.RESULT);
-                    if(resultCode == RESULT_OK) {
-                        thumbnail  = getVideoThumbnail();
-                    }
-                    else {
-                        Log.e("formalchat", "DoWnLoAd Failed .... !!!");
-                    }
-                }
-            }
-        };
-    }
 
     private void downloadVideoIfNotExists() {
         ParseUser user = ParseUser.getCurrentUser();
