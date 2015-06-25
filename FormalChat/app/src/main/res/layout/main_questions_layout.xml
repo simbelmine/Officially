@@ -5,13 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
+    <TextView
+        android:id="@+id/user_email"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:paddingLeft="@dimen/main_label_padding"
+        android:layout_marginTop="@dimen/main_label_padding"
+        android:textColor="@color/gray_green"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/name_lbl"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/main_label_height"
+            android:layout_height="50dp"
             android:paddingLeft="@dimen/main_label_padding"
             android:paddingBottom="@dimen/main_label_padding"
             android:gravity="bottom"

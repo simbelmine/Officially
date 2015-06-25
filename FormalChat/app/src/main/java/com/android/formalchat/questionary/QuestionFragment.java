@@ -28,6 +28,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.w3c.dom.Text;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +58,8 @@ public abstract class QuestionFragment extends Fragment {
     private int questionPosition;
     private boolean isLast = false;
     private FixedViewPagerScroller mScroller;
+    private TextView userEmail;
+    private  ParseUser parseUser;
 
     HashMap<Integer, TextView> answersToViews = new HashMap<>();
     private AnswerReadyListener answerReadyListener;
@@ -124,6 +128,7 @@ public abstract class QuestionFragment extends Fragment {
     }
 
     private void init() {
+        parseUser = ParseUser.getCurrentUser();
         TextView questionView = (TextView) rootView.findViewById(R.id.question);
         questionView.setText(questionTxt);
 
@@ -140,6 +145,8 @@ public abstract class QuestionFragment extends Fragment {
 
         updateTextViewColorsAccordingToSelectedAnswer();
 
+        userEmail = (TextView) rootView.findViewById(R.id.user_email);
+        userEmail.setText(getUserEmail());
         skip = (TextView) rootView.findViewById(R.id.skip_txt);
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,6 +154,13 @@ public abstract class QuestionFragment extends Fragment {
                 skipQuestionary();
             }
         });
+    }
+
+    private String getUserEmail() {
+        if(parseUser.containsKey("username")) {
+            return parseUser.get("username").toString();
+        }
+        return null;
     }
 
     private void initScrollView() {
@@ -263,7 +277,6 @@ public abstract class QuestionFragment extends Fragment {
     }
 
     public void updateQuestionary_(final String question, final int answer) {
-        final ParseUser parseUser = ParseUser.getCurrentUser();
         final String userName = parseUser.getUsername();
 
         final ParseQuery<ParseObject> parseQuery = new ParseQuery<>("UserQuestionary");

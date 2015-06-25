@@ -64,6 +64,8 @@ public class MainQuestionsActivity extends Activity {
     private ImageView age_check;
     private DatePickerDialog datePickerDialog;
     private SimpleDateFormat dateFormatter;
+    private TextView userEmail;
+    private ParseUser parseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +181,6 @@ public class MainQuestionsActivity extends Activity {
     }
 
     private void saveVariablesToParse() {
-        ParseUser parseUser = ParseUser.getCurrentUser();
         final String userName = parseUser.getUsername();
 
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
@@ -267,6 +268,14 @@ public class MainQuestionsActivity extends Activity {
         return 0;
     }
 
+
+    private String getUserEmail() {
+        if(parseUser.containsKey("username")) {
+            return parseUser.get("username").toString();
+        }
+        return null;
+    }
+
     private String getCurrentLocation() {
         if(Geocoder.isPresent()) {
             try {
@@ -351,12 +360,15 @@ public class MainQuestionsActivity extends Activity {
         name_check = (ImageView) findViewById(R.id.name_check);
         age_check = (ImageView) findViewById(R.id.age_check);
         done_btn = (Button) findViewById(R.id.done_btn);
+        userEmail = (TextView) findViewById(R.id.user_email);
     }
 
     private void init() {
+        parseUser = ParseUser.getCurrentUser();
         isMaleClicked = true;
         name.setImeOptions(EditorInfo.IME_ACTION_DONE);
         location.setText(getCurrentLocation());
+        userEmail.setText(getUserEmail());
     }
 
     private void initGenderButtons() {
@@ -375,7 +387,6 @@ public class MainQuestionsActivity extends Activity {
     }
 
     private void setDoneQuestions() {
-        ParseUser parseUser = ParseUser.getCurrentUser();
         parseUser.put("doneMainQuestions", true);
         parseUser.saveInBackground();
     }
