@@ -1,6 +1,7 @@
 package com.android.formalchat;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -31,6 +32,7 @@ import java.util.List;
  * Created by Sve on 3/26/15.
  */
 public class DrawerActivity extends FragmentActivity {
+    public static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
     public static final int PROFILE_ID = 202;
     private RoundedImageView profilePic;
@@ -109,8 +111,10 @@ public class DrawerActivity extends FragmentActivity {
             query.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {
-                    ParseObject userInfo = parseObjects.get(0);
-                    profileName.setText(userInfo.get("name").toString());
+                    if(e == null && parseObjects.size() > 0) {
+                        ParseObject userInfo = parseObjects.get(0);
+                        profileName.setText(userInfo.get("name").toString());
+                    }
                 }
             });
         }
