@@ -46,6 +46,9 @@ import java.util.Locale;
 public class MainQuestionsActivity extends Activity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     private static final String EXTRA_ABOUT_ME = "aboutMeText";
+    private static final int INIT_YEAR = 1980;
+    private static final int INIT_MONTH = 0;
+    private static final int INIT_DAY = 1;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private EditText name;
@@ -59,7 +62,6 @@ public class MainQuestionsActivity extends Activity {
     private ImageView age_check;
     private DatePickerDialog datePickerDialog;
     private SimpleDateFormat dateFormatter;
-    private Calendar currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +244,7 @@ public class MainQuestionsActivity extends Activity {
     }
 
     private int getAge() {
+        Calendar currentDate = Calendar.getInstance();
         int currentYear = currentDate.get(Calendar.YEAR);
         int year = getYear();
 
@@ -375,7 +378,8 @@ public class MainQuestionsActivity extends Activity {
     }
 
     private void initDatePickerDialog() {
-        currentDate = Calendar.getInstance();
+        Calendar initDate = Calendar.getInstance();
+        initDate.set(INIT_YEAR, INIT_MONTH, INIT_DAY);
         dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
         datePickerDialog = new DatePickerDialog(this, new OnDateSetListener() {
             @Override
@@ -384,9 +388,9 @@ public class MainQuestionsActivity extends Activity {
                 newDate.set(year, monthOfYear, dayOfMonth);
                 age.setText(dateFormatter.format(newDate.getTime()));
             }
-        }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DAY_OF_MONTH));
+        }, initDate.get(Calendar.YEAR), initDate.get(Calendar.MONTH), initDate.get(Calendar.DAY_OF_MONTH));
         if(isBeforeVersion21()) {
-            datePickerDialog.setTitle(dateFormatter.format(currentDate.getTime()));
+            datePickerDialog.setTitle(dateFormatter.format(initDate.getTime()));
         }
     }
 
