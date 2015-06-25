@@ -4,15 +4,11 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +24,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -160,22 +154,23 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     private void downloadVideoIfNotExists() {
         ParseUser user = ParseUser.getCurrentUser();
-        videoFile = user.getParseFile("video");
-        fileName = videoFile.getName();
-        String shortName = getShortImageNameFromUri(fileName);
-        videoUri = Uri.parse(dir + filePath + shortName);
+        if(user != null) {
+            videoFile = user.getParseFile("video");
+            fileName = videoFile.getName();
+            String shortName = getShortImageNameFromUri(fileName);
+            videoUri = Uri.parse(dir + filePath + shortName);
 
-        File targetFolder = new File(dir + filePath);
-        if(!targetFolder.exists()) {
-            targetFolder.mkdir();
-        }
+            File targetFolder = new File(dir + filePath);
+            if (!targetFolder.exists()) {
+                targetFolder.mkdir();
+            }
 
-        tmpFile = new File(dir, filePath + shortName);
-        if(!tmpFile.exists()) {
-            startVideoDownloadService();
-        }
-        else {
-            thumbnail  = getVideoThumbnail();
+            tmpFile = new File(dir, filePath + shortName);
+            if (!tmpFile.exists()) {
+                startVideoDownloadService();
+            } else {
+                thumbnail = getVideoThumbnail();
+            }
         }
     }
 
