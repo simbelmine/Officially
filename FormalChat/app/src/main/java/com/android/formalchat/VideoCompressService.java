@@ -101,7 +101,7 @@ public class VideoCompressService extends IntentService {
 
 
             String commandStr = "ffmpeg -y -i "+ destinationVideoPath +
-                    " -strict experimental -s 160x120 -r 25 -vcodec mpeg4 -b 150k -ab 48000 -ac 2 -ar 22050 " +
+                    " -strict experimental -s 320x240 -r 25 -vcodec mpeg4 -b 1000k -ab 64k -ac 2 -ar 22050 " +
                     destinationVideoPathOut;
             Log.e("formalchat", commandStr);
 
