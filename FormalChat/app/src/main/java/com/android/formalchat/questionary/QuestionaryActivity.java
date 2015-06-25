@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.android.formalchat.MainActivity;
 import com.android.formalchat.R;
+import com.parse.ParseUser;
 
 import java.lang.reflect.Field;
 
@@ -120,10 +121,11 @@ public class QuestionaryActivity extends ActionBarActivity {
     }
 
     private void setDoneQuestionary() {
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("questionary_done", true);
-        editor.commit();
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME_ANSWERS, 0);
+        sharedPreferences.edit().clear().commit();
+        ParseUser parseUser = ParseUser.getCurrentUser();
+        parseUser.put("doneQuestionary", true);
+        parseUser.saveInBackground();
     }
 
     private void startMainActivity() {

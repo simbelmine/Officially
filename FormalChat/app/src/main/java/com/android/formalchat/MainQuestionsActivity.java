@@ -373,8 +373,9 @@ public class MainQuestionsActivity extends Activity {
     }
 
     private void setDoneQuestions() {
-        editor.putBoolean("questions_done", true);
-        editor.commit();
+        ParseUser parseUser = ParseUser.getCurrentUser();
+        parseUser.put("doneMainQuestions", true);
+        parseUser.saveInBackground();
     }
 
     private void initDatePickerDialog() {

@@ -117,11 +117,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 ////                if(isEmailAutorized(pUser)) {
 ////                    launchMainActivity();
 ////                }
+        Log.v("formalchat", "staartCorrectActivity, user =  " + pUser);
+
         if (pUser != null) {
-            if(!isQuestionsDone()) {
+            showProgress(true);
+            if(!isMainQuestionsDone(pUser)) {
                 startActivityByClassName(MainQuestionsActivity.class);
             }
-            else if(!isQuestionaryDone()) {
+            else if(!isQuestionaryDone(pUser)) {
                 startActivityByClassName(QuestionaryActivity.class);
             }
             else {
@@ -130,17 +133,25 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
     }
 
-    private boolean isQuestionaryDone() {
-        return sharedPreferences.getBoolean("questionary_done", false);
+
+    private boolean isMainQuestionsDone(ParseUser pUser) {
+        if(pUser.containsKey("doneMainQuestions") && pUser.getBoolean("doneMainQuestions") == true) {
+            return true;
+        }
+        return false;
     }
 
-    private boolean isQuestionsDone() {
-        return sharedPreferences.getBoolean("questions_done", false);
+    private boolean isQuestionaryDone(ParseUser pUser) {
+        if(pUser.containsKey("doneQuestionary") && pUser.getBoolean("doneQuestionary") == true) {
+            return true;
+        }
+        return false;
     }
 
     private void init() {
@@ -352,7 +363,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 if (parseUser != null) {
                     Log.v(TAG, "emailVerified" + (parseUser.getBoolean("emailVerified")));
                     if(isEmailAutorized(parseUser) || BuildConfig.DEBUG) {
-                        logInIfAccountExistsInParse(userName);
+                        logInWithCorrectActivity();
                     }
                     else {
                         showAlertMsg(R.string.confirm_email, R.color.border_green);
@@ -377,26 +388,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         alertLayout.setVisibility(View.INVISIBLE);
     }
 
-    private void logInIfAccountExistsInParse(String userName) {
-        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
-        parseQuery.whereEqualTo("loginName", userName);
-        parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                if(e == null) {
-                    if(parseObject != null) {
-                        showProgress(true);
-                        setLogedInSharedPrefs();
-                        startActivityByClassName(MainActivity.class);
-                    }
-                }
-                else {
-                    showAlertMsg(R.string.something_wrong, R.color.alert_red);
-//                    Toast.makeText(getApplicationContext(), getString(R.string.something_wrong), Toast.LENGTH_SHORT).show();
-                    Log.e("formalchat", "Problem with finding: " + e.toString());
-                }
-            }
-        });
+    private void logInWithCorrectActivity() {
+        startCorrectActivity();
+        setLogedInSharedPrefs();
     }
 
     private void setLogedInSharedPrefs() {
