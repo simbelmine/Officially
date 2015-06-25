@@ -1,33 +1,20 @@
 package com.android.formalchat;
 
 import android.app.Activity;
-import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.netcompss.ffmpeg4android.GeneralUtils;
-import com.parse.ParseFile;
-import com.parse.ParseUser;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.PrefixFileFilter;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Sve on 4/2/15.
@@ -47,7 +34,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
     }
 
     private void init() {
-        startRecordingBtn = (Button) findViewById(R.id.start_video_btn);
+        startRecordingBtn = (Button) findViewById(R.id.start_record_video_btn);
     }
 
     private void setOnclickListeners() {
@@ -57,7 +44,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.start_video_btn:
+            case R.id.start_record_video_btn:
                 dispatchTakeVideoIntent();
                 break;
         }
@@ -65,7 +52,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String destinationFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/";
+        String destinationFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/video_in/";
         String videoName;
 
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
@@ -109,7 +96,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
     }
 
     private File getMediaFileUri() {
-        File root = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/");
+        File root = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/video_in/");
         // Create the storage directory if it does not exist
         if (! root.exists()){
             root.mkdirs();

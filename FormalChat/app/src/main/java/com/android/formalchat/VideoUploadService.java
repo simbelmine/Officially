@@ -2,13 +2,16 @@ package com.android.formalchat;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -65,7 +68,7 @@ public class VideoUploadService extends IntentService {
                 saveInBackground(user, parseFile);
             }
             else {
-                saveEventually(user, parseFile);
+                showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning);
             }
 
         } catch (IOException e) {
@@ -76,7 +79,6 @@ public class VideoUploadService extends IntentService {
     private void saveInBackground(ParseUser user, ParseFile parseFile) {
         Log.v("formalchat", "saveInBackground...");
         user.put("video", parseFile);
-        showUploadNotification();
         user.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -84,58 +86,52 @@ public class VideoUploadService extends IntentService {
                     Log.v("formalchat", "saveInBackground...in...");
                     onDoneSaveTransaction();
                 }
-            }
-        });
-    }
-
-    private void saveEventually(final ParseUser user, final ParseFile parseFile) {
-        user.saveEventually(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if(e == null) {
-                    user.put("video", parseFile);
-                    user.saveInBackground();
+                else {
+                    Log.e("formalchat", e.getMessage());
+                    showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning);
+                    return;
                 }
             }
         });
     }
 
-    private void showUploadNotification() {
+    private void showVideoUploadedNotification(int titleId, int textId) {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationBuilder = new NotificationCompat.Builder(this);
-        notificationBuilder.setContentTitle("Video Upload")
-                .setContentText("Download in progress")
+        notificationBuilder.setContentTitle(getResources().getString(titleId))
+                .setContentText(getResources().getString(textId))
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setOngoing(true);
-
-        new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        int progress;
-                        // Do the operation 20 times
-                        for (progress = 0; progress <= 100; progress+= 5) {
-                            // Set the progress indicator to (max value, current completition percentage, determinate state)
-                            notificationBuilder.setProgress(100, progress, true);
-                            notificationManager.notify(ID, notificationBuilder.build());
-                        }
-                    }
-                }
-        ).start();
+                .setOngoing(false)
+                .setContentIntent(getPendingIntent());
+        notificationManager.notify(ID, notificationBuilder.build());
     }
 
-    private void hideUploadNotification() {
-        notificationBuilder.setContentText("Upload complete")
-                .setOngoing(false)
-                .setProgress(0, 0, false);
-        notificationManager.notify(ID, notificationBuilder.build());
+    private PendingIntent getPendingIntent() {
+        Intent resultIntent = new Intent(this, ProfileGallery.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        return pendingIntent;
     }
 
     private void onDoneSaveTransaction() {
         Log.e("formalchat", "Video was saved Successfully !");
-        //hide notification for uploading - or just show error on the same notification
-        hideUploadNotification();
+        showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text);
+        moveVideoToUsableFolder();
         sendBroadcastMessage();
+    }
+
+    private void moveVideoToUsableFolder() {
+        File startFolder = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/video_in/" + out_videoName);
+        File destinationFolder = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/" + out_videoName);
+
+        if(startFolder.exists() && destinationFolder.exists()) {
+            startFolder.renameTo(destinationFolder);
+        }
     }
 
     private void sendBroadcastMessage() {

@@ -19,7 +19,7 @@
         android:textColor="@color/white"
         />
     <Button
-        android:id="@+id/start_video_btn"
+        android:id="@+id/start_record_video_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/welcome_video_txt"

@@ -144,4 +144,9 @@
         <item>Advanced degree</item>
     </string-array>
 
+    <!-- Notifications -->
+    <string name="video_upload_notif_title">Video upload finished</string>
+    <string name="video_upload_notif_text">Touch to see it. It\'s in your Gallery.</string>
+    <string name="video_upload_notif_text_warning">Video upload failed</string>
+
 </resources>
