@@ -1,9 +1,11 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -387,12 +389,43 @@ public class MainQuestionsActivity extends Activity {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                age.setText(dateFormatter.format(newDate.getTime()));
+                if(verifyYear(year)) {
+                    age.setText(dateFormatter.format(newDate.getTime()));
+                }
+                else {
+                    age.setText("");
+                }
             }
         }, initDate.get(Calendar.YEAR), initDate.get(Calendar.MONTH), initDate.get(Calendar.DAY_OF_MONTH));
         if(isBeforeVersion21()) {
             datePickerDialog.setTitle(dateFormatter.format(initDate.getTime()));
         }
+    }
+
+    private boolean verifyYear(int year) {
+        if(year >= Calendar.getInstance().get(Calendar.YEAR)) {
+            showAlertDialog();
+            return false;
+        }
+        return true;
+    }
+
+    private void showAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
+        alertDialogBuilder.setTitle(getResources().getString(R.string.alert_title));
+        alertDialogBuilder
+                .setMessage(getResources().getString(R.string.alert_text))
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.alert_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, close
+                        // current activity
+                        return;
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     private boolean isBeforeVersion21() {
