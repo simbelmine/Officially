@@ -30,7 +30,7 @@
             android:text="@string/done"
             android:layout_alignParentRight="true"
             android:gravity="center_vertical|center_horizontal"
-            android:background="@color/items"
+            android:background="@drawable/button_selector_light"
             android:textColor="@color/white"
             android:textSize="12sp"
             />

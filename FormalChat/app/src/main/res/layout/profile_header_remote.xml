@@ -116,7 +116,7 @@
             android:paddingRight="5dp"
             android:scaleType="centerInside"
             android:elevation="@dimen/FEB_elevation"
-            android:background="@drawable/photos_btn"
+            android:background="@drawable/button_selector_drawable"
             android:textColor="@color/white"
             android:clickable="true"
             />

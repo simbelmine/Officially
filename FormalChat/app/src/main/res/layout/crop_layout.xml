@@ -24,6 +24,6 @@
         android:layout_gravity="bottom"
         android:layout_margin="10dp"
         android:text="@string/done"
-        android:textColor="@color/items"
-        android:background="@color/action_bar"/>
+        android:textColor="@color/white"
+        android:background="@drawable/button_selector"/>
 </FrameLayout>

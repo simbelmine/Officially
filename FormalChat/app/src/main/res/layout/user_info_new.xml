@@ -480,7 +480,7 @@
                 android:layout_marginBottom="@dimen/aboutMe_btn_margin"
                 android:text="@string/user_info_save"
                 android:textColor="@color/white"
-                android:background="@color/items"/>
+                android:background="@drawable/button_selector_light"/>
         </RelativeLayout>
 
     </LinearLayout>

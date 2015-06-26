@@ -117,7 +117,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 ////                if(isEmailAutorized(pUser)) {
 ////                    launchMainActivity();
 ////                }
-        Log.v("formalchat", "staartCorrectActivity, user =  " + pUser);
 
         if (pUser != null) {
             showProgress(true);
