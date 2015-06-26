@@ -451,7 +451,7 @@ public class ProfileActivityRemote extends DrawerActivity {
                     for (ParseObject parseObject : objects) {
                         String name_p = parseObject.getString("name");
                         int gender_p = parseObject.getInt("gender");
-                        String age_p = parseObject.getString("age");
+                        int age_p = parseObject.getInt("age");
 
                         String motto_p = parseObject.getString("motto");
                         String location_p = parseObject.getString("location");
@@ -467,7 +467,7 @@ public class ProfileActivityRemote extends DrawerActivity {
                         int interests_p = parseObject.getInt("interests");
 
                         name.setText(name_p);
-                        age.setText(age_p);
+                        age.setText(String.valueOf(age_p));
 
                         if (motto_p == null || "\t".equals(motto_p)) {
                             motto.setText(getResources().getString(R.string.motto));
