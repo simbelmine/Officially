@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -62,6 +63,7 @@ public class ProfileActivityRemote extends DrawerActivity {
     private ImageView got_it_img;
     private RelativeLayout help_video_leyout;
     private String shortName;
+    private ImageView zodiacSign;
 
     private TextView name;
     private TextView gender;
@@ -103,6 +105,7 @@ public class ProfileActivityRemote extends DrawerActivity {
         videoExists = isVideoExists();
 
         init();
+        setZodiacalSign();
         startPhotosCounter();
         setOnClickListeners();
         applyLayoutTransition();
@@ -139,6 +142,7 @@ public class ProfileActivityRemote extends DrawerActivity {
         help_video_leyout = (RelativeLayout) findViewById(R.id.help_layout);
         got_it_img = (ImageView) findViewById(R.id.got_it_img);
         photos_btn = (TextView) findViewById(R.id.photos_button);
+        zodiacSign = (ImageView) findViewById(R.id.zodiac_sign);
 
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
@@ -166,6 +170,56 @@ public class ProfileActivityRemote extends DrawerActivity {
             sexIcon.setImageDrawable(getResources().getDrawable(R.drawable.female));
             isMale = false;
         }
+    }
+
+    private void setZodiacalSign() {
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<>("UserInfo");
+        parseQuery.whereContains("loginName", user.getUsername());
+        parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if(e == null) {
+                    if(parseObject.containsKey("birthday")) {
+                        getZodiacalSign(parseObject.get("birthday").toString());
+                    }
+                    else {
+                        zodiacSign.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+    }
+
+    private void getZodiacalSign(String birthdayValue) {
+        ZodiacCalculator zodiacCalculator = new ZodiacCalculator(getApplicationContext(), birthdayValue);
+        String zodiacSignName = zodiacCalculator.getZodiacSign();
+
+        if(zodiacSignName != null) {
+            int resourceID = getResources().getIdentifier(zodiacSignName, "drawable", getPackageName());
+            zodiacSign.setVisibility(View.VISIBLE);
+            zodiacSign.setBackgroundResource(resourceID);
+        }
+
+        // ******************  Test Dates for Zodiacal Signs **********************//
+//        String[] array = {
+//                        "22/12/1980", "25/12/1980", "19/01/1980",
+//                        "20/01/1980", "10/02/1980", "18/02/1980",
+//                        "19/02/1980", "25/02/1980", "20/03/1980",
+//                        "21/03/1980", "25/03/1980", "19/04/1980",
+//                        "20/04/1980", "25/04/1980", "20/05/1980",
+//                        "21/05/1999", "25/05/1999", "20/06/1999",
+//                        "21/06/1999", "25/06/1999", "22/07/1999",
+//                        "23/07/1999", "25/07/1999", "22/08/1999",
+//                        "23/08/1999", "25/08/1999", "22/09/1999",
+//                        "23/09/1999", "25/09/1999", "22/10/1999",
+//                        "23/10/1999", "25/10/1999", "21/11/1999",
+//                        "22/11/1999", "25/11/1999", "21/12/1999"
+//        };
+//
+//        for(String s : array) {
+//            ZodiacCalculator zodiacCalculator1 = new ZodiacCalculator(getApplicationContext(), s);
+//            Log.v("formalchat", s + " : " +  zodiacCalculator1.getZodiacSign());
+//        }
     }
 
     private boolean isVideoExists() {

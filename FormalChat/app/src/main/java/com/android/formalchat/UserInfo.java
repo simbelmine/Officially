@@ -33,6 +33,13 @@ public class UserInfo extends ParseObject{
         put("gender", gender);
     }
 
+    public String getBirthday() {
+        return getString("birthday");
+    }
+    public void setBirthday(String birthday) {
+        put("birthday", birthday);
+    }
+
     public int getAge() {
         return getInt("age");
     }

@@ -204,10 +204,32 @@ public class MainQuestionsActivity extends Activity {
 
         userInfo.setName(name.getText().toString());
         userInfo.setGender(getCorrectGender());
+        userInfo.setBirthday(age.getText().toString());
         userInfo.setAge(getAge());
         userInfo.setLocation(location.getText().toString());
 
         userInfo.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    Log.e("formalchat", "Questionary was saved Successfully !");
+                } else {
+                    Log.e("formalchat", "Error saving: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void saveToExistingUserInfo(ParseObject parseObject, String userName) {
+        parseObject.put("loginName", userName);
+        parseObject.put("name", name.getText().toString());
+        parseObject.put("gender", getCorrectGender());
+        parseObject.put("birthday", age.getText().toString());
+        parseObject.put("age", getAge());
+        parseObject.put("location", location.getText().toString());
+
+        parseObject.saveInBackground(new SaveCallback() {
+
             @Override
             public void done(com.parse.ParseException e) {
                 if (e == null) {
@@ -226,35 +248,15 @@ public class MainQuestionsActivity extends Activity {
             return 1;
     }
 
-    private void saveToExistingUserInfo(ParseObject parseObject, String userName) {
-        parseObject.put("loginName", userName);
-        parseObject.put("name", name.getText().toString());
-        parseObject.put("gender", getCorrectGender());
-        parseObject.put("age", getAge());
-        parseObject.put("location", location.getText().toString());
-
-        parseObject.saveInBackground(new SaveCallback() {
-
-            @Override
-            public void done(com.parse.ParseException e) {
-                if (e == null) {
-                    Log.e("formalchat", "Questionary was saved Successfully !");
-                } else {
-                    Log.e("formalchat", "Error saving: " + e.getMessage());
-                }
-            }
-        });
-    }
-
     private int getAge() {
         Calendar currentDate = Calendar.getInstance();
         int currentYear = currentDate.get(Calendar.YEAR);
-        int year = getYear();
+        int birthDayYear = getBirthDayYear();
 
-        return currentYear - year;
+        return currentYear - birthDayYear;
     }
 
-    private int getYear() {
+    private int getBirthDayYear() {
         Calendar calendar = Calendar.getInstance();
         Date date;
         try {
