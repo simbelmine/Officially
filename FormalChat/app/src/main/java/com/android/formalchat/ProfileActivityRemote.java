@@ -191,35 +191,13 @@ public class ProfileActivityRemote extends DrawerActivity {
     }
 
     private void getZodiacalSign(String birthdayValue) {
-        ZodiacCalculator zodiacCalculator = new ZodiacCalculator(getApplicationContext(), birthdayValue);
-        String zodiacSignName = zodiacCalculator.getZodiacSign();
+        ZodiacCalculator zodiacCalculator = new ZodiacCalculator(getApplicationContext());
+        ZodiacSign zodiacSignEnum = zodiacCalculator.calculateZodiacSign(birthdayValue);
 
-        if(zodiacSignName != null) {
-            int resourceID = getResources().getIdentifier(zodiacSignName, "drawable", getPackageName());
+        if(zodiacSignEnum != null) {
             zodiacSign.setVisibility(View.VISIBLE);
-            zodiacSign.setBackgroundResource(resourceID);
+            zodiacSign.setBackgroundResource(zodiacSignEnum.getImageId());
         }
-
-        // ******************  Test Dates for Zodiacal Signs **********************//
-//        String[] array = {
-//                        "22/12/1980", "25/12/1980", "19/01/1980",
-//                        "20/01/1980", "10/02/1980", "18/02/1980",
-//                        "19/02/1980", "25/02/1980", "20/03/1980",
-//                        "21/03/1980", "25/03/1980", "19/04/1980",
-//                        "20/04/1980", "25/04/1980", "20/05/1980",
-//                        "21/05/1999", "25/05/1999", "20/06/1999",
-//                        "21/06/1999", "25/06/1999", "22/07/1999",
-//                        "23/07/1999", "25/07/1999", "22/08/1999",
-//                        "23/08/1999", "25/08/1999", "22/09/1999",
-//                        "23/09/1999", "25/09/1999", "22/10/1999",
-//                        "23/10/1999", "25/10/1999", "21/11/1999",
-//                        "22/11/1999", "25/11/1999", "21/12/1999"
-//        };
-//
-//        for(String s : array) {
-//            ZodiacCalculator zodiacCalculator1 = new ZodiacCalculator(getApplicationContext(), s);
-//            Log.v("formalchat", s + " : " +  zodiacCalculator1.getZodiacSign());
-//        }
     }
 
     private boolean isVideoExists() {
