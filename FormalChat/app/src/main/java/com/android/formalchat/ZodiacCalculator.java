@@ -15,27 +15,23 @@ public class ZodiacCalculator {
     private final static int DUMMY_POSITION = 22;
     private Context context;
     private String date;
-    private String zodiacSign;
 
-    public ZodiacCalculator(Context context, String date) {
+    public ZodiacCalculator(Context context) {
         this.context = context;
+    }
+
+    protected ZodiacSign calculateZodiacSign(String date) {
         this.date = date;
-        setZodiacSign();
-    }
-
-    public String getZodiacSign() {
-        return zodiacSign;
-    }
-
-    public void setZodiacSign() {
-        String[] zodiacSignsArray = this.context.getResources().getStringArray(R.array.zodiac_values);
         int zodiacalSignPosition = getZodiacSignPosition();
         if(zodiacalSignPosition != DUMMY_POSITION) {
-            this.zodiacSign = zodiacSignsArray[zodiacalSignPosition];
+            for(ZodiacSign sign : ZodiacSign.values()) {
+                if(sign.ordinal() == zodiacalSignPosition) {
+                    return sign;
+                }
+            }
         }
-        else {
-            this.zodiacSign = null;
-        }
+
+        return null;
     }
 
     private int getZodiacSignPosition() {
