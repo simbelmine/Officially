@@ -145,20 +145,6 @@
     </string-array>
 
     <!-- Zodiac Signs -->
-    <string-array name="zodiac_values">
-        <item>zodiac_aquarius</item>
-        <item>zodiac_pisces</item>
-        <item>zodiac_aries</item>
-        <item>zodiac_taurus</item>
-        <item>zodiac_gemini</item>
-        <item>zodiac_cancer</item>
-        <item>zodiac_leo</item>
-        <item>zodiac_virgo</item>
-        <item>zodiac_libra</item>
-        <item>zodiac_scorpio</item>
-        <item>zodiac_sagittarius</item>
-        <item>zodiac_capricorn</item>
-    </string-array>
     <string-array name="zodiac_start_dates">
         <item>20/01</item>
         <item>19/02</item>
