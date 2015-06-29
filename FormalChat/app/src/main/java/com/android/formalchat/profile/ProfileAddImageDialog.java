@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.profile;
 
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -31,6 +31,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.formalchat.R;
+import com.android.formalchat.UserImages;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;

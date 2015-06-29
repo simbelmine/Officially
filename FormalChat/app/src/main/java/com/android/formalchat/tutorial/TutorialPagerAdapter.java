@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.tutorial;
 
 
 import android.content.Context;
@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
+
+import com.android.formalchat.R;
 
 /**
  * Created by Sve on 1/29/15.

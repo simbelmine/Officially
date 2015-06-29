@@ -29,7 +29,7 @@
         android:theme="@style/AppThemeW"
         >
 
-        <activity android:name=".TutorialPagerActivity">
+        <activity android:name=".tutorial.TutorialPagerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -42,7 +42,7 @@
             android:noHistory="true">
         </activity>
         <activity   android:name=".MainActivity"/>
-        <activity   android:name=".ProfileActivity"
+        <activity   android:name=".profile.ProfileActivityCurrent"
                     android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity   android:name=".UserInfoActivity"
                     android:windowSoftInputMode="adjustPan|stateHidden"/>
@@ -66,9 +66,9 @@
                     android:theme="@style/QuestionsDialogTheme"/>
         <activity android:name=".VideoRecordActivity"/>
         <activity android:name=".VideoShowActivity"/>
-        <activity android:name=".ProfileViewGallery"/>
-        <activity android:name=".ProfileGallery"/>
-        <activity android:name=".ProfileActivityRemote"/>
+        <activity android:name=".profile.ProfileViewGallery"/>
+        <activity android:name=".profile.ProfileGallery"/>
+        <activity android:name=".profile.ProfileActivityRemote"/>
 
         <service android:name=".VideoUploadService"/>
         <service android:name=".VideoDownloadService"/>

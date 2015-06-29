@@ -1,8 +1,10 @@
-package com.android.formalchat;
+package com.android.formalchat.profile;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import com.android.formalchat.R;
 
 /**
  * Created by Sve on 5/29/15.

@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.tutorial;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +8,9 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.android.formalchat.LoginActivity;
+import com.android.formalchat.R;
 
 /**
  * Created by Sve on 1/29/15.

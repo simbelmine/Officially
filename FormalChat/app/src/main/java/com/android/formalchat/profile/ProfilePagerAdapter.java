@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.profile;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -21,6 +21,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
+import com.android.formalchat.FullImageActivity;
+import com.android.formalchat.R;
+import com.android.formalchat.VideoDownloadService;
+import com.android.formalchat.VideoShowActivity;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.squareup.picasso.Callback;

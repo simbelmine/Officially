@@ -1,13 +1,11 @@
 package com.android.formalchat;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,9 +13,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SlidingDrawer;
 import android.widget.TextView;
 
+import com.android.formalchat.profile.ProfileActivityCurrent;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -99,7 +97,7 @@ public class DrawerActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 drawerLayout.closeDrawer(leftDrawerLayout);
-                launchActivity(ProfileActivity.class, PROFILE_ID);
+                launchActivity(ProfileActivityCurrent.class, PROFILE_ID);
             }
         });
     }
@@ -211,7 +209,7 @@ public class DrawerActivity extends FragmentActivity {
                 break;
             case 1:
                 onItemSelected(position);
-                launchActivity(ProfileActivity.class, position);
+                launchActivity(ProfileActivityCurrent.class, position);
                 break;
             case 2:
                 logOut();

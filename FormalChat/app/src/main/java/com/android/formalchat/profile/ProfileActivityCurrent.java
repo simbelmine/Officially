@@ -1,14 +1,17 @@
-package com.android.formalchat;
+package com.android.formalchat.profile;
 
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 
+import com.android.formalchat.R;
+import com.android.formalchat.UserInfoActivity;
+
 /**
  * Created by Sve on 2/4/15.
  */
-public class ProfileActivity extends ProfileBaseActivity {
+public class ProfileActivityCurrent extends ProfileBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +31,7 @@ public class ProfileActivity extends ProfileBaseActivity {
 
         switch (v.getId()) {
             case R.id.feb_button:
-                PopupMenu popupMenu = new PopupMenu(ProfileActivity.this, edit_feb_btn);
+                PopupMenu popupMenu = new PopupMenu(ProfileActivityCurrent.this, edit_feb_btn);
                 popupMenu.getMenuInflater().inflate(R.menu.profile_edit_menu, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override

@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.profile;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,6 +21,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.formalchat.BlurredImage;
+import com.android.formalchat.DrawerActivity;
+import com.android.formalchat.R;
+import com.android.formalchat.RoundedImageView;
+import com.android.formalchat.VideoDownloadService;
+import com.android.formalchat.VideoShowActivity;
+import com.android.formalchat.ZodiacCalculator;
+import com.android.formalchat.ZodiacSign;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;

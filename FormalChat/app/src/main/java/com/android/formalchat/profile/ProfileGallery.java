@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.profile;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -23,6 +23,11 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.formalchat.DrawerActivity;
+import com.android.formalchat.R;
+import com.android.formalchat.VideoDownloadService;
+import com.android.formalchat.VideoRecordActivity;
+import com.android.formalchat.VideoUploadService;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;

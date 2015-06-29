@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.formalchat.questionary.QuestionaryActivity;
+import com.android.formalchat.tutorial.TutorialPagerActivity;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
