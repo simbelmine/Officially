@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
-import com.android.formalchat.FullImageActivity;
 import com.android.formalchat.R;
 import com.android.formalchat.VideoDownloadService;
 import com.android.formalchat.VideoShowActivity;

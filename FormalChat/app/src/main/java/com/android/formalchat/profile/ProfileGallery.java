@@ -89,6 +89,8 @@ public class ProfileGallery extends DrawerActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeUploadVideo, intentFilterUploadVideo);
         IntentFilter intentFilterDownloadVideo = new IntentFilter(VideoDownloadService.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeDownloadVideo, intentFilterDownloadVideo);
+        IntentFilter intentFilterDeletedPicture = new IntentFilter(FullImageActivity.ACTION_DELETED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNoticePictureDeleted, intentFilterDeletedPicture);
     }
 
     @Override
@@ -169,7 +171,6 @@ public class ProfileGallery extends DrawerActivity {
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction() != null) {
                 if (isNetworkAvailable()) {
-                    Log.v("formalchat", "onNoticePictureUpload...");
                     populateResourcesFromParse();
                 }
             }
@@ -194,6 +195,15 @@ public class ProfileGallery extends DrawerActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
            galleryAdapter.notifyDataSetChanged();
+        }
+    };
+
+    private BroadcastReceiver onNoticePictureDeleted = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isNetworkAvailable()) {
+                populateResourcesFromParse();
+            }
         }
     };
 

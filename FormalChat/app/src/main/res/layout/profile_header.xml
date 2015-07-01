@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <FrameLayout
+        android:id="@+id/profile_header_holder"
         android:layout_width="match_parent"
         android:layout_height="300dp">
         <!-- by placing the imageview inside the fragment we avoid overdraw when

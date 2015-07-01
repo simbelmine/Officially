@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.profile;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +19,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.android.formalchat.BlurredImage;
+import com.android.formalchat.CropActivity;
+import com.android.formalchat.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -37,6 +41,8 @@ import java.util.List;
 public class FullImageActivity extends Activity {
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final int CROP_FROM_IMG = 123;
+    public static final String ACTION_DELETED = "PICTURE_DELETE_COMPLETE";
+    public static final String ACTION_UPLOADED_PROFILE_PIC = "PROFILE_PICTURE_UPLOAD_COMPLETE";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private ImageView fullScreenView;
@@ -136,7 +142,7 @@ public class FullImageActivity extends Activity {
                 byte[] profileImg = data.getByteArrayExtra("profileImg");
                 saveProfileImgToLocal(profileImg);
                 setImageAsProfile(profileImg);
-                setFlagToSharedPrefs();
+                sendBroadcastMessage(ACTION_UPLOADED_PROFILE_PIC);
                 setProfPicNameToSharPrefs();
                 finish();
             }
@@ -219,7 +225,7 @@ public class FullImageActivity extends Activity {
                     if(imagesList.size() > 0) {
                         imagesList.get(0).deleteInBackground();
                         deleteImageFromLocalStorage();
-                        setFlagToSharedPrefs();
+                        sendBroadcastMessage(ACTION_DELETED);
                         finish();
                     }
                 }
@@ -244,10 +250,9 @@ public class FullImageActivity extends Activity {
         }
     }
 
-    private void setFlagToSharedPrefs() {
-        editor.putBoolean("refresh", true);
-        editor.putBoolean("photo_num_changed", true);
-        editor.commit();
+    private void sendBroadcastMessage(String action) {
+        Intent sender = new Intent(action);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(sender);
     }
 
     public String getParseImgNameFromUri() {

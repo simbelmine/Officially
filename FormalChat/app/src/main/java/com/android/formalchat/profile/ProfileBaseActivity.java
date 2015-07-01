@@ -17,6 +17,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -106,18 +108,14 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         startGalleryPhotosCounter();
         setOnClickListeners();
        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
-        getProfileImgPath();
-        if(isNetworkAvailable()) {
-            loadBigProfilePicFromParse();
-            loadSmallProfilePicFromParse();
-        }
+        setProfileImages();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        registerReciver();
+        registerRecivers();
 
         if(isNetworkAvailable()) {
             populateInfoFromParse();
@@ -128,6 +126,13 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        unregisterReceivers();
+    }
+
     private BroadcastReceiver onPictureUploadNotice = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -135,13 +140,36 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         }
     };
 
-    private void registerReciver() {
-        IntentFilter intentFilter = new IntentFilter(ProfileAddImageDialog.ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(onPictureUploadNotice, intentFilter);
+    private BroadcastReceiver onPictureDeletedNotice = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startGalleryPhotosCounter();
+        }
+    };
+
+    private BroadcastReceiver onProfilePictureUploadedNotice = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setProfileImages();
+            ViewGroup vg = (ViewGroup) findViewById (R.id.profile_header_holder);
+            vg.removeAllViews();
+            vg.refreshDrawableState();
+        }
+    };
+
+    private void registerRecivers() {
+        IntentFilter intentFilterPictureUploaded = new IntentFilter(ProfileAddImageDialog.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onPictureUploadNotice, intentFilterPictureUploaded);
+        IntentFilter intentFilterPictureDeleted = new IntentFilter(FullImageActivity.ACTION_DELETED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onPictureDeletedNotice, intentFilterPictureDeleted);
+        IntentFilter intentFilterProfilePictureUploaded = new IntentFilter(FullImageActivity.ACTION_UPLOADED_PROFILE_PIC);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onProfilePictureUploadedNotice, intentFilterProfilePictureUploaded);
     }
 
-    private void unregisterReceiver() {
+    private void unregisterReceivers() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onPictureUploadNotice);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onPictureDeletedNotice);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onProfilePictureUploadedNotice);
     }
 
     private void setTitle() {
@@ -199,6 +227,14 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         perfectSmn = (TextView) findViewById(R.id.perfect_smn_edit);
         perfectDate = (TextView) findViewById(R.id.perfect_date_edit);
         interests = (TextView) findViewById(R.id.interests_edit);
+    }
+
+    private void setProfileImages() {
+        getProfileImgPath();
+        if(isNetworkAvailable()) {
+            loadBigProfilePicFromParse();
+            loadSmallProfilePicFromParse();
+        }
     }
 
     private boolean isVideoExists() {
