@@ -74,10 +74,7 @@ public class ProfileGallery extends DrawerActivity {
 
         setTitle();
         if(isNetworkAvailable()) {
-            if (videoExists) {
-                addVideoToPaths();
-            }
-            getImagesFromParse();
+            populateResourcesFromParse();
         }
     }
 
@@ -86,9 +83,11 @@ public class ProfileGallery extends DrawerActivity {
     protected void onResume() {
         super.onResume();
 
-        IntentFilter intentFilterUploadVideo= new IntentFilter(VideoUploadService.ACTION);
+        IntentFilter intentFilterPictureUpload = new IntentFilter(ProfileAddImageDialog.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNoticePictureUpload, intentFilterPictureUpload);
+        IntentFilter intentFilterUploadVideo = new IntentFilter(VideoUploadService.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeUploadVideo, intentFilterUploadVideo);
-        IntentFilter intentFilterDownloadVideo= new IntentFilter(VideoDownloadService.ACTION);
+        IntentFilter intentFilterDownloadVideo = new IntentFilter(VideoDownloadService.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeDownloadVideo, intentFilterDownloadVideo);
     }
 
@@ -103,16 +102,16 @@ public class ProfileGallery extends DrawerActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        if(sharedPreferences.contains("refresh") && sharedPreferences.getBoolean("refresh", false)) {
-            imagePaths.clear();
-            if(isNetworkAvailable()) {
-                if (videoExists) {
-                    addVideoToPaths();
-                }
-                getImagesFromParse();
-            }
-            sharedPreferences.edit().putBoolean("refresh", false).commit();
-        }
+//        if(sharedPreferences.contains("refresh") && sharedPreferences.getBoolean("refresh", false)) {
+//            imagePaths.clear();
+//            if(isNetworkAvailable()) {
+//                if (videoExists) {
+//                    addVideoToPaths();
+//                }
+//                getImagesFromParse();
+//            }
+//            sharedPreferences.edit().putBoolean("refresh", false).commit();
+//        }
     }
 
     @Override
@@ -165,6 +164,18 @@ public class ProfileGallery extends DrawerActivity {
         }
     }
 
+    private BroadcastReceiver onNoticePictureUpload = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction() != null) {
+                if (isNetworkAvailable()) {
+                    Log.v("formalchat", "onNoticePictureUpload...");
+                    populateResourcesFromParse();
+                }
+            }
+        }
+    };
+
     private BroadcastReceiver onNoticeDownloadVideo = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -186,7 +197,7 @@ public class ProfileGallery extends DrawerActivity {
         }
     };
 
-    private void getImagesFromParse() {
+    private void populateResourcesFromParse() {
         ParseUser user = ParseUser.getCurrentUser();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserImages");
         query.whereEqualTo("userName", user.getUsername());
@@ -195,12 +206,19 @@ public class ProfileGallery extends DrawerActivity {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (list.size() > 0) {
+                    ArrayList<String> imagesPaths = new ArrayList<>();
+
+                    if (videoExists) {
+                        imagesPaths = addVideoToPaths(imagesPaths);
+                    }
+
                     for (ParseObject po : list) {
                         String picUrl = ((ParseFile) po.get("photo")).getUrl();
-                        imagePaths.add(picUrl);
+                        imagesPaths.add(picUrl);
                     }
+                    Log.v("formalchat", "findInBackground images = " + imagePaths.size());
                     //gridView.setAdapter(new ProfileGalleryAdapter(activity, getApplicationContext(), imagePaths));
-                    initAdapter();
+                    initAdapter(imagesPaths);
 
                 } else {
                     Log.v("formalchat", "listsize is 0 ");
@@ -213,11 +231,13 @@ public class ProfileGallery extends DrawerActivity {
         });
     }
 
-    private void initAdapter() {
+    private void initAdapter(ArrayList<String> imagesPaths) {
         if (galleryAdapter != null) {
-            galleryAdapter.updateImages(imagePaths);
+            Log.v("formalchat", "adapter NOT null = " + imagesPaths.size());
+            galleryAdapter.updateImages(imagesPaths);
         } else {
-            galleryAdapter = new ProfileGalleryAdapter(activity, getApplicationContext(), imagePaths);
+            Log.v("formalchat", "adapter null = " + imagesPaths.size());
+            galleryAdapter = new ProfileGalleryAdapter(activity, getApplicationContext(), imagesPaths);
             gridView.setAdapter(galleryAdapter);
         }
     }
@@ -229,9 +249,10 @@ public class ProfileGallery extends DrawerActivity {
         return false;
     }
 
-    private void addVideoToPaths() {
+    private ArrayList<String> addVideoToPaths(ArrayList<String> imagesPaths) {
         String videoPath = user.getParseFile("video").getUrl();
-        imagePaths.add(videoPath);
+        imagesPaths.add(videoPath);
+        return imagesPaths;
     }
 
     private boolean isNetworkAvailable() {

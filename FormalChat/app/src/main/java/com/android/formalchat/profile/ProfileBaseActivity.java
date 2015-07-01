@@ -1,9 +1,9 @@
 package com.android.formalchat.profile;
-import com.android.formalchat.ZodiacCalculator;
-
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -116,6 +117,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
 
+        registerReciver();
+
         if(isNetworkAvailable()) {
             populateInfoFromParse();
         }
@@ -123,6 +126,22 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
             // Get from local
             //getImagesFromLocalStorage();
         }
+    }
+
+    private BroadcastReceiver onPictureUploadNotice = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startGalleryPhotosCounter();
+        }
+    };
+
+    private void registerReciver() {
+        IntentFilter intentFilter = new IntentFilter(ProfileAddImageDialog.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onPictureUploadNotice, intentFilter);
+    }
+
+    private void unregisterReceiver() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onPictureUploadNotice);
     }
 
     private void setTitle() {

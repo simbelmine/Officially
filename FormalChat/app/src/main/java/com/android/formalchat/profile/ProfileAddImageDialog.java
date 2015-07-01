@@ -53,7 +53,7 @@ public class ProfileAddImageDialog extends DialogFragment {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int ACTIVITY_SELECT_IMAGE = 321;
     public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final String ACTION="UPLOAD_COMPLETE";
+    public static final String ACTION="PICTURE_UPLOAD_COMPLETE";
 
     private static final String PREFS_NAME = "FormalChatPrefs";
     private SharedPreferences sharedPreferences;
