@@ -1,4 +1,5 @@
 package com.android.formalchat.profile;
+import com.android.formalchat.ZodiacCalculator;
 
 import android.app.Activity;
 import android.content.Context;

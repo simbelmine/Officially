@@ -20,7 +20,7 @@ public class ZodiacCalculator {
         this.context = context;
     }
 
-    protected ZodiacSign calculateZodiacSign(String date) {
+    public ZodiacSign calculateZodiacSign(String date) {
         this.date = date;
         int zodiacalSignPosition = getZodiacSignPosition();
         if(zodiacalSignPosition != DUMMY_POSITION) {
