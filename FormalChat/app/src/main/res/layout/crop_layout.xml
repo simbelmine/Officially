@@ -3,26 +3,25 @@
     android:id="@+id/root_crop"
     android:layout_width="300dp"
     android:layout_height="400dp"
-    android:background="@color/items"
+    android:background="@color/background"
     android:orientation="vertical"
     android:layout_gravity="center_vertical|center_horizontal"
     android:foregroundGravity="center"
     >
     <ImageView
         android:id="@+id/mesureRect"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/croppingSquare"
+        android:layout_height="@dimen/croppingSquare"
         android:scaleType="fitXY"
         android:layout_gravity="center"
         android:background="@drawable/rounded_btns_white"
         />
-
     <Button
         android:id="@+id/done_editing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="10dp"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_gravity="top|right"
+        android:layout_margin="5dp"
         android:text="@string/done"
         android:textColor="@color/white"
         android:background="@drawable/button_selector"/>

@@ -63,6 +63,7 @@ public class CropActivity extends Activity {
                 cropMeasureView.bringToFront();
 
                 doneEditing = (Button) findViewById(R.id.done_editing);
+                doneEditing.setAllCaps(false);
                 doneEditing.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -1,24 +1,12 @@
 package com.android.formalchat;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Display;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 /**
  * Created by Sve on 4/1/15.
@@ -27,6 +15,7 @@ public class ZoomInOutImgView extends ImageView {
     private static final int INVALID_POINTER_ID = -1;
 
     private Drawable image;
+    private int squareDimension;
     private float posX;
     private float posY;
     private float lastTouchX;
@@ -39,12 +28,43 @@ public class ZoomInOutImgView extends ImageView {
     public ZoomInOutImgView(Context context, Drawable image, int pX, int pY) {
         super(context);
         this.image = image;
-        int pxs = (int) (100 * getResources().getDisplayMetrics().density);
-        image.setBounds(0, 0, pxs, pxs);
+        squareDimension = (int)(getResources().getDimension(R.dimen.croppingSquare)/getResources().getDisplayMetrics().density);
+        int pxs = (int) (squareDimension * getResources().getDisplayMetrics().density);
+//         image.setBounds(0, 0, pxs, pxs);
         scaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
 
         posX = pX / 2 - pxs / 2;
         posY = pY / 2 - pxs / 2;
+
+        calculateImageBounds(pxs);
+    }
+
+    private void calculateImageBounds(int pixels) {
+        int imgHeight = image.getIntrinsicHeight(); // 533
+        int imgWidth = image.getIntrinsicWidth();   // 395
+        double minimisationNumber;
+
+
+        if(imgHeight > imgWidth && imgHeight > squareDimension) {
+            minimisationNumber = (double)imgWidth/(double)squareDimension;
+            double minimizedHeight = imgHeight/minimisationNumber;
+            int minimizedHeight_rounded = (int) Math.ceil(minimizedHeight);
+
+            image.setBounds(0, 0 - minimizedHeight_rounded/2, pixels, pixels + minimizedHeight_rounded/2);
+        }
+        else if(imgWidth > imgHeight && imgWidth > squareDimension) {
+            minimisationNumber = (double)imgHeight/(double)squareDimension;
+            double minimizedWidth = imgWidth/minimisationNumber;
+            int minimizedWidth_rounded = (int) Math.ceil(minimizedWidth);
+
+            image.setBounds(0 - minimizedWidth_rounded/2, 0, pixels + minimizedWidth_rounded/2, pixels);
+        }
+        else {
+            image.setBounds(0, 0, pixels, pixels);
+        }
+
+
+//        image.setBounds(0, 0 - scaledHeightByMinimisationNumber_ToPixels, (int) posX, (int) posX + scaledHeightByMinimisationNumber_ToPixels);
     }
 
     @Override

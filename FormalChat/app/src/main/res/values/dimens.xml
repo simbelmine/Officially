@@ -67,6 +67,7 @@
     <dimen name="back_icon_size">18dp</dimen>
     <dimen name="menu_icon_size">20dp</dimen>
     <dimen name="full_icons_margin">10dp</dimen>
+    <dimen name="croppingSquare">200dp</dimen>
 
     <!--Main-->
     <dimen name="header_height">50dp</dimen>
