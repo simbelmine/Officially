@@ -254,8 +254,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 else {
                     Log.e("formalchat", e.getMessage());
                     saveDataToParse(userName, email, password);
-                    startActivityByClassName(MainQuestionsActivity.class);
-                    setLogedInSharedPrefs();
                 }
             }
         });
@@ -291,6 +289,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.sign_up_success),
                             Toast.LENGTH_LONG).show();
+
+                    startActivityByClassName(MainQuestionsActivity.class);
+                    setLogedInSharedPrefs();
                 } else {
                     // Sign up didn't succeed. Look at the ParseException
                     // to figure out what went wrong
