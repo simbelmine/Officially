@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -44,6 +43,8 @@ import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,9 +54,10 @@ import java.util.List;
 public class ProfileBaseActivity extends DrawerActivity implements View.OnClickListener {
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final String PREFS_INFO = "FormalChatUserInfo";
+    private static final String FILE_DIR = "/.formal_chat/";
+    private static final String PROFILE_PIC_BLURRED = "blurred_profile.jpg";
     public static final int NONE = 101;
     private File dir = Environment.getExternalStorageDirectory();
-    private String filePath = "/.formal_chat/";
     private SharedPreferences sharedPreferences;
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
@@ -232,7 +234,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private void setProfileImages() {
         getProfileImgPath();
         if(isNetworkAvailable()) {
-            loadBigProfilePicFromParse();
+            loadBigProfilePic();
             loadSmallProfilePicFromParse();
         }
     }
@@ -363,7 +365,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     protected void startVideo() {
         if(isVideoExists()) {
             downloadVideoIfNotExists();
-            String videoPath = dir + filePath + shortName;
+            String videoPath = dir + FILE_DIR + shortName;
             onStartActivity(VideoShowActivity.class, "videoUri", videoPath);
         }
         else {
@@ -377,12 +379,12 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         String fileName = videoFile.getName();
         shortName = getShortImageNameFromUri(fileName);
 
-        File targetFolder = new File(dir + filePath);
+        File targetFolder = new File(dir + FILE_DIR);
         if(!targetFolder.exists()) {
             targetFolder.mkdir();
         }
 
-        File tmpFile = new File(dir, filePath + shortName);
+        File tmpFile = new File(dir, FILE_DIR + shortName);
         if(!tmpFile.exists()) {
             startVideoDownloadService();
         }
@@ -395,7 +397,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private void startVideoDownloadService() {
         Intent intent = new Intent(this, VideoDownloadService.class);
         intent.putExtra(VideoDownloadService.DIRPATH, dir.getAbsolutePath());
-        intent.putExtra(VideoDownloadService.FILEPATH, filePath);
+        intent.putExtra(VideoDownloadService.FILEPATH, FILE_DIR);
 
         startService(intent);
     }
@@ -414,46 +416,14 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void loadBigProfilePicFromParse() {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
+    private void loadBigProfilePic() {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
         if(isProfPicExists(path)) {
-            Bitmap myBitmap = BitmapFactory.decodeFile(path + "/blurred_profile.jpg");
-            profilePic.setImageBitmap(myBitmap);
+            loadBigProfilePicFromLocal(path);
         }
         else
         {
-            if (user.has("profileImgName")) {
-                final String profileImgName = user.get("profileImgName").toString();
-                ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
-                parseQuery.whereEqualTo("userName", getCurrentUser());
-                parseQuery.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (list.size() > 0) {
-                            for (ParseObject po : list) {
-                                String picUrl = ((ParseFile) po.get("photo")).getUrl();
-                                String nameFromUrl = getShortImageNameFromUri(picUrl);
-
-                                if (profileImgName.equals(nameFromUrl)) {
-
-                                    ParseFile parseFile = ((ParseFile) po.get("photo"));
-                                    parseFile.getDataInBackground(new GetDataCallback() {
-                                        @Override
-                                        public void done(byte[] bytes, ParseException e) {
-                                            if (e == null) {
-                                                Bitmap blurredBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                                BlurredImage bm = new BlurredImage();
-                                                Bitmap bitmap = bm.getBlurredImage(blurredBitmap, 50);
-                                                profilePic.setImageBitmap(bitmap);
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    }
-                });
-            }
+            loadBigProfilePicFromParse(path);
         }
     }
 
@@ -462,11 +432,74 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         File[] files_list = dir.listFiles();
 
         for(int f = 0; f < files_list.length; f++) {
-            if("blurred_profile.jpg".equals(files_list[f].getName())) {
+            if(PROFILE_PIC_BLURRED.equals(files_list[f].getName())) {
                 return true;
             }
         }
         return false;
+    }
+
+    private void loadBigProfilePicFromLocal(String path) {
+        Bitmap myBitmap = BitmapFactory.decodeFile(path + "/" + PROFILE_PIC_BLURRED);
+        profilePic.setImageBitmap(myBitmap);
+    }
+
+    private void loadBigProfilePicFromParse(final String path) {
+        if (user.has("profileImgName")) {
+            final String profileImgName = user.get("profileImgName").toString();
+            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+            parseQuery.whereEqualTo("userName", getCurrentUser());
+            parseQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> list, ParseException e) {
+                    if (list.size() > 0) {
+                        for (ParseObject po : list) {
+                            String picUrl = ((ParseFile) po.get("photo")).getUrl();
+                            String nameFromUrl = getShortImageNameFromUri(picUrl);
+
+                            if (profileImgName.equals(nameFromUrl)) {
+
+                                ParseFile parseFile = ((ParseFile) po.get("photo"));
+                                parseFile.getDataInBackground(new GetDataCallback() {
+                                    @Override
+                                    public void done(byte[] bytes, ParseException e) {
+                                        if (e == null) {
+                                            Bitmap blurredBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                            BlurredImage bm = new BlurredImage();
+                                            Bitmap bitmap = bm.getBlurredImage(blurredBitmap, 50);
+                                            saveCopyToLocal(path, bitmap);
+                                            profilePic.setImageBitmap(bitmap);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void saveCopyToLocal(String path, Bitmap bitmapToSave) {
+        FileOutputStream out = null;
+        File fileToSave = new File(path + "/" + PROFILE_PIC_BLURRED);
+        try {
+            out = new FileOutputStream(fileToSave);
+            bitmapToSave.compress(Bitmap.CompressFormat.PNG, 100, out);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if(out != null) {
+                    out.close();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void loadSmallProfilePicFromParse() {
