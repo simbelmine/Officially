@@ -68,6 +68,8 @@
     <dimen name="menu_icon_size">20dp</dimen>
     <dimen name="full_icons_margin">10dp</dimen>
     <dimen name="croppingSquare">200dp</dimen>
+    <dimen name="root_crop_height">400dp</dimen>
+    <dimen name="root_crop_width">300dp</dimen>
 
     <!--Main-->
     <dimen name="header_height">50dp</dimen>
