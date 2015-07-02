@@ -78,6 +78,17 @@ public class DrawerActivity extends FragmentActivity {
         setListOnClickItemListener();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (ParseUser.getCurrentUser() == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+    }
+
     private void setPic() {
         String profilePicUri = getUserProfilePicUri();
         if(profilePicUri != null) {
@@ -236,7 +247,9 @@ public class DrawerActivity extends FragmentActivity {
     public void logOut() {
         ParseUser.logOut();
         deleteNotSharableFiles();
-        launchActivity(LoginActivity.class, NONE);
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     private void deleteNotSharableFiles() {
