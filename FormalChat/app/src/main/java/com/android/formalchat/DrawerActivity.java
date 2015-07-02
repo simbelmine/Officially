@@ -2,7 +2,10 @@ package com.android.formalchat;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +27,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -231,7 +235,22 @@ public class DrawerActivity extends FragmentActivity {
 
     public void logOut() {
         ParseUser.logOut();
+        deleteNotSharableFiles();
         launchActivity(LoginActivity.class, NONE);
+    }
+
+    private void deleteNotSharableFiles() {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
+        File dir = new File(path);
+        File[] files_list = dir.listFiles();
+
+        for(int f = 0; f < files_list.length; f++) {
+            if("blurred_profile.jpg".equals(files_list[f].getName())) {
+                files_list[f].delete();
+            }
+        }
+
+
     }
 }
 
