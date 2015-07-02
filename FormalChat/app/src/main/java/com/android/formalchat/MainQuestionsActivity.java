@@ -184,6 +184,7 @@ public class MainQuestionsActivity extends Activity {
         final String userName = parseUser.getUsername();
 
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
+        parseQuery.whereContains("loginName", userName);
         parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, com.parse.ParseException e) {
