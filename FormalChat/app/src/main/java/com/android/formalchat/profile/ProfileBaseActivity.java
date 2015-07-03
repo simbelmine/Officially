@@ -20,13 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.formalchat.BlurredImage;
 import com.android.formalchat.DrawerActivity;
 import com.android.formalchat.R;
+import com.android.formalchat.RetrieveBlurredImageService;
 import com.android.formalchat.RoundedImageView;
 import com.android.formalchat.VideoDownloadService;
 import com.android.formalchat.VideoShowActivity;
@@ -34,7 +35,6 @@ import com.android.formalchat.ZodiacCalculator;
 import com.android.formalchat.ZodiacSign;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -43,8 +43,6 @@ import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +79,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private TextView gender;
     private TextView age;
     private TextView photos_btn;
+    private ProgressBar profileProgressBar;
     private int photos_btn_counter;
 
     private TextView motto;
@@ -109,9 +108,10 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         setZodiacalSign();
         startGalleryPhotosCounter();
         setOnClickListeners();
-       //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
+        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
         setProfileImages();
     }
+
 
     @Override
     protected void onResume() {
@@ -166,12 +166,17 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         LocalBroadcastManager.getInstance(this).registerReceiver(onPictureDeletedNotice, intentFilterPictureDeleted);
         IntentFilter intentFilterProfilePictureUploaded = new IntentFilter(FullImageActivity.ACTION_UPLOADED_PROFILE_PIC);
         LocalBroadcastManager.getInstance(this).registerReceiver(onProfilePictureUploadedNotice, intentFilterProfilePictureUploaded);
+
+        IntentFilter intentFilterBigProfilePicDownload = new IntentFilter(RetrieveBlurredImageService.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onDonwloadBigProfPicNotice, intentFilterBigProfilePicDownload);
     }
 
     private void unregisterReceivers() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onPictureUploadNotice);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onPictureDeletedNotice);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onProfilePictureUploadedNotice);
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onDonwloadBigProfPicNotice);
     }
 
     private void setTitle() {
@@ -211,6 +216,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         help_video_layout = (RelativeLayout) findViewById(R.id.help_layout);
         got_it_img = (ImageView) findViewById(R.id.got_it_img);
         photos_btn = (TextView) findViewById(R.id.photos_button);
+        profileProgressBar = (ProgressBar)findViewById(R.id.progresBar_photos_counter);
         zodiacSign = (ImageView) findViewById(R.id.zodiac_sign);
 
         // *** Footer
@@ -346,12 +352,12 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
 //            case R.id.got_it_img:
-                // ****** Remote Profile Only ***** //
+            // ****** Remote Profile Only ***** //
 //                ((FrameLayout)help_video_leyout.getParent()).removeView(help_video_leyout);
 //                startVideo();
 //                break;
 //            case R.id.small_prof_pic:
-                // TO DO --------------------------------------------
+            // TO DO --------------------------------------------
 //                if(isRemoteProfile()) {
 //                    startVideo();
 //                }
@@ -419,12 +425,18 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private void loadBigProfilePic() {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
         if(isProfPicExists(path)) {
-            loadBigProfilePicFromLocal(path);
+            retrieveBlurredImageFromLocal(path);
         }
         else
         {
-            loadBigProfilePicFromParse(path);
+            retrieveBlurredImageFromParse();
         }
+    }
+
+    private void retrieveBlurredImageFromParse() {
+        profileProgressBar.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, RetrieveBlurredImageService.class);
+        startService(intent);
     }
 
     private boolean isProfPicExists(String path) {
@@ -439,67 +451,9 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         return false;
     }
 
-    private void loadBigProfilePicFromLocal(String path) {
+    private void retrieveBlurredImageFromLocal(String path) {
         Bitmap myBitmap = BitmapFactory.decodeFile(path + "/" + PROFILE_PIC_BLURRED);
         profilePic.setImageBitmap(myBitmap);
-    }
-
-    private void loadBigProfilePicFromParse(final String path) {
-        if (user.has("profileImgName")) {
-            final String profileImgName = user.get("profileImgName").toString();
-            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
-            parseQuery.whereEqualTo("userName", getCurrentUser());
-            parseQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> list, ParseException e) {
-                    if (list.size() > 0) {
-                        for (ParseObject po : list) {
-                            String picUrl = ((ParseFile) po.get("photo")).getUrl();
-                            String nameFromUrl = getShortImageNameFromUri(picUrl);
-
-                            if (profileImgName.equals(nameFromUrl)) {
-
-                                ParseFile parseFile = ((ParseFile) po.get("photo"));
-                                parseFile.getDataInBackground(new GetDataCallback() {
-                                    @Override
-                                    public void done(byte[] bytes, ParseException e) {
-                                        if (e == null) {
-                                            Bitmap blurredBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                            BlurredImage bm = new BlurredImage();
-                                            Bitmap bitmap = bm.getBlurredImage(blurredBitmap, 50);
-                                            saveCopyToLocal(path, bitmap);
-                                            profilePic.setImageBitmap(bitmap);
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    private void saveCopyToLocal(String path, Bitmap bitmapToSave) {
-        FileOutputStream out = null;
-        File fileToSave = new File(path + "/" + PROFILE_PIC_BLURRED);
-        try {
-            out = new FileOutputStream(fileToSave);
-            bitmapToSave.compress(Bitmap.CompressFormat.PNG, 100, out);
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            try {
-                if(out != null) {
-                    out.close();
-                }
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void loadSmallProfilePicFromParse() {
@@ -704,4 +658,12 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         return s;
     }
 
+    private BroadcastReceiver onDonwloadBigProfPicNotice = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
+            retrieveBlurredImageFromLocal(path);
+            profileProgressBar.setVisibility(View.GONE);
+        }
+    };
 }
