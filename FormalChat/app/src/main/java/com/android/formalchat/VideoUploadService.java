@@ -68,7 +68,7 @@ public class VideoUploadService extends IntentService {
                 saveInBackground(user, parseFile);
             }
             else {
-                showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning);
+                showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning, R.drawable.upload_icon_wrong);
             }
 
         } catch (IOException e) {
@@ -88,19 +88,19 @@ public class VideoUploadService extends IntentService {
                 }
                 else {
                     Log.e("formalchat", e.getMessage());
-                    showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning);
+                    showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning, R.drawable.upload_icon_wrong);
                     return;
                 }
             }
         });
     }
 
-    private void showVideoUploadedNotification(int titleId, int textId) {
+    private void showVideoUploadedNotification(int titleId, int textId, int drawableId) {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder.setContentTitle(getResources().getString(titleId))
                 .setContentText(getResources().getString(textId))
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(drawableId)
                 .setOngoing(false)
                 .setContentIntent(getPendingIntent());
         notificationManager.notify(ID, notificationBuilder.build());
@@ -120,7 +120,7 @@ public class VideoUploadService extends IntentService {
 
     private void onDoneSaveTransaction() {
         Log.e("formalchat", "Video was saved Successfully !");
-        showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text);
+        showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text, R.drawable.upload_icon);
         moveVideoToUsableFolder();
         sendBroadcastMessage();
     }

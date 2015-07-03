@@ -239,7 +239,7 @@ public class ProfileAddImageDialog extends DialogFragment {
         notificationBuilder = new NotificationCompat.Builder(getActivity());
         notificationBuilder.setContentTitle("Picture Upload")
                 .setContentText("Download in progress")
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.upload_icon)
                 .setOngoing(true);
 
         new Thread(
