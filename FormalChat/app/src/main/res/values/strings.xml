@@ -180,6 +180,10 @@
     <string name="video_upload_notif_title">Video upload finished</string>
     <string name="video_upload_notif_text">Touch to see it. It\'s in your Gallery.</string>
     <string name="video_upload_notif_text_warning">Video upload failed</string>
+    <string name="picture_upload_notif_title">Picture Upload</string>
+    <string name="picture_upload_notif_text">Download in progress</string>
+    <string name="picture_upload_notif_complete">Upload complete</string>
+    <string name="picture_upload_notif_text_warning">Picture upload failed</string>
 
     <!-- Alert Dialog -->
     <string name="alert_title">Wrong Date</string>

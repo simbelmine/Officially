@@ -178,7 +178,11 @@ public class ProfileAddImageDialog extends DialogFragment {
             userImages.setUserName(userName);
             userImages.setPhotoFile(imgFile);
             //show notification for uploading
-            showUploadNotification();
+            showUploadNotification(
+                    R.string.picture_upload_notif_title,
+                    R.string.picture_upload_notif_text,
+                    R.drawable.upload_icon,
+                    true);
             userImages.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -188,6 +192,11 @@ public class ProfileAddImageDialog extends DialogFragment {
                     }
                     else {
                         Log.e("formalchat", "Error saving: " + e.getMessage());
+                        showUploadNotification(
+                                R.string.picture_upload_notif_title,
+                                R.string.picture_upload_notif_text_warning,
+                                R.drawable.upload_icon_wrong,
+                                false);
                     }
                 }
             });
@@ -234,7 +243,7 @@ public class ProfileAddImageDialog extends DialogFragment {
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(sender);
     }
 
-    private void showUploadNotification() {
+    private void showUploadNotification(int titleId, int textId, int drawableId, boolean ongoing) {
         notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationBuilder = new NotificationCompat.Builder(getActivity());
         notificationBuilder.setContentTitle("Picture Upload")
