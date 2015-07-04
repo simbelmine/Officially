@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +18,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.formalchat.profile.ProfileGalleryAdapter;
+import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.GetCallback;
+import com.parse.ParseCloud;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Sve on 1/28/15.
@@ -30,9 +44,13 @@ public class MainActivity extends DrawerActivity {
     private Boolean exit;
     private DrawerLayout drawerLayout;
     private GridView people_GridView;
+    private PeopleGridViewAdapter peopleGridViewAdapter;
     private ImageButton grid_list_btn;
     private boolean isGrid;
     private ListView people_ListView;
+    private PeopleListViewAdapter peopleListViewAdapter;
+
+    private List<ParseUser> usersList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +72,85 @@ public class MainActivity extends DrawerActivity {
             launchLoginActivity();
         }
 
+      //  doInBackground();
+
         people_GridView = (GridView) findViewById(R.id.people_gridview);
         people_ListView = (ListView) findViewById(R.id.people_listview);
 
         grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
         initGridListBtn();
         setOnClickListeners();
+
+        getMatchesResults();
+    }
+
+    private void getMatchesResults() {
+        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserQuestionary");
+        parseQuery.whereEqualTo("loginName", ParseUser.getCurrentUser().getUsername());
+        parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if (e == null) {
+                    int drinkingCriteria = parseObject.getInt("matchDrinking");
+                    int smokingCriteria = parseObject.getInt("matchSmoking");
+                    int religionCriteria = parseObject.getInt("matchReligion");
+                    startParseCloudCode(drinkingCriteria, smokingCriteria, religionCriteria);
+                }
+            }
+        });
+    }
+
+    private void startParseCloudCode(int drinkingCriteria, int smokingCriteria, int religionCriteria) {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("userName", ParseUser.getCurrentUser().getUsername());
+        params.put("drinkingCriteria", drinkingCriteria);
+        params.put("smokingCriteria", smokingCriteria);
+        params.put("religionCriteria", religionCriteria);
+
+        ParseCloud.callFunctionInBackground("clientRequest", params, new FunctionCallback<ArrayList<ParseUser>>() {
+            @Override
+            public void done(ArrayList<ParseUser> list, ParseException e) {
+                if (e == null) {
+                    Log.v("formalchat", "----- " + list);
+                    usersList = new ArrayList<>();
+                    for (ParseUser user : list) {
+                        usersList.add(user);
+                    }
+                    initAdapter();
+
+                } else {
+                    Log.v("formalchat", "----- NONE");
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    private void doInBackground() {
+        ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+        parseQuery.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> users, ParseException e) {
+                if (e == null && users.size() > 0) {
+                    usersList = users;
+                    initAdapter();
+                }
+            }
+        });
+    }
+
+    private void initAdapter() {
+        if(peopleGridViewAdapter != null) {
+            peopleGridViewAdapter.updateUsers(usersList);
+        }
+        else {
+            peopleGridViewAdapter = new PeopleGridViewAdapter(getApplicationContext(), usersList);
+            people_GridView.setAdapter(peopleGridViewAdapter);
+        }
     }
 
     private void initSharedPreferences() {
@@ -109,7 +200,7 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void setPplGridView() {
-        people_GridView.setAdapter(new PeopleGridViewAdapter(getApplicationContext()));
+        //people_GridView.setAdapter(new PeopleGridViewAdapter(getApplicationContext()));
         people_ListView.setVisibility(View.GONE);
         people_GridView.setVisibility(View.VISIBLE );
     }

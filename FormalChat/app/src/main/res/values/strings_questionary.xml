@@ -32,7 +32,7 @@
     <string-array name="a_match_drinking">
         <item>None</item>
         <item>Never</item>
-        <item>On special ocasions</item>
+        <item>On special occasions</item>
         <item>Once a week</item>
         <item>Few times a week</item>
         <item>Daily</item>
