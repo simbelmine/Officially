@@ -26,7 +26,7 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter implement
 
     @Override
     public int getCount() {
-        return 7;
+        return 8;
     }
 
     @Override
@@ -39,25 +39,28 @@ public class QuestionaryPagerAdapter extends FragmentStatePagerAdapter implement
         QuestionFragment q = null;
         switch (position) {
             case 0:
-                q = new QuestionFragmentMatchReligion();
-                break;
-            case 1:
                 q = new QuestionFragmentMatchSmoking();
                 break;
-            case 2:
+            case 1:
                 q = new QuestionFragmentMatchDrinking();
                 break;
+            case 2:
+                q = new QuestionFragmentMatchReligion();
+                break;
             case 3:
-                q = new QuestionFragmentYourEthnicity();
+                q = new QuestionFragmentMatchEthnicity();
                 break;
             case 4:
-                q = new QuestionFragmentYourReligion();
-                break;
-            case 5:
                 q = new QuestionFragmentYourSmoking();
                 break;
-            case 6:
+            case 5:
                 q = new QuestionFragmentYourDrinking();
+                break;
+            case 6:
+                q = new QuestionFragmentYourReligion();
+                break;
+            case 7:
+                q = new QuestionFragmentYourEthnicity();
                 q.setIsLast(true);
         }
         q.setAnswerReadyListener(this);

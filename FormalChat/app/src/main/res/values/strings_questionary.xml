@@ -12,6 +12,17 @@
         <item>Very important</item>
     </string-array>
 
+    <!-- Match Ethnicity -->
+    <string name="tag_match_ethnicity">matchEthnicity</string>
+    <string name="q_match_ethnicity">How important is your match\'s ethnicity?</string>
+
+    <string-array name="a_match_ethnicity">
+        <item>None</item>
+        <item>Not at all important</item>
+        <item>Somewhat important</item>
+        <item>Very important</item>
+    </string-array>
+
 <!--Question 2 -->
     <string name="tag_match_smoking">matchSmoking</string>
     <string name="q_match_smoking">The most my match can smoke is...</string>
@@ -44,6 +55,7 @@
 
     <string-array name="a_your_ethnicity">
         <item>None</item>
+        <item>Not important</item>
         <item>White</item>
         <item>Hispanic / Latino</item>
         <item>Black / African descent</item>
@@ -60,6 +72,7 @@
 
     <string-array name="a_your_religion">
         <item>None</item>
+        <item>Not important</item>
         <item>Christian</item>
         <item>Jewish</item>
         <item>Muslim</item>
