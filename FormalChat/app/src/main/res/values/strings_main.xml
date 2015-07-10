@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="search_for">
+    <string-array name="search_by_criteria">
+        <item>Show me all</item>
+        <item>Perfect Match</item>
+        <item>Match is Drinking</item>
+        <item>Match is not Drinking</item>
+        <item>Match is Smoking</item>
+        <item>Match is not Smoking</item>
+        <item>Match with my Religion</item>
+        <item>Match with my Ethnicity</item>
+    </string-array>
+    <string-array name="global_search">
         <item>Men and Women</item>
         <item>Men</item>
         <item>Women</item>
