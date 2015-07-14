@@ -47,40 +47,41 @@ public class PeopleGridViewAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return usersList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view;
-        RoundedImageView profileImg;
-        TextView userName;
-
-        if(convertView == null) {
-            //imageView = new ImageView(context);
-
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            viewHolder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.ppl_grid_card, parent, false);
-            profileImg = (RoundedImageView) view.findViewById(R.id.picture);
-            userName = (TextView) view.findViewById(R.id.text);
-
-            ParseUser user = usersList.get(position);
-            if(user.containsKey("profileImg") && user.getParseFile("profileImg") != null) {
-                Picasso.with(context).load(user.getParseFile("profileImg").getUrl()).into(profileImg);
-            }
-            userName.setText(user.get("username").toString());
+            convertView = inflater.inflate(R.layout.ppl_grid_card, parent, false);
+            viewHolder.profileImg = (RoundedImageView) convertView.findViewById(R.id.picture);
+            viewHolder.userName = (TextView) convertView.findViewById(R.id.text);
+            convertView.setTag(viewHolder);
         }
         else {
-            view = convertView;
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
 
-        return view;
+        ParseUser user = usersList.get(position);
+        if(user.containsKey("profileImg") && user.getParseFile("profileImg") != null) {
+            Picasso.with(context).load(user.getParseFile("profileImg").getUrl()).into(viewHolder.profileImg);
+        }
+        viewHolder.userName.setText(user.get("username").toString());
+
+        return convertView;
     }
 
+    public static class ViewHolder {
+        RoundedImageView profileImg;
+        TextView userName;
+    }
 }

@@ -7,6 +7,7 @@
     android:gravity="bottom"
     >
     <com.android.formalchat.RoundedImageView
+        android:id="@+id/picture"
         android:layout_width="@dimen/list_img_size"
         android:layout_height="@dimen/list_img_size"
         android:scaleType="centerCrop"
@@ -18,6 +19,7 @@
         android:layout_alignParentBottom="true"
         >
         <TextView
+            android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="User's Name"

@@ -12,26 +12,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.parse.FunctionCallback;
 import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by Sve on 1/28/15.
@@ -48,10 +42,11 @@ public class MainActivity extends DrawerActivity {
     private PeopleGridViewAdapter peopleGridViewAdapter;
     private PeopleGridViewAdapter peopleGridViewAdapterMatches;
     private ImageButton grid_list_btn;
-    private boolean isGrid;
-    private ListView people_ListView;
-    private ListView people_ListView_Matches;
+    private boolean isListButtonVisible;
+    private ScrollableListView people_ListView;
+    private ScrollableListView people_ListView_Matches;
     private PeopleListViewAdapter peopleListViewAdapter;
+    private PeopleListViewAdapter peopleListViewAdapterMatches;
 
     private List<ParseUser> usersList;
     private List<ParseUser> usersListMatches;
@@ -68,38 +63,61 @@ public class MainActivity extends DrawerActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
         exit = false;
-        isGrid = false;
+        isListButtonVisible = true; // Start always with grid view
 
         setTitle();
         initSharedPreferences();
 
-        currentUser = ParseUser.getCurrentUser();
-        if (currentUser == null) {
-            // show the signup or login screen
-            launchLoginActivity();
-        }
+        init();
 
-      //  doInBackground();
-
-        people_GridView_Matches = (ScrollableGridView) findViewById(R.id.people_gridview_matches);
-        people_ListView_Matches = (ListView) findViewById(R.id.people_listview_matches);
-
-        people_GridView = (ScrollableGridView) findViewById(R.id.people_gridview);
-        people_ListView = (ListView) findViewById(R.id.people_listview);
-
-        searchSpinner = (Spinner) findViewById(R.id.search_for);
-        searchSpinner.setSelection(1);
-        matchesLayout = (LinearLayout) findViewById(R.id.matches);
-
-        grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
         initGridListBtn();
         setOnClickListeners();
         setOnSpinnerItemSelected();
 
-//        getGridResults(); // not Needed ,it's called because Spinner position 1 is selected with this
+//        getGridListResults(); // not Needed ,it's called because Spinner position 1 is selected with this
     }
 
-    private void getGridResults() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setSpinnerPosition();
+    }
+
+    private void init() {
+        currentUser = ParseUser.getCurrentUser();
+        startLoginIfNoUser();
+        people_GridView_Matches = (ScrollableGridView) findViewById(R.id.people_gridview_matches);
+        people_GridView_Matches.setExpanded(true);
+        people_GridView = (ScrollableGridView) findViewById(R.id.people_gridview);
+        people_GridView.setExpanded(true);
+
+        people_ListView_Matches = (ScrollableListView) findViewById(R.id.people_listview_matches);
+        people_ListView = (ScrollableListView) findViewById(R.id.people_listview);
+
+        searchSpinner = (Spinner) findViewById(R.id.search_for);
+
+        matchesLayout = (LinearLayout) findViewById(R.id.matches);
+        grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
+    }
+
+    private void setSpinnerPosition() {
+        if(sharedPreferences.contains("spinner_position")) {
+            int position = sharedPreferences.getInt("spinner_position", 1);
+            searchSpinner.setSelection(position);
+            performFilterByPosition(position);
+        }
+        else {
+            searchSpinner.setSelection(1);
+        }
+    }
+
+    private void startLoginIfNoUser() {
+        if (currentUser == null) {
+            launchLoginActivity();
+        }
+    }
+
+    private void getGridListResults() {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserQuestionary");
         parseQuery.whereEqualTo("loginName", ParseUser.getCurrentUser().getUsername());
         parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
@@ -113,24 +131,37 @@ public class MainActivity extends DrawerActivity {
                     int ethnicityCriteria = parseObject.getInt("matchEthnicity");
                     int yourReligionCriteria = parseObject.getInt("yourReligion");
                     int yourEthnicityCriteria = parseObject.getInt("yourEthnicity");
-                    startParseCloudCode(people_GridView_Matches, drinkingCriteria,
-                            smokingCriteria, religionCriteria, ethnicityCriteria,
-                            yourReligionCriteria, yourEthnicityCriteria);
-                    startParseCloudCode(people_GridView, drinkingCriteria,
-                            smokingCriteria, religionCriteria, ethnicityCriteria,
-                            yourReligionCriteria, yourEthnicityCriteria);
-                }
-                else {
+
+                    if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
+                        getResultsFromParseCloud(people_GridView_Matches, drinkingCriteria,
+                                smokingCriteria, religionCriteria, ethnicityCriteria,
+                                yourReligionCriteria, yourEthnicityCriteria);
+                        getResultsFromParseCloud(people_GridView, drinkingCriteria,
+                                smokingCriteria, religionCriteria, ethnicityCriteria,
+                                yourReligionCriteria, yourEthnicityCriteria);
+                    } else {
+                        getResultsFromParseCloud(people_ListView_Matches, drinkingCriteria,
+                                smokingCriteria, religionCriteria, ethnicityCriteria,
+                                yourReligionCriteria, yourEthnicityCriteria);
+                        getResultsFromParseCloud(people_ListView, drinkingCriteria,
+                                smokingCriteria, religionCriteria, ethnicityCriteria,
+                                yourReligionCriteria, yourEthnicityCriteria);
+                    }
+                } else {
                     matchesLayout.setVisibility(View.GONE);
-                    startParseCloudCode(people_GridView, 0, 0, 0, 0, 0, 0);
+                    if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
+                        getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0);
+                    } else {
+                        getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0);
+                    }
                 }
             }
         });
     }
 
-    private void startParseCloudCode(final ScrollableGridView gridview, int drinkingCriteria,
-                                     int smokingCriteria, int religionCriteria, int ethnicityCriteria,
-                                     int yourReligionCriteria, int yourEthnicityCriteria) {
+    private void getResultsFromParseCloud(final View view, int drinkingCriteria,
+                                          int smokingCriteria, int religionCriteria, int ethnicityCriteria,
+                                          int yourReligionCriteria, int yourEthnicityCriteria) {
         final HashMap<String, Object> params = new HashMap<>();
         params.put("userName", ParseUser.getCurrentUser().getUsername());
         params.put("drinkingCriteria", drinkingCriteria);
@@ -139,35 +170,74 @@ public class MainActivity extends DrawerActivity {
         params.put("ethnicityCriteria", ethnicityCriteria);
         params.put("yourReligionCriteria", yourReligionCriteria);
         params.put("yourEthnicityCriteria", yourEthnicityCriteria);
-        if(gridview == people_GridView ) {
+        if(view == people_GridView || view == people_ListView) {
             params.put("excludeCriteriaFromAllUsers", true);
         }
 
-       ParseCloud.callFunctionInBackground("clientRequest", params, new FunctionCallback<ArrayList<ArrayList>>() {
-           @Override
-           public void done(ArrayList<ArrayList> listResults, ParseException e) {
-               if(e == null && listResults != null) {
-                   ArrayList<ParseUser> users = listResults.get(0);
-                   if(gridview == people_GridView) {
+        ParseCloud.callFunctionInBackground("clientRequest", params, new FunctionCallback<ArrayList<ArrayList>>() {
+            @Override
+            public void done(ArrayList<ArrayList> listResults, ParseException e) {
+                if (e == null && listResults != null) {
+                    ArrayList<ParseUser> users = listResults.get(0);
+
+                    if (view == people_GridView || view == people_ListView) {
                         usersList = new ArrayList<>();
                         for (ParseUser user : users) {
                             usersList.add(user);
                         }
-                        initAdapter(peopleGridViewAdapter, gridview, usersList);
-                    }
-                    else if(gridview == people_GridView_Matches) {
+                        initAdapter(view, usersList);
+                    } else if (view == people_GridView_Matches || view == people_ListView_Matches) {
                         usersListMatches = new ArrayList<>();
                         for (ParseUser user : users) {
                             usersListMatches.add(user);
                         }
-                        initAdapter(peopleGridViewAdapterMatches, gridview, usersListMatches);
+                        initAdapter(view, usersListMatches);
                     }
-               }
-               else {
-                   Log.v("formalchat", "----- NONE");
-               }
-           }
-       });
+                } else {
+                    Log.v("formalchat", "----- NONE");
+                }
+            }
+        });
+    }
+
+
+    private void initAdapter(View view, List<ParseUser> list){
+        if(view == people_GridView)  {
+//            if(peopleGridViewAdapter != null) {
+//                peopleGridViewAdapter.updateUsers(list);
+//            }
+//            else {
+            peopleGridViewAdapter = new PeopleGridViewAdapter(getApplicationContext(), list);
+            ((ScrollableGridView)view).setAdapter(peopleGridViewAdapter);
+//            }
+        }
+        else if(view == people_GridView_Matches) {
+//            if(peopleGridViewAdapterMatches != null) {
+//                peopleGridViewAdapterMatches.updateUsers(list);
+//            }
+//            else {
+            peopleGridViewAdapterMatches = new PeopleGridViewAdapter(getApplicationContext(), list);
+            ((ScrollableGridView)view).setAdapter(peopleGridViewAdapterMatches);
+//            }
+        }
+        else if(view == people_ListView) {
+//            if(peopleListViewAdapter != null) {
+//                peopleListViewAdapter.updateUsers(list);
+//            }
+//            else {
+            peopleListViewAdapter = new PeopleListViewAdapter(getApplicationContext(), list);
+            ((ScrollableListView)view).setAdapter(peopleListViewAdapter);
+//            }
+        }
+        else if(view == people_ListView_Matches) {
+//            if(peopleListViewAdapterMatches != null) {
+//                peopleListViewAdapterMatches.updateUsers(list);
+//            }
+//            else {
+            peopleListViewAdapterMatches = new PeopleListViewAdapter(getApplicationContext(), list);
+            ((ScrollableListView)view).setAdapter(peopleListViewAdapterMatches);
+//            }
+        }
     }
 
     @Override
@@ -175,40 +245,17 @@ public class MainActivity extends DrawerActivity {
         super.onRestart();
     }
 
-//    private void doInBackground() {
-//        ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
-//        parseQuery.findInBackground(new FindCallback<ParseUser>() {
-//            @Override
-//            public void done(List<ParseUser> users, ParseException e) {
-//                if (e == null && users.size() > 0) {
-//                    usersList = users;
-//                    initAdapter();
-//                }
-//            }
-//        });
-//    }
-
-    private void initAdapter(PeopleGridViewAdapter adapter, ScrollableGridView gridView, List<ParseUser> list) {
-        if(adapter != null) {
-            adapter.updateUsers(list);
-        }
-        else {
-            adapter = new PeopleGridViewAdapter(getApplicationContext(), list);
-            gridView.setAdapter(adapter);
-        }
-    }
-
     private void initSharedPreferences() {
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
     }
 
     private void initGridListBtn() {
-        if(!sharedPreferences.contains("isGrid")) {
+        if(!sharedPreferences.contains("isListButtonVisible")) {
             grid_list_btn.setImageResource(R.drawable.list);
             setPplGridView();
         }
         else {
-            if (sharedPreferences.getBoolean("isGrid", false)) {
+            if (sharedPreferences.getBoolean("isListButtonVisible", false)) {
                 grid_list_btn.setImageResource(R.drawable.list);
                 setPplGridView();
             } else {
@@ -222,16 +269,18 @@ public class MainActivity extends DrawerActivity {
         grid_list_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isGrid) {
-                    isGrid = false;
+                if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
+                    isListButtonVisible = false;
                     grid_list_btn.setImageResource(R.drawable.grid);
                     setGridListStatus();
                     setPplListView();
+                    setSpinnerPosition();
                 } else {
-                    isGrid = true;
+                    isListButtonVisible = true;
                     grid_list_btn.setImageResource(R.drawable.list);
                     setGridListStatus();
                     setPplGridView();
+                    setSpinnerPosition();
                 }
             }
         });
@@ -241,37 +290,7 @@ public class MainActivity extends DrawerActivity {
         searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        matchesLayout.setVisibility(View.GONE);
-                        startParseCloudCode(people_GridView, 0, 0, 0, 0, 0, 0);
-                        break;
-                    case 1:
-                        getGridResults();
-                        break;
-                    case 2:
-                        startSearch("drinkingCriteria", 2, ">=", false);
-                        startSearch("drinkingCriteria", 2, ">=", true);
-                        break;
-                    case 3:
-                        startSearch("drinkingCriteria", 1, "<=", false);
-                        startSearch("drinkingCriteria", 1, "<=", true);
-                        break;
-                    case 4:
-                        startSearch("smokingCriteria", 2, ">=", false);
-                        startSearch("smokingCriteria", 2, ">=", true);
-                        break;
-                    case 5:
-                        startSearch("smokingCriteria", 1, "<=", false);
-                        startSearch("smokingCriteria", 1, "<=", true);
-                        break;
-                    case 6:
-                        startComplexSearch("religionCriteria");
-                        break;
-                    case 7:
-                        startComplexSearch("ethnicityCriteria");
-                        break;
-                }
+                performFilterByPosition(position);
             }
 
             @Override
@@ -279,6 +298,56 @@ public class MainActivity extends DrawerActivity {
 
             }
         });
+    }
+
+    private void performFilterByPosition(int position) {
+        switch (position) {
+            case 0:
+                matchesLayout.setVisibility(View.GONE);
+                if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
+                    getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0);
+                } else {
+                    getResultsFromParseCloud(people_ListView, 0, 0, 0, 0, 0, 0);
+                }
+                saveSpinnerPosition(position);
+                break;
+            case 1:
+                getGridListResults();
+                saveSpinnerPosition(position);
+                break;
+            case 2:
+                startSearch("drinkingCriteria", 2, ">=", false);
+                startSearch("drinkingCriteria", 2, ">=", true);
+                saveSpinnerPosition(position);
+                break;
+            case 3:
+                startSearch("drinkingCriteria", 1, "<=", false);
+                startSearch("drinkingCriteria", 1, "<=", true);
+                saveSpinnerPosition(position);
+                break;
+            case 4:
+                startSearch("smokingCriteria", 2, ">=", false);
+                startSearch("smokingCriteria", 2, ">=", true);
+                saveSpinnerPosition(position);
+                break;
+            case 5:
+                startSearch("smokingCriteria", 1, "<=", false);
+                startSearch("smokingCriteria", 1, "<=", true);
+                saveSpinnerPosition(position);
+                break;
+            case 6:
+                startComplexSearch("religionCriteria");
+                saveSpinnerPosition(position);
+                break;
+            case 7:
+                startComplexSearch("ethnicityCriteria");
+                saveSpinnerPosition(position);
+                break;
+        }
+    }
+
+    private void saveSpinnerPosition(int position) {
+        sharedPreferences.edit().putInt("spinner_position", position).commit();
     }
 
     private void startComplexSearch(String criteria) {
@@ -330,21 +399,32 @@ public class MainActivity extends DrawerActivity {
                 if (e == null) {
                     ArrayList<ParseUser> users = listResults.get(0);
                     matchesLayout.setVisibility(View.VISIBLE);
+
                     if(listResults.size() >= 2) {
-                        Boolean b = (Boolean)listResults.get(1).get(0);
-                        if(b) {
+                        Boolean excludeCriteria = (Boolean)listResults.get(1).get(0);
+                        if(excludeCriteria) {
                             usersList = new ArrayList<>();
                             for (ParseUser user : users) {
                                 usersList.add(user);
                             }
-                            initAdapter(peopleGridViewAdapter, people_GridView, usersList);
+                            if(sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
+                                initAdapter(people_GridView, usersList);
+                            }
+                            else {
+                                initAdapter(people_ListView, usersList);
+                            }
                         }
                     } else {
-                            usersListMatches = new ArrayList<>();
+                        usersListMatches = new ArrayList<>();
                         for (ParseUser user : users) {
                             usersListMatches.add(user);
                         }
-                        initAdapter(peopleGridViewAdapterMatches, people_GridView_Matches, usersListMatches);
+                        if(sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
+                            initAdapter(people_GridView_Matches, usersListMatches);
+                        }
+                        else {
+                            initAdapter(people_ListView_Matches, usersListMatches);
+                        }
                     }
                 } else {
                     Log.v("formalchat", "----- NONE");
@@ -354,22 +434,28 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void setPplListView() {
-        people_ListView.setAdapter(new PeopleListViewAdapter(getApplicationContext()));
+        //people_ListView.setAdapter(new PeopleListViewAdapter(getApplicationContext()));
         people_GridView.setVisibility(View.GONE);
         people_GridView_Matches.setVisibility(View.GONE);
         people_ListView.setVisibility(View.VISIBLE);
+        people_ListView_Matches.setVisibility(View.VISIBLE);
+        //getGridListResults();
+        setSpinnerPosition();
     }
 
     private void setPplGridView() {
         //people_GridView.setAdapter(new PeopleGridViewAdapter(getApplicationContext()));
         people_ListView.setVisibility(View.GONE);
+        people_ListView_Matches.setVisibility(View.GONE);
         people_GridView.setVisibility(View.VISIBLE );
         people_GridView_Matches.setVisibility(View.VISIBLE);
+        // getGridListResults();
+        setSpinnerPosition();
     }
 
     private void setGridListStatus() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isGrid", isGrid);
+        editor.putBoolean("isListButtonVisible", isListButtonVisible);
         editor.commit();
     }
 
@@ -415,5 +501,11 @@ public class MainActivity extends DrawerActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPreferences.edit().remove("spinner_position").commit();
     }
 }

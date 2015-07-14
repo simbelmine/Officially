@@ -44,7 +44,8 @@
                 android:id="@+id/matches"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:focusableInTouchMode="true">
                 <TextView
                     android:id="@+id/match_results_txt"
                     android:layout_width="match_parent"
@@ -66,7 +67,7 @@
                     android:gravity="center"
                     android:visibility="visible"
                     />
-                <ListView
+                <com.android.formalchat.ScrollableListView
                     android:id="@+id/people_listview_matches"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -74,8 +75,8 @@
                     android:layout_marginRight="@dimen/list_margin"
                     android:dividerHeight="@dimen/list_margin"
                     android:divider="@color/transp"
-                    android:visibility="gone"
-                    android:layout_below="@+id/people_listview"/>
+                    android:visibility="visible"
+                />
             </LinearLayout>
 
             <LinearLayout
@@ -105,9 +106,8 @@
                     android:stretchMode="columnWidth"
                     android:gravity="center"
                     android:visibility="visible"
-                    android:layout_below="@+id/all_results_txt"
                     />
-                <ListView
+                <com.android.formalchat.ScrollableListView
                     android:id="@+id/people_listview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -115,7 +115,7 @@
                     android:layout_marginRight="@dimen/list_margin"
                     android:dividerHeight="@dimen/list_margin"
                     android:divider="@color/transp"
-                    android:visibility="gone"/>
+                   />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
