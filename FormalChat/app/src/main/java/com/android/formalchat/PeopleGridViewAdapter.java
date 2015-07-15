@@ -1,18 +1,22 @@
 package com.android.formalchat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.android.formalchat.profile.ProfileActivityRemote;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -62,6 +66,8 @@ public class PeopleGridViewAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.ppl_grid_card, parent, false);
+            setViewOnClickListener(convertView, position);
+
             viewHolder.profileImg = (RoundedImageView) convertView.findViewById(R.id.picture);
             viewHolder.userName = (TextView) convertView.findViewById(R.id.text);
             convertView.setTag(viewHolder);
@@ -83,5 +89,18 @@ public class PeopleGridViewAdapter extends BaseAdapter {
     public static class ViewHolder {
         RoundedImageView profileImg;
         TextView userName;
+    }
+
+    private void setViewOnClickListener(View convertView, final int position) {
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser user = usersList.get(position);
+                Intent intent = new Intent(context, ProfileActivityRemote.class);
+                intent.putExtra("userNameMain", user.getUsername());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
     }
 }

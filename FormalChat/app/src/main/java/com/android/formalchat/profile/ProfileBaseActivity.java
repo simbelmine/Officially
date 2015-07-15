@@ -53,7 +53,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final String PREFS_INFO = "FormalChatUserInfo";
     private static final String FILE_DIR = "/.formal_chat/";
-    private static final String PROFILE_PIC_BLURRED = "blurred_profile.jpg";
+    private static final String PROFILE_PIC_BLURRED = "blurred_profile_remote.jpg";
     public static final int NONE = 101;
     private File dir = Environment.getExternalStorageDirectory();
     private SharedPreferences sharedPreferences;
@@ -105,11 +105,11 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         setTitle();
         initView();
         init();
-        setZodiacalSign();
-        startGalleryPhotosCounter();
-        setOnClickListeners();
-        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
-        setProfileImages();
+//        setZodiacalSign();
+//        startGalleryPhotosCounter();
+//        setOnClickListeners();
+//        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
+//        setProfileImages();
     }
 
 
@@ -200,7 +200,6 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private void init() {
         // *** Main
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
-        user = ParseUser.getCurrentUser();
         imagePaths = new ArrayList<>();
         activity = this;
         isMale = true;
@@ -235,6 +234,41 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         perfectSmn = (TextView) findViewById(R.id.perfect_smn_edit);
         perfectDate = (TextView) findViewById(R.id.perfect_date_edit);
         interests = (TextView) findViewById(R.id.interests_edit);
+
+        user = getParseUser();
+    }
+
+    private void fillInfoToProfile() {
+        if(isNetworkAvailable()) {
+            populateInfoFromParse();
+        }
+        setZodiacalSign();
+        startGalleryPhotosCounter();
+        setOnClickListeners();
+        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
+        setProfileImages();
+    }
+
+    private ParseUser getParseUser() {
+        if(getIntent().hasExtra("userNameMain")) {
+            String userName = getIntent().getStringExtra("userNameMain");
+
+            if(!userName.equals("")) {
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                query.whereEqualTo("username", userName);
+                query.getFirstInBackground(new GetCallback<ParseUser>() {
+                    @Override
+                    public void done(ParseUser parseUser, ParseException e) {
+                        if(e == null) {
+                            user = parseUser;
+                            fillInfoToProfile();
+                        }
+                    }
+                });
+            }
+        }
+
+        return null;
     }
 
     private void setProfileImages() {
@@ -246,28 +280,31 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private boolean isVideoExists() {
-        if(user.containsKey("video")) {
-            return true;
+        if(user != null) {
+            if (user.containsKey("video")) {
+                return true;
+            }
         }
         return false;
     }
 
     private void setZodiacalSign() {
-        ParseQuery<ParseObject> parseQuery = new ParseQuery<>("UserInfo");
-        parseQuery.whereContains("loginName", user.getUsername());
-        parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                if(e == null) {
-                    if(parseObject.containsKey("birthday")) {
-                        getZodiacalSign(parseObject.get("birthday").toString());
-                    }
-                    else {
-                        zodiacSign.setVisibility(View.GONE);
+        if(user != null) {
+            ParseQuery<ParseObject> parseQuery = new ParseQuery<>("UserInfo");
+            parseQuery.whereContains("loginName", user.getUsername());
+            parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if (e == null) {
+                        if (parseObject.containsKey("birthday")) {
+                            getZodiacalSign(parseObject.get("birthday").toString());
+                        } else {
+                            zodiacSign.setVisibility(View.GONE);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void getZodiacalSign(String birthdayValue) {
@@ -312,20 +349,22 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void countUserImages() {
-        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
-        parseQuery.whereEqualTo("userName", getCurrentUser());
-        parseQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    photos_btn_counter = list.size();
-                } else {
-                    photos_btn_counter = 0;
-                }
+        if(user != null) {
+            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+            parseQuery.whereEqualTo("userName", user.getUsername());
+            parseQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> list, ParseException e) {
+                    if (e == null) {
+                        photos_btn_counter = list.size();
+                    } else {
+                        photos_btn_counter = 0;
+                    }
 
-                updateUserImagesCounter();
-            }
-        });
+                    updateUserImagesCounter();
+                }
+            });
+        }
     }
 
     private void updateUserImagesCounter() {
@@ -380,19 +419,21 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void downloadVideoIfNotExists() {
-        ParseUser user = ParseUser.getCurrentUser();
-        ParseFile videoFile = user.getParseFile("video");
-        String fileName = videoFile.getName();
-        shortName = getShortImageNameFromUri(fileName);
+        if(user != null) {
+            //ParseUser user = ParseUser.getCurrentUser();
+            ParseFile videoFile = user.getParseFile("video");
+            String fileName = videoFile.getName();
+            shortName = getShortImageNameFromUri(fileName);
 
-        File targetFolder = new File(dir + FILE_DIR);
-        if(!targetFolder.exists()) {
-            targetFolder.mkdir();
-        }
+            File targetFolder = new File(dir + FILE_DIR);
+            if (!targetFolder.exists()) {
+                targetFolder.mkdir();
+            }
 
-        File tmpFile = new File(dir, FILE_DIR + shortName);
-        if(!tmpFile.exists()) {
-            startVideoDownloadService();
+            File tmpFile = new File(dir, FILE_DIR + shortName);
+            if (!tmpFile.exists()) {
+                startVideoDownloadService();
+            }
         }
     }
 
@@ -409,9 +450,11 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void getProfileImgPath() {
-        if(user.has("profileImg")) {
-            ParseFile pic = user.getParseFile("profileImg");
-            profileImgPath = pic.getUrl();
+        if(user != null) {
+            if (user.has("profileImg")) {
+                ParseFile pic = user.getParseFile("profileImg");
+                profileImgPath = pic.getUrl();
+            }
         }
     }
 
@@ -423,19 +466,21 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void loadBigProfilePic() {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
-        if(isProfPicExists(path)) {
-            retrieveBlurredImageFromLocal(path);
-        }
-        else
-        {
-            retrieveBlurredImageFromParse();
-        }
+//        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
+//        if(isProfPicExists(path)) {
+////            retrieveBlurredImageFromLocal(path);
+//        }
+//        else
+//        {
+        retrieveBlurredImageFromParse();
+//        }
     }
 
     private void retrieveBlurredImageFromParse() {
         profileProgressBar.setVisibility(View.VISIBLE);
         Intent intent = new Intent(this, RetrieveBlurredImageService.class);
+        intent.putExtra("remoteProfile", true);
+        intent.putExtra("remoteUserName", user.getUsername());
         startService(intent);
     }
 
@@ -463,10 +508,12 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void populateInfoFromParse() {
-        String currentUser = getCurrentUser();
+        //String currentUser = getCurrentUser();
 
-        populateFromUserInfo(currentUser);
-        populateFromQuestionary(currentUser);
+        if(user != null) {
+            populateFromUserInfo(user.getUsername());
+            populateFromQuestionary(user.getUsername());
+        }
     }
 
     private void populateFromUserInfo(String currentUser) {
@@ -661,9 +708,32 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private BroadcastReceiver onDonwloadBigProfPicNotice = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
-            retrieveBlurredImageFromLocal(path);
+            if(!getIntent().hasExtra("retrieveImage")) {
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
+                retrieveBlurredImageFromLocal(path);
+            }
+            profilePic.setBackgroundResource(R.drawable.background);
             profileProgressBar.setVisibility(View.GONE);
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        deleteNotSharableFiles();
+    }
+
+    private void deleteNotSharableFiles() {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
+        File dir = new File(path);
+        File[] files_list = dir.listFiles();
+
+        for(int f = 0; f < files_list.length; f++) {
+            if("blurred_profile_remote.jpg".equals(files_list[f].getName())) {
+                files_list[f].delete();
+            }
+        }
+
+
+    }
 }
