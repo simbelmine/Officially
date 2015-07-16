@@ -53,7 +53,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final String PREFS_INFO = "FormalChatUserInfo";
     private static final String FILE_DIR = "/.formal_chat/";
-    private static final String PROFILE_PIC_BLURRED = "blurred_profile_remote.jpg";
+    private static final String PROFILE_PIC_BLURRED = "blurred_profile.jpg";
+    private static final String PROFILE_PIC_BLURRED_REMOTE = "blurred_profile_remote.jpg";
     public static final int NONE = 101;
     private File dir = Environment.getExternalStorageDirectory();
     private SharedPreferences sharedPreferences;
@@ -105,13 +106,14 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         setTitle();
         initView();
         init();
+        loadDataAccordingUser();
+
 //        setZodiacalSign();
 //        startGalleryPhotosCounter();
 //        setOnClickListeners();
 //        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
 //        setProfileImages();
     }
-
 
     @Override
     protected void onResume() {
@@ -234,22 +236,9 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         perfectSmn = (TextView) findViewById(R.id.perfect_smn_edit);
         perfectDate = (TextView) findViewById(R.id.perfect_date_edit);
         interests = (TextView) findViewById(R.id.interests_edit);
-
-        user = getParseUser();
     }
 
-    private void fillInfoToProfile() {
-        if(isNetworkAvailable()) {
-            populateInfoFromParse();
-        }
-        setZodiacalSign();
-        startGalleryPhotosCounter();
-        setOnClickListeners();
-        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
-        setProfileImages();
-    }
-
-    private ParseUser getParseUser() {
+    private void loadDataAccordingUser() {
         if(getIntent().hasExtra("userNameMain")) {
             String userName = getIntent().getStringExtra("userNameMain");
 
@@ -267,8 +256,21 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                 });
             }
         }
+        else if(ParseUser.getCurrentUser() != null) {
+            user = ParseUser.getCurrentUser();
+            fillInfoToProfile();
+        }
+    }
 
-        return null;
+    private void fillInfoToProfile() {
+        if(isNetworkAvailable()) {
+            populateInfoFromParse();
+        }
+        setZodiacalSign();
+        startGalleryPhotosCounter();
+        setOnClickListeners();
+        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
+        setProfileImages();
     }
 
     private void setProfileImages() {
@@ -466,14 +468,15 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void loadBigProfilePic() {
-//        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
-//        if(isProfPicExists(path)) {
-////            retrieveBlurredImageFromLocal(path);
-//        }
-//        else
-//        {
-        retrieveBlurredImageFromParse();
-//        }
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
+
+        if(!getIntent().hasExtra("userNameMain") && isProfPicExists(path)) {
+            retrieveBlurredImageFromLocal(path);
+        }
+        else
+        {
+            retrieveBlurredImageFromParse();
+        }
     }
 
     private void retrieveBlurredImageFromParse() {
@@ -497,7 +500,15 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void retrieveBlurredImageFromLocal(String path) {
-        Bitmap myBitmap = BitmapFactory.decodeFile(path + "/" + PROFILE_PIC_BLURRED);
+        String pictureName;
+        if(!getIntent().hasExtra("userNameMain")) {
+            pictureName = PROFILE_PIC_BLURRED;
+        }
+        else {
+            pictureName = PROFILE_PIC_BLURRED_REMOTE;
+        }
+
+        Bitmap myBitmap = BitmapFactory.decodeFile(path + "/" + pictureName);
         profilePic.setImageBitmap(myBitmap);
     }
 
