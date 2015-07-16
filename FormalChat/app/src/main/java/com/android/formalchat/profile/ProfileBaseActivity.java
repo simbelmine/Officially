@@ -404,7 +404,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
 //                }
 //                break;
             case R.id.photos_button:
-                onStartActivity(ProfileGallery.class, null, null);
+                onStartActivity(ProfileGallery.class, "userNameProfile", user.getUsername());
                 break;
         }
     }

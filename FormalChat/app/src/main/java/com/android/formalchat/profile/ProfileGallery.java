@@ -29,6 +29,7 @@ import com.android.formalchat.VideoDownloadService;
 import com.android.formalchat.VideoRecordActivity;
 import com.android.formalchat.VideoUploadService;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -59,6 +60,8 @@ public class ProfileGallery extends DrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.answersHolder.profile_gallery);
+        setTitle();
+
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View contentView = inflater.inflate(R.layout.profile_gallery, null, false);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -69,15 +72,39 @@ public class ProfileGallery extends DrawerActivity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         gridView = (GridView) findViewById(R.id.grid_layout_profile);
         imagePaths = new ArrayList<>();
-        user = ParseUser.getCurrentUser();
-        videoExists = isVideoExists();
+        loadDataAccordingUser();
+    }
 
-        setTitle();
+    private void loadDataAccordingUser() {
+        if(getIntent().hasExtra("userNameProfile")) {
+            String userName = getIntent().getStringExtra("userNameProfile");
+            if(!userName.equals("")) {
+                ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+                parseQuery.whereEqualTo("username", userName);
+                parseQuery.getFirstInBackground(new GetCallback<ParseUser>() {
+                    @Override
+                    public void done(ParseUser parseUser, ParseException e) {
+                        if(e == null) {
+                            user = parseUser;
+                            videoExists = isVideoExists();
+                            loadPicturesFromParse();
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            user = ParseUser.getCurrentUser();
+            videoExists = isVideoExists();
+            loadPicturesFromParse();
+        }
+    }
+
+    private void loadPicturesFromParse() {
         if(isNetworkAvailable()) {
             populateResourcesFromParse();
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -208,7 +235,6 @@ public class ProfileGallery extends DrawerActivity {
     };
 
     private void populateResourcesFromParse() {
-        ParseUser user = ParseUser.getCurrentUser();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserImages");
         query.whereEqualTo("userName", user.getUsername());
         query.orderByAscending("createdAt");
@@ -253,8 +279,10 @@ public class ProfileGallery extends DrawerActivity {
     }
 
     private boolean isVideoExists() {
-        if(user.containsKey("video")) {
-            return true;
+        if(user != null) {
+            if (user.containsKey("video")) {
+                return true;
+            }
         }
         return false;
     }
