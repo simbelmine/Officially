@@ -15,6 +15,7 @@
             android:orientation="horizontal"
             android:layout_margin="@dimen/header_margin"
             android:gravity="bottom"
+            android:focusableInTouchMode="true"
             android:weightSum="7">
             <Spinner
                 android:id="@+id/search_for"
@@ -44,8 +45,7 @@
                 android:id="@+id/matches"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:focusableInTouchMode="true">
+                android:orientation="vertical">
                 <TextView
                     android:id="@+id/match_results_txt"
                     android:layout_width="match_parent"
