@@ -49,7 +49,7 @@ public class RetrieveBlurredImageService extends IntentService {
 
     private void getParseUserByName() {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
-        if(bundle.containsKey("remoteUserName") && bundle.getString("remoteUserName") != null && !bundle.getString("remoteUserName").equals("")) {
+        if(bundle != null && bundle.containsKey("remoteUserName") && bundle.getString("remoteUserName") != null && !bundle.getString("remoteUserName").equals("")) {
             query.whereEqualTo("username", bundle.getString("remoteUserName"));
             query.getFirstInBackground(new GetCallback<ParseUser>() {
                 @Override
@@ -60,6 +60,10 @@ public class RetrieveBlurredImageService extends IntentService {
                     }
                 }
             });
+        }
+        else {
+            user = ParseUser.getCurrentUser();
+            retrieveBlurredImage();
         }
     }
 
@@ -154,7 +158,7 @@ public class RetrieveBlurredImageService extends IntentService {
     }
 
     private String getPicNameByExtraValue() {
-        if(bundle.containsKey("remoteProfile")) {
+        if(bundle!= null && bundle.containsKey("remoteProfile")) {
             if(bundle.getBoolean("remoteProfile", false)) {
                 return PROFILE_PIC_BLURRED_REMOTE;
             }

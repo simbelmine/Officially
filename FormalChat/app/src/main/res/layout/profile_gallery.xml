@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
-
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/grid_layout_profile"
+    >
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="@dimen/grid_column_width"
-        android:numColumns="2"
-        android:layout_margin="@dimen/grid_margin"
-        android:verticalSpacing="@dimen/grid_margin"
-        android:horizontalSpacing="@dimen/grid_margin"
-        android:paddingTop="@dimen/grid_margin"
-        android:paddingBottom="@dimen/grid_margin"
-        android:stretchMode="columnWidth"
-        android:gravity="center"
-        android:fastScrollEnabled="true"/>
-</LinearLayout>
+        android:background="@color/background">
+
+        <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/grid_layout_profile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnWidth="@dimen/grid_column_width"
+            android:numColumns="2"
+            android:layout_margin="@dimen/grid_margin"
+            android:verticalSpacing="@dimen/grid_margin"
+            android:horizontalSpacing="@dimen/grid_margin"
+            android:paddingTop="@dimen/grid_margin"
+            android:paddingBottom="@dimen/grid_margin"
+            android:stretchMode="columnWidth"
+            android:gravity="center"
+            android:fastScrollEnabled="true"/>
+    </LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

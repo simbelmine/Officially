@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,6 +56,7 @@ public class ProfileGallery extends DrawerActivity {
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
     private ListView leftDrawerList;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,33 @@ public class ProfileGallery extends DrawerActivity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         gridView = (GridView) findViewById(R.id.grid_layout_profile);
         imagePaths = new ArrayList<>();
+        initSwipeContainer();
+
         loadDataAccordingUser();
+    }
+
+    private void initSwipeContainer() {
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        setSwipeAppearance();
+        setOnRefreshListener();
+    }
+
+    private void setSwipeAppearance() {
+        swipeContainer.setColorSchemeResources(
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark
+        );
+    }
+
+    private void setOnRefreshListener() {
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadDataAccordingUser();
+            }
+        });
     }
 
     private void loadDataAccordingUser() {
@@ -98,6 +126,8 @@ public class ProfileGallery extends DrawerActivity {
             videoExists = isVideoExists();
             loadPicturesFromParse();
         }
+
+        swipeContainer.setRefreshing(false);
     }
 
     private void loadPicturesFromParse() {

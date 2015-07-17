@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +72,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private  boolean isMale;
     private String shortName;
     private ImageView zodiacSign;
+    private SwipeRefreshLayout swipeContainer;
 
     protected ImageView got_it_img;                     // Remote Profile
     protected RelativeLayout help_video_layout;         // Remote Profile
@@ -81,6 +83,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private TextView age;
     private TextView photos_btn;
     private ProgressBar profileProgressBar;
+    private RelativeLayout progressLayout;
     private int photos_btn_counter;
 
     private TextView motto;
@@ -106,6 +109,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         setTitle();
         initView();
         init();
+
         loadDataAccordingUser();
 
 //        setZodiacalSign();
@@ -158,6 +162,19 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
             ViewGroup vg = (ViewGroup) findViewById (R.id.profile_header_holder);
             vg.removeAllViews();
             vg.refreshDrawableState();
+        }
+    };
+
+    private BroadcastReceiver onDonwloadBigProfPicNotice = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(!getIntent().hasExtra("retrieveImage")) {
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
+                retrieveBlurredImageFromLocal(path);
+            }
+            profilePic.setBackgroundResource(R.drawable.background);
+            profileProgressBar.setVisibility(View.GONE);
+            progressLayout.setVisibility(View.GONE);
         }
     };
 
@@ -218,7 +235,9 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         got_it_img = (ImageView) findViewById(R.id.got_it_img);
         photos_btn = (TextView) findViewById(R.id.photos_button);
         profileProgressBar = (ProgressBar)findViewById(R.id.progresBar_photos_counter);
+        progressLayout = (RelativeLayout) findViewById(R.id.progress_layout);
         zodiacSign = (ImageView) findViewById(R.id.zodiac_sign);
+        initSwipeContainer();
 
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
@@ -236,6 +255,30 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         perfectSmn = (TextView) findViewById(R.id.perfect_smn_edit);
         perfectDate = (TextView) findViewById(R.id.perfect_date_edit);
         interests = (TextView) findViewById(R.id.interests_edit);
+    }
+
+    private void initSwipeContainer() {
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        setSwipeAppearance();
+        setOnRefreshListener();
+    }
+
+    private void setSwipeAppearance() {
+        swipeContainer.setColorSchemeResources(
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark
+        );
+    }
+
+    private void setOnRefreshListener() {
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadDataAccordingUser();
+            }
+        });
     }
 
     private void loadDataAccordingUser() {
@@ -480,10 +523,20 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void retrieveBlurredImageFromParse() {
-        profileProgressBar.setVisibility(View.VISIBLE);
+        if(swipeContainer.isRefreshing()) {
+            profileProgressBar.setVisibility(View.INVISIBLE);
+            progressLayout.setVisibility(View.INVISIBLE);
+        }
+        else {
+            profileProgressBar.setVisibility(View.VISIBLE);
+            progressLayout.setVisibility(View.VISIBLE);
+        }
+
         Intent intent = new Intent(this, RetrieveBlurredImageService.class);
-        intent.putExtra("remoteProfile", true);
-        intent.putExtra("remoteUserName", user.getUsername());
+        if(getIntent().hasExtra("userNameMain")) {
+            intent.putExtra("remoteProfile", true);
+            intent.putExtra("remoteUserName", user.getUsername());
+        }
         startService(intent);
     }
 
@@ -510,6 +563,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
 
         Bitmap myBitmap = BitmapFactory.decodeFile(path + "/" + pictureName);
         profilePic.setImageBitmap(myBitmap);
+        swipeContainer.setRefreshing(false);
     }
 
     private void loadSmallProfilePicFromParse() {
@@ -715,18 +769,6 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         }
         return s;
     }
-
-    private BroadcastReceiver onDonwloadBigProfPicNotice = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(!getIntent().hasExtra("retrieveImage")) {
-                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
-                retrieveBlurredImageFromLocal(path);
-            }
-            profilePic.setBackgroundResource(R.drawable.background);
-            profileProgressBar.setVisibility(View.GONE);
-        }
-    };
 
     @Override
     protected void onDestroy() {

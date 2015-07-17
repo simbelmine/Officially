@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.AndroidCharacter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +55,7 @@ public class MainActivity extends DrawerActivity {
 
     private Spinner searchSpinner;
     private LinearLayout matchesLayout;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,7 @@ public class MainActivity extends DrawerActivity {
         initGridListBtn();
         setOnClickListeners();
         setOnSpinnerItemSelected();
+        setOnRefreshListener();
 
 //        getGridListResults(); // not Needed ,it's called because Spinner position 1 is selected with this
     }
@@ -86,6 +90,7 @@ public class MainActivity extends DrawerActivity {
     private void init() {
         currentUser = ParseUser.getCurrentUser();
         startLoginIfNoUser();
+        initSwipeContainer();
         people_GridView_Matches = (ScrollableGridView) findViewById(R.id.people_gridview_matches);
         people_GridView_Matches.setExpanded(true);
         people_GridView = (ScrollableGridView) findViewById(R.id.people_gridview);
@@ -98,6 +103,20 @@ public class MainActivity extends DrawerActivity {
 
         matchesLayout = (LinearLayout) findViewById(R.id.matches);
         grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
+    }
+
+    private void initSwipeContainer() {
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        setSwipeAppearance();
+    }
+
+    private void setSwipeAppearance() {
+        swipeContainer.setColorSchemeResources(
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark
+        );
     }
 
     private void setSpinnerPosition() {
@@ -155,6 +174,8 @@ public class MainActivity extends DrawerActivity {
                         getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0);
                     }
                 }
+
+                swipeContainer.setRefreshing(false);
             }
         });
     }
@@ -193,6 +214,8 @@ public class MainActivity extends DrawerActivity {
                         }
                         initAdapter(view, usersListMatches);
                     }
+
+                    swipeContainer.setRefreshing(false);
                 } else {
                     Log.v("formalchat", "----- NONE");
                 }
@@ -296,6 +319,15 @@ public class MainActivity extends DrawerActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+    }
+
+    private void setOnRefreshListener() {
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setSpinnerPosition();
             }
         });
     }
@@ -426,6 +458,8 @@ public class MainActivity extends DrawerActivity {
                             initAdapter(people_ListView_Matches, usersListMatches);
                         }
                     }
+
+                    swipeContainer.setRefreshing(false);
                 } else {
                     Log.v("formalchat", "----- NONE");
                 }
