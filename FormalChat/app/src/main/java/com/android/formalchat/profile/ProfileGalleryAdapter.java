@@ -12,6 +12,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,11 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         //**** To Do: Recycle grid views DOESN'T work ****//
         // *************************//
 
+        Log.v("formalchat", "User = " + user.getUsername());
+        for(String s : images) {
+            Log.v("formalchat", position + " : " + s);
+        }
+
         ViewHolder viewHolder;
 
         if(convertView == null) {
@@ -142,7 +148,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             setVideoImgOnClickListener(img);
             progressBar.setVisibility(View.GONE);
         }
-        else if(!isVideo(position) && position != 0){
+        else {
             Picasso.with(context).load(images.get(position)).into(img, new Callback() {
                 @Override
                 public void onSuccess() {

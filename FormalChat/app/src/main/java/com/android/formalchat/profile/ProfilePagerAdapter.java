@@ -104,7 +104,6 @@ public class ProfilePagerAdapter extends PagerAdapter {
                     downloadVideoIfNotExists();
 
                     FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                    addTransparentPlayImage(itemView);
                     reCreateImageView(layoutParams, imageView);
                     setVideoImgOnClickListener(imageView);
                     progressBar.setVisibility(View.GONE);
@@ -125,11 +124,6 @@ public class ProfilePagerAdapter extends PagerAdapter {
 
         container.addView(itemView);
         return itemView;
-    }
-
-    private void addTransparentPlayImage(View itemView) {
-        ImageView playImageView = (ImageView) itemView.findViewById(R.id.image_play);
-        playImageView.setVisibility(View.VISIBLE);
     }
 
     private void reCreateImageView(FrameLayout.LayoutParams layoutParams, ImageView imageView) {
