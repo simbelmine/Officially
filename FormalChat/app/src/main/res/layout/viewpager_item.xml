@@ -10,14 +10,6 @@
         android:visibility="invisible"
         android:scaleType="centerCrop"
         android:layout_gravity="center"/>
-    <ImageView
-        android:id="@+id/image_play"
-        android:layout_width="@dimen/play_size"
-        android:layout_height="@dimen/play_size"
-        android:src="@drawable/play_g_"
-        android:layout_gravity="center"
-        android:scaleType="fitCenter"
-        android:visibility="invisible"/>
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="match_parent"

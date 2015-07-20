@@ -217,7 +217,7 @@ public class MainActivity extends DrawerActivity {
 
                     swipeContainer.setRefreshing(false);
                 } else {
-                    Log.v("formalchat", "----- NONE");
+
                 }
             }
         });

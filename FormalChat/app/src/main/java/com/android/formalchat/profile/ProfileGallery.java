@@ -282,7 +282,6 @@ public class ProfileGallery extends DrawerActivity {
                         String picUrl = ((ParseFile) po.get("photo")).getUrl();
                         imagesPaths.add(picUrl);
                     }
-                    Log.v("formalchat", "findInBackground images = " + imagePaths.size());
                     //gridView.setAdapter(new ProfileGalleryAdapter(activity, getApplicationContext(), imagePaths));
                     initAdapter(imagesPaths);
 
@@ -299,11 +298,9 @@ public class ProfileGallery extends DrawerActivity {
 
     private void initAdapter(ArrayList<String> imagesPaths) {
         if (galleryAdapter != null) {
-            Log.v("formalchat", "adapter NOT null = " + imagesPaths.size());
             galleryAdapter.updateImages(imagesPaths);
         } else {
-            Log.v("formalchat", "adapter null = " + imagesPaths.size());
-            galleryAdapter = new ProfileGalleryAdapter(activity, getApplicationContext(), imagesPaths);
+            galleryAdapter = new ProfileGalleryAdapter(activity, getApplicationContext(), imagesPaths, user);
             gridView.setAdapter(galleryAdapter);
         }
     }

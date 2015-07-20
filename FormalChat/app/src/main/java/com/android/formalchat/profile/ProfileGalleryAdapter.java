@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
@@ -37,7 +40,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private Context context;
     /////// ***** For the Video File *****
     private static final int RESULT_OK = -1;
-    private static final String OUT_VID_EXTENSION = "VID";
+    private static final String OUT_VID_EXTENSION = "mp4";
     private static final int OUT_VID_EXT_SHIFT = 3;
     private File dir = Environment.getExternalStorageDirectory();
     private String filePath = "/.formal_chat/";
@@ -48,15 +51,17 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private Activity activity;
     private Bitmap thumbnail;
     private Uri videoUri;
+    private ParseUser user;
 
-    public ProfileGalleryAdapter(Activity activity, Context context, List<String> paths) {
+    public ProfileGalleryAdapter(Activity activity, Context context, List<String> paths, ParseUser user) {
         this.activity = activity;
         this.context = context;
         this.images = paths;
+        this.user = user;
     }
 
     public void updateImages(List<String> paths) {
-        //this.images.clear();
+       // this.images.clear();
         //this.images.addAll(paths_);
         this.images = paths;
         this.notifyDataSetChanged();
@@ -69,32 +74,47 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return images.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-//        Log.e("formalchat", "position....  " + position + "    " + images.get(position));
-
         // **************************//
         //**** To Do: Recycle grid views DOESN'T work ****//
         // *************************//
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.viewpager_item, parent, false);
 
-        ProgressBar progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
-        VideoView videoView = (VideoView) convertView.findViewById(R.id.video);
-        ImageView img = (ImageView) convertView.findViewById(R.id.image);
+        ViewHolder viewHolder;
 
-        populateImages(convertView, img, progressBar, position);
+        if(convertView == null) {
+            viewHolder = new ViewHolder();
 
-        addImageOnClickListener(img, position);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.viewpager_item, parent, false);
+
+            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+            viewHolder.progressBar.setVisibility(View.VISIBLE);
+            viewHolder.videoView = (VideoView) convertView.findViewById(R.id.video);
+            viewHolder.img = (ImageView) convertView.findViewById(R.id.image);
+            convertView.setTag(viewHolder);
+        }
+        else {
+            viewHolder = (ViewHolder)convertView.getTag();
+        }
+
+        populateImages(viewHolder.img, viewHolder.progressBar, position);
+
         return convertView;
+    }
+
+    public static class ViewHolder {
+        ProgressBar progressBar;
+        VideoView videoView;
+        ImageView img;
     }
 
 
@@ -110,35 +130,39 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         });
     }
 
-    private void populateImages(final View view, final ImageView img, final ProgressBar progressBar, final int position) {
-        Picasso.with(context).load(images.get(position)).into(img, new Callback() {
-            @Override
-            public void onSuccess() {
-                img.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
+    private void populateImages(final ImageView img, final ProgressBar progressBar, final int position) {
+        if(isVideo(position)) {
+            downloadVideoIfNotExists();
 
-            @Override
-            public void onError() {
-                if (isVideo(position)) {
-                    downloadVideoIfNotExists();
-
-                    float gallery_item_h = context.getResources().getDimension(R.dimen.gallery_item_h);
-                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            (int)gallery_item_h);
-                    addTransparentPlayImage(view);
-                    reCreateImageView(layoutParams, img);
-                    setVideoImgOnClickListener(img);
+            float gallery_item_h = context.getResources().getDimension(R.dimen.gallery_item_h);
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    (int) gallery_item_h);
+            reCreateImageView(layoutParams, img);
+            setVideoImgOnClickListener(img);
+            progressBar.setVisibility(View.GONE);
+        }
+        else if(!isVideo(position) && position != 0){
+            Picasso.with(context).load(images.get(position)).into(img, new Callback() {
+                @Override
+                public void onSuccess() {
+                    addImageOnClickListener(img, position);
+                    img.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
                 }
-            }
-        });
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
     }
 
     private boolean isVideo(int position) {
         String path = images.get(position);
         String extension = getExtention(path);
+
         if(OUT_VID_EXTENSION.equals(extension)) {
             return true;
         }
@@ -146,7 +170,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     private String getExtention(String path) {
-        int startIdx = path.indexOf("_")+1;
+        int startIdx = path.lastIndexOf(".")+1;
         int endIdx = startIdx + OUT_VID_EXT_SHIFT;
         return path.substring(startIdx, endIdx);
     }
@@ -156,7 +180,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     /////////////////////////////
 
     private void downloadVideoIfNotExists() {
-        ParseUser user = ParseUser.getCurrentUser();
         if(user != null) {
             videoFile = user.getParseFile("video");
             fileName = videoFile.getName();
@@ -180,7 +203,21 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private Bitmap getVideoThumbnail() {
         Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
                 MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
-        return thumb;
+        Bitmap playImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_g_);
+
+        return overlayThumbnailWithPlayIcon(thumb, playImage);
+    }
+
+    private Bitmap overlayThumbnailWithPlayIcon(Bitmap thumb, Bitmap playImage) {
+        Bitmap overlayBmp = Bitmap.createBitmap(thumb.getWidth(), thumb.getHeight(), thumb.getConfig());
+        float columnWidth = context.getResources().getDimension(R.dimen.grid_column_width);
+        Bitmap play = Bitmap.createScaledBitmap(playImage, (int)columnWidth/2, (int)columnWidth/2, true);
+
+        Canvas canvas = new Canvas(overlayBmp);
+        canvas.drawBitmap(thumb, new Matrix(), null);
+        canvas.drawBitmap(play, (int) columnWidth / 2 - (play.getHeight() / 3), (int) columnWidth / 2, null);
+
+        return overlayBmp;
     }
 
     public String getShortImageNameFromUri(String url) {
@@ -193,11 +230,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         intent.putExtra(VideoDownloadService.FILEPATH, filePath);
 
         context.startService(intent);
-    }
-
-    private void addTransparentPlayImage(View itemView) {
-        ImageView playImageView = (ImageView) itemView.findViewById(R.id.image_play);
-        playImageView.setVisibility(View.VISIBLE);
     }
 
     private void reCreateImageView(FrameLayout.LayoutParams layoutParams, ImageView imageView) {
