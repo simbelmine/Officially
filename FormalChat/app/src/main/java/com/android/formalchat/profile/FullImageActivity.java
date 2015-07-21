@@ -202,6 +202,9 @@ public class FullImageActivity extends Activity {
         Intent intent = new Intent(FullImageActivity.this, CropActivity.class);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // NB: if it starts with FLAG_ACTIVITY_NEW_TASK it cannot start it for result
+
+        Log.v("formalchat", "url = " + url);
+
         intent.putExtra("url", url);
         startActivityForResult(intent, CROP_FROM_IMG);
     }

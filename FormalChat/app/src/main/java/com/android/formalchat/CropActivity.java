@@ -3,6 +3,8 @@ package com.android.formalchat;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.formalchat.profile.FullImageActivity;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
@@ -34,6 +40,7 @@ public class CropActivity extends Activity {
     private ImageView cropMeasureView;
     private ZoomInOutImgView imgView;
     private Button doneEditing;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +48,16 @@ public class CropActivity extends Activity {
         setContentView(R.layout.crop_layout);
 
         dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
-        final String url = getIntent().getStringExtra("url");
-        final Drawable drawable = getDrawableFromUrl(url);
+        url = getIntent().getStringExtra("url");
+//        final Drawable drawable = getDrawableFromLocal(url);
+        Drawable drawable = getDrawableFromParseUrl(url);
+        applyDrawableToCode(drawable);
 
+
+
+    }
+
+    private void applyDrawableToCode(final Drawable drawable) {
         final FrameLayout rl = (FrameLayout) findViewById(R.id.root_crop);
         final LinearLayout.LayoutParams params_original = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
@@ -99,7 +113,7 @@ public class CropActivity extends Activity {
         return outputStream.toByteArray();
     }
 
-    private Drawable getDrawableFromUrl(String url) {
+    private Drawable getDrawableFromLocal(String url) {
         String imgName = getShortName(url);
         File imgFile = new File(dir, imgName);
 
@@ -108,6 +122,22 @@ public class CropActivity extends Activity {
         }
 
         return Drawable.createFromPath(imgFile.getAbsolutePath());
+    }
+
+    private Drawable getDrawableFromParseUrl(String url) {
+        Bitmap x;
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.connect();
+            InputStream input = connection.getInputStream();
+
+            x = BitmapFactory.decodeStream(input);
+            return new BitmapDrawable(x);
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     private void downloadImg(String img_url, File imgFile) {
