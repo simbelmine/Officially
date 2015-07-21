@@ -120,6 +120,7 @@ public class ProfileAddImageDialog extends DialogFragment {
                 if (requestCode == ACTIVITY_SELECT_IMAGE) {
                     drawable = getSelectedImage(data, requestCode);
                     saveToParse(drawable);
+                    saveThumbnail(data);
                 }
             }
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -129,6 +130,11 @@ public class ProfileAddImageDialog extends DialogFragment {
 
             getDialog().dismiss();
         }
+    }
+
+    private void saveThumbnail(Intent data) {
+        Drawable drawable = getThumbImage(data);
+        saveToLocalStorage(drawable);
     }
 
     private void onClickTakePhoto() {
@@ -156,7 +162,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             try {
                 out = new FileOutputStream(picture);
                 Bitmap bitmapImage = ((BitmapDrawable) drawable).getBitmap();
-                bitmapImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, out);
                 out.close();
             }
             catch(IOException ex) {
@@ -186,7 +192,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             userImages.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-                    saveToLocalStorage(drawableL);
+//                    saveToLocalStorage(drawableL);
                     if(e == null) {
                         onDoneSaveTransaction();
                     }
@@ -211,7 +217,7 @@ public class ProfileAddImageDialog extends DialogFragment {
                 public void done(ParseException e) {
                     if (e == null) {
                         Log.v("formalchat", "saveEventually: It was saved Successfully");
-                        saveToLocalStorage(drawableL);
+//                        saveToLocalStorage(drawableL);
                         userImages.setUserName(userName);
                         userImages.setPhotoFile(imgFile);
                         userImages.saveInBackground();
@@ -301,14 +307,28 @@ public class ProfileAddImageDialog extends DialogFragment {
         Drawable drawable;
         if(fileUri != null) {
             imgCameraPath = fileUri.getPath();
-            Bitmap lessResolutionImage = getLessResolutionImg(imgCameraPath);
+            Bitmap lessResolutionImage = getLessResolutionImg(imgCameraPath, 600);
             drawable = new BitmapDrawable(getResources(), lessResolutionImage);
             return drawable;
         }
         return null;
     }
 
+    private Drawable getThumbImage(Intent data) {
+        if(data != null) {
+            return getDrawableFromIntent(data, 200);
+        }
+        return null;
+    }
+
     private Drawable getGalleryImage(Intent data) {
+        if(data != null) {
+            return getDrawableFromIntent(data, 600);
+        }
+        return null;
+    }
+
+    private Drawable getDrawableFromIntent(Intent data, int maxImgSize) {
         Drawable drawable;
         if(data != null) {
             Uri selectedImage = data.getData();
@@ -321,7 +341,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             String filePath = cursor.getString(columnIndex);
             cursor.close();
 
-            Bitmap yourSelectedImage = getLessResolutionImg(filePath);
+            Bitmap yourSelectedImage = getLessResolutionImg(filePath, maxImgSize);
             Bitmap compressedImage = compressBitmapImg(yourSelectedImage);
             drawable = new BitmapDrawable(getResources(), compressedImage);
             return drawable;
@@ -331,18 +351,18 @@ public class ProfileAddImageDialog extends DialogFragment {
 
     private Bitmap compressBitmapImg(Bitmap bitmapImg) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmapImg.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+        bitmapImg.compress(Bitmap.CompressFormat.PNG, 20, outputStream);
         byte[] imageArray = outputStream.toByteArray();
 
         return BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
     }
 
-    private Bitmap getLessResolutionImg(String filePath) {
+    private Bitmap getLessResolutionImg(String filePath, int maxTargetLength) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         // First decode with inJustDecodeBounds=true to check dimensions
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
-        int maxTargetLength = 800;
+        //int maxTargetLength = 400;
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, maxTargetLength, maxTargetLength);

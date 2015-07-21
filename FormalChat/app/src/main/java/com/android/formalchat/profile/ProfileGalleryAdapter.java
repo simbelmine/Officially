@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -30,7 +31,10 @@ import com.parse.ParseUser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -89,11 +93,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         //**** To Do: Recycle grid views DOESN'T work ****//
         // *************************//
 
-        Log.v("formalchat", "User = " + user.getUsername());
-        for(String s : images) {
-            Log.v("formalchat", position + " : " + s);
-        }
-
         ViewHolder viewHolder;
 
         if(convertView == null) {
@@ -101,16 +100,16 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.viewpager_item, parent, false);
-
-            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
-            viewHolder.progressBar.setVisibility(View.VISIBLE);
-            viewHolder.videoView = (VideoView) convertView.findViewById(R.id.video);
-            viewHolder.img = (ImageView) convertView.findViewById(R.id.image);
             convertView.setTag(viewHolder);
         }
         else {
             viewHolder = (ViewHolder)convertView.getTag();
         }
+
+        viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+        viewHolder.progressBar.setVisibility(View.VISIBLE);
+        viewHolder.videoView = (VideoView) convertView.findViewById(R.id.video);
+        viewHolder.img = (ImageView) convertView.findViewById(R.id.image);
 
         populateImages(viewHolder.img, viewHolder.progressBar, position);
 
@@ -149,7 +148,9 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             progressBar.setVisibility(View.GONE);
         }
         else {
-            Picasso.with(context).load(images.get(position)).into(img, new Callback() {
+            String thumbnailPath = getImageThumbnailPath(images.get(position));
+
+            Picasso.with(context).load("file://"+thumbnailPath).into(img, new Callback() {
                 @Override
                 public void onSuccess() {
                     addImageOnClickListener(img, position);
@@ -163,6 +164,16 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                 }
             });
         }
+    }
+
+    private String getImageThumbnailPath(String path) {
+        String shortName = getShortImageNameFromUri(path);
+        File tmpFile = new File(dir, filePath + shortName);
+        if (tmpFile.exists()) {
+            return tmpFile.getAbsolutePath();
+        }
+
+        return null;
     }
 
     private boolean isVideo(int position) {
@@ -223,7 +234,17 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         canvas.drawBitmap(thumb, new Matrix(), null);
         canvas.drawBitmap(play, (int) columnWidth / 2 - (play.getHeight() / 3), (int) columnWidth / 2, null);
 
+        overlayBmp = compressBitmapImg(overlayBmp);
+
         return overlayBmp;
+    }
+
+    private Bitmap compressBitmapImg(Bitmap bitmapImg) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmapImg.compress(Bitmap.CompressFormat.PNG, 20, outputStream);
+        byte[] imageArray = outputStream.toByteArray();
+
+        return BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
     }
 
     public String getShortImageNameFromUri(String url) {
