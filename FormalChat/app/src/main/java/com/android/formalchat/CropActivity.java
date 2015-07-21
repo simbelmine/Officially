@@ -134,7 +134,7 @@ public class CropActivity extends Activity {
             x = BitmapFactory.decodeStream(input);
             return new BitmapDrawable(x);
         }
-        catch (IOException ex) {
+        catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;

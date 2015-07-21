@@ -40,53 +40,51 @@ public class ZoomInOutImgView extends ImageView {
     }
 
     private void calculateImageBounds(int pixels) {
-        int rootLayoutHeight = (int)(getResources().getDimension(R.dimen.root_crop_height)/getResources().getDisplayMetrics().density);
-        int rootLayoutWidth = (int)(getResources().getDimension(R.dimen.root_crop_width)/getResources().getDisplayMetrics().density);
-        int imgHeight = image.getIntrinsicHeight(); // 533
-        int imgWidth = image.getIntrinsicWidth();   // 395
-        double minimisationNumber;
+        if(image != null) {
+            int rootLayoutHeight = (int) (getResources().getDimension(R.dimen.root_crop_height) / getResources().getDisplayMetrics().density);
+            int rootLayoutWidth = (int) (getResources().getDimension(R.dimen.root_crop_width) / getResources().getDisplayMetrics().density);
+            int imgHeight = image.getIntrinsicHeight(); // 533
+            int imgWidth = image.getIntrinsicWidth();   // 395
+            double minimisationNumber;
 
-        Log.v("formalchat", "square dimens: " + squareDimension);
-        Log.v("formalchat", "imgHeight: " + imgHeight);
-        Log.v("formalchat", "imgWidth: " + imgWidth);
+            Log.v("formalchat", "square dimens: " + squareDimension);
+            Log.v("formalchat", "imgHeight: " + imgHeight);
+            Log.v("formalchat", "imgWidth: " + imgWidth);
 
 
-        if(imgHeight > squareDimension && imgWidth > squareDimension) {
-            if(imgHeight > rootLayoutHeight) {
-                squareDimension = rootLayoutHeight+100;
+            if (imgHeight > squareDimension && imgWidth > squareDimension) {
+                if (imgHeight > rootLayoutHeight) {
+                    squareDimension = rootLayoutHeight + 100;
+                }
+                double minimisationNumberHeight = (double) imgWidth / (double) squareDimension;
+                double minimizedHeight = imgHeight / minimisationNumberHeight;
+                int minimizedHeight_rounded = (int) Math.ceil(minimizedHeight);
+
+                if (imgWidth > rootLayoutWidth) {
+                    squareDimension = rootLayoutWidth + 100;
+                }
+                double minimisationNumberWidth = (double) imgHeight / (double) squareDimension;
+                double minimizedWidth = imgWidth / minimisationNumberWidth;
+                int minimizedWidth_rounded = (int) Math.ceil(minimizedWidth);
+
+                image.setBounds(0 - minimizedWidth_rounded / 2, 0 - minimizedHeight_rounded / 2, pixels + minimizedWidth_rounded / 2, pixels + minimizedHeight_rounded / 2);
+            } else if (imgHeight > imgWidth && imgHeight > squareDimension) {
+                minimisationNumber = (double) imgWidth / (double) squareDimension;
+                double minimizedHeight = imgHeight / minimisationNumber;
+                int minimizedHeight_rounded = (int) Math.ceil(minimizedHeight);
+
+                image.setBounds(0, 0 - minimizedHeight_rounded / 2, pixels, pixels + minimizedHeight_rounded / 2);
+            } else if (imgWidth > imgHeight && imgWidth > squareDimension) {
+                minimisationNumber = (double) imgHeight / (double) squareDimension;
+                double minimizedWidth = imgWidth / minimisationNumber;
+                int minimizedWidth_rounded = (int) Math.ceil(minimizedWidth);
+
+                image.setBounds(0 - minimizedWidth_rounded / 2, 0, pixels + minimizedWidth_rounded / 2, pixels);
+            } else {
+                image.setBounds(0, 0, pixels, pixels);
             }
-            double minimisationNumberHeight = (double)imgWidth/(double)squareDimension;
-            double minimizedHeight = imgHeight/minimisationNumberHeight;
-            int minimizedHeight_rounded = (int) Math.ceil(minimizedHeight);
 
-            if(imgWidth > rootLayoutWidth) {
-                squareDimension = rootLayoutWidth+100;
-            }
-            double minimisationNumberWidth = (double)imgHeight/(double)squareDimension;
-            double minimizedWidth = imgWidth/minimisationNumberWidth;
-            int minimizedWidth_rounded = (int) Math.ceil(minimizedWidth);
-
-            image.setBounds(0 - minimizedWidth_rounded/2, 0 - minimizedHeight_rounded/2, pixels + minimizedWidth_rounded/2, pixels + minimizedHeight_rounded/2);
         }
-        else if(imgHeight > imgWidth && imgHeight > squareDimension) {
-            minimisationNumber = (double)imgWidth/(double)squareDimension;
-            double minimizedHeight = imgHeight/minimisationNumber;
-            int minimizedHeight_rounded = (int) Math.ceil(minimizedHeight);
-
-            image.setBounds(0, 0 - minimizedHeight_rounded/2, pixels, pixels + minimizedHeight_rounded/2);
-        }
-        else if(imgWidth > imgHeight && imgWidth > squareDimension) {
-            minimisationNumber = (double)imgHeight/(double)squareDimension;
-            double minimizedWidth = imgWidth/minimisationNumber;
-            int minimizedWidth_rounded = (int) Math.ceil(minimizedWidth);
-
-            image.setBounds(0 - minimizedWidth_rounded/2, 0, pixels + minimizedWidth_rounded/2, pixels);
-        }
-        else {
-            image.setBounds(0, 0, pixels, pixels);
-        }
-
-
 //        image.setBounds(0, 0 - scaledHeightByMinimisationNumber_ToPixels, (int) posX, (int) posX + scaledHeightByMinimisationNumber_ToPixels);
     }
 
@@ -151,12 +149,14 @@ public class ZoomInOutImgView extends ImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.save();
-        canvas.translate(posX, posY);
-        canvas.scale(scaleFactor, scaleFactor);
-        image.draw(canvas);
-        setcache();
-        canvas.restore();
+        if(image!=null) {
+            canvas.save();
+            canvas.translate(posX, posY);
+            canvas.scale(scaleFactor, scaleFactor);
+            image.draw(canvas);
+            setcache();
+            canvas.restore();
+        }
     }
 
     private void setcache() {
