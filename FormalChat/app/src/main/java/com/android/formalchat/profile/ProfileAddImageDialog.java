@@ -125,7 +125,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
                 drawable = getSelectedImage(data, requestCode);
                 saveToParse(drawable);
-                saveToLocalStorage(getCameraImageThumbnail(drawable, 200));
+                saveToLocalStorage(getCameraImageThumbnail(drawable, 300));
             }
 
             getDialog().dismiss();
@@ -307,7 +307,7 @@ public class ProfileAddImageDialog extends DialogFragment {
         Drawable drawable;
         if(fileUri != null) {
             imgCameraPath = fileUri.getPath();
-            Bitmap lessResolutionImage = getLessResolutionImg(imgCameraPath, 600);
+            Bitmap lessResolutionImage = getLessResolutionImg(imgCameraPath, 800);
             drawable = new BitmapDrawable(getResources(), lessResolutionImage);
             return drawable;
         }
@@ -316,7 +316,7 @@ public class ProfileAddImageDialog extends DialogFragment {
 
     private Drawable getThumbImage(Intent data) {
         if(data != null) {
-            return getDrawableFromIntent(data, 200);
+            return getDrawableFromIntent(data, 300);
         }
         return null;
     }
@@ -330,7 +330,7 @@ public class ProfileAddImageDialog extends DialogFragment {
 
     private Drawable getGalleryImage(Intent data) {
         if(data != null) {
-            return getDrawableFromIntent(data, 600);
+            return getDrawableFromIntent(data, 800);
         }
         return null;
     }
