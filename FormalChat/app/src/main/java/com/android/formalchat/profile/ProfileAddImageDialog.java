@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -27,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,7 +44,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 /**
  * Created by Sve on 2/4/15.
@@ -126,6 +125,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
                 drawable = getSelectedImage(data, requestCode);
                 saveToParse(drawable);
+                saveToLocalStorage(getCameraImageThumbnail(drawable, 200));
             }
 
             getDialog().dismiss();
@@ -156,7 +156,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             success = folder.mkdir();
         }
 
-        if(success) {
+        if(success && drawable != null) {
             File picture = new File(folder, imageName);
             FileOutputStream out;
             try {
@@ -321,6 +321,13 @@ public class ProfileAddImageDialog extends DialogFragment {
         return null;
     }
 
+    private Drawable getCameraImageThumbnail(Drawable drawable, int maxImgSize) {
+        Bitmap bitmapFromDrawable = ((BitmapDrawable)drawable).getBitmap();
+        Bitmap thumbBitmap = ThumbnailUtils.extractThumbnail(bitmapFromDrawable, maxImgSize, maxImgSize);
+
+       return new BitmapDrawable(getResources(), thumbBitmap);
+    }
+
     private Drawable getGalleryImage(Intent data) {
         if(data != null) {
             return getDrawableFromIntent(data, 600);
@@ -330,8 +337,9 @@ public class ProfileAddImageDialog extends DialogFragment {
 
     private Drawable getDrawableFromIntent(Intent data, int maxImgSize) {
         Drawable drawable;
-        if(data != null) {
-            Uri selectedImage = data.getData();
+
+        Uri selectedImage = data.getData();
+        if(selectedImage != null) {
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
             Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
@@ -346,12 +354,13 @@ public class ProfileAddImageDialog extends DialogFragment {
             drawable = new BitmapDrawable(getResources(), compressedImage);
             return drawable;
         }
-        return null;
-    }
+
+    return null;
+}
 
     private Bitmap compressBitmapImg(Bitmap bitmapImg) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmapImg.compress(Bitmap.CompressFormat.PNG, 20, outputStream);
+        bitmapImg.compress(Bitmap.CompressFormat.PNG, 80, outputStream);
         byte[] imageArray = outputStream.toByteArray();
 
         return BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);

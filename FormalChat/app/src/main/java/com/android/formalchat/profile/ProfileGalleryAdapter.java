@@ -10,10 +10,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +31,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -203,10 +201,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             String shortName = getShortImageNameFromUri(fileName);
             videoUri = Uri.parse(dir + filePath + shortName);
 
-            File targetFolder = new File(dir + filePath);
-            if (!targetFolder.exists()) {
-                targetFolder.mkdir();
-            }
+            createTargetFolderIfNotExists();
 
             tmpFile = new File(dir, filePath + shortName);
             if (!tmpFile.exists()) {
@@ -217,12 +212,39 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         }
     }
 
+    private void createTargetFolderIfNotExists() {
+        File targetFolder = new File(dir + filePath);
+        if (!targetFolder.exists()) {
+            targetFolder.mkdir();
+        }
+    }
+
     private Bitmap getVideoThumbnail() {
         Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
                 MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
         Bitmap playImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_g_);
 
         return overlayThumbnailWithPlayIcon(thumb, playImage);
+    }
+
+    private String getVideoThumbnailPath(Bitmap videoThumbnail) {
+        createTargetFolderIfNotExists();
+
+        File thumb = new File(dir, filePath + "video_thumbnail.jpg");
+        try {
+            if (!thumb.exists()) {
+                FileOutputStream outStream = new FileOutputStream(thumb);
+                videoThumbnail.compress(Bitmap.CompressFormat.PNG, 0, outStream);
+                outStream.close();
+            }
+
+            return thumb.getAbsolutePath();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     private Bitmap overlayThumbnailWithPlayIcon(Bitmap thumb, Bitmap playImage) {
@@ -241,7 +263,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     private Bitmap compressBitmapImg(Bitmap bitmapImg) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmapImg.compress(Bitmap.CompressFormat.PNG, 20, outputStream);
+        bitmapImg.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
         byte[] imageArray = outputStream.toByteArray();
 
         return BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
@@ -260,6 +282,8 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     private void reCreateImageView(FrameLayout.LayoutParams layoutParams, ImageView imageView) {
+//        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
+
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setVisibility(View.VISIBLE);
