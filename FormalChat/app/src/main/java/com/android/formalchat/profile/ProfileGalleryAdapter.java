@@ -136,12 +136,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private void populateImages(final ImageView img, final ProgressBar progressBar, final int position) {
         if(isVideo(position)) {
             downloadVideoIfNotExists();
-
-            float gallery_item_h = context.getResources().getDimension(R.dimen.gallery_item_h);
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    (int) gallery_item_h);
-            reCreateImageView(layoutParams, img);
+            reCreateImageView(img);
             setVideoImgOnClickListener(img);
             progressBar.setVisibility(View.GONE);
         }
@@ -220,11 +215,22 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     private Bitmap getVideoThumbnail() {
-        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
-                MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
-        Bitmap playImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_g_);
+        createTargetFolderIfNotExists();
 
-        return overlayThumbnailWithPlayIcon(thumb, playImage);
+        File videoThumbnail = new File(dir, filePath + "video_thumbnail.jpg");
+        if(videoThumbnail.exists()) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap bitmap = BitmapFactory.decodeFile(videoThumbnail.getAbsolutePath(), options);
+            return bitmap;
+        }
+        else {
+            Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
+                    MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+            Bitmap playImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_g_);
+
+            return overlayThumbnailWithPlayIcon(thumb, playImage);
+        }
     }
 
     private String getVideoThumbnailPath(Bitmap videoThumbnail) {
@@ -281,13 +287,16 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         context.startService(intent);
     }
 
-    private void reCreateImageView(FrameLayout.LayoutParams layoutParams, ImageView imageView) {
-//        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
-
+    private void reCreateImageView(ImageView imageView) {
+        float gallery_item_h = context.getResources().getDimension(R.dimen.gallery_item_h);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                (int) gallery_item_h);
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setVisibility(View.VISIBLE);
-        imageView.setImageBitmap(thumbnail);
+//        imageView.setImageBitmap(thumbnail);
+        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
     }
 
     private void setVideoImgOnClickListener(ImageView imageView) {
