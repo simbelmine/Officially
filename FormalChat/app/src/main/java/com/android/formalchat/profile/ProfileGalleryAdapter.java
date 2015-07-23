@@ -12,6 +12,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,20 +144,39 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         else {
             String thumbnailPath = getImageThumbnailPath(images.get(position));
 
-            Picasso.with(context).load("file://"+thumbnailPath).into(img, new Callback() {
-                @Override
-                public void onSuccess() {
-                    addImageOnClickListener(img, position);
-                    img.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                }
+            if(getBitmapFactoryOptions(thumbnailPath) != null) {
+                int imageHeight = getBitmapFactoryOptions(thumbnailPath).outHeight;
+                int imageWidth = getBitmapFactoryOptions(thumbnailPath).outWidth;
 
-                @Override
-                public void onError() {
+                if (imageHeight > 0 && imageWidth > 0) {
 
+                    Picasso.with(context).load("file://" + thumbnailPath).resize(imageWidth / 4,
+                            imageHeight / 4).into(img, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            addImageOnClickListener(img, position);
+                            img.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
                 }
-            });
+            }
         }
+    }
+
+    private BitmapFactory.Options getBitmapFactoryOptions(String thumbnailPath) {
+        if(thumbnailPath!= null && !thumbnailPath.equals("")) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(thumbnailPath, options);
+            return options;
+        }
+        return null;
     }
 
     private String getImageThumbnailPath(String path) {

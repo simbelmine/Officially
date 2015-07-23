@@ -119,13 +119,15 @@ public class ProfileAddImageDialog extends DialogFragment {
                 if (requestCode == ACTIVITY_SELECT_IMAGE) {
                     drawable = getSelectedImage(data, requestCode);
                     saveToParse(drawable);
-                    saveThumbnail(data);
+                    //saveThumbnail(data);
+                    saveToLocalStorage(drawable);
                 }
             }
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
                 drawable = getSelectedImage(data, requestCode);
                 saveToParse(drawable);
-                saveToLocalStorage(getCameraImageThumbnail(drawable, 300));
+                //saveToLocalStorage(getCameraImageThumbnail(drawable, 300));
+                saveToLocalStorage(drawable);
             }
 
             getDialog().dismiss();
