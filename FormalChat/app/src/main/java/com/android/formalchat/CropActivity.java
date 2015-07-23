@@ -19,9 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.formalchat.profile.FullImageActivity;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -49,12 +46,17 @@ public class CropActivity extends Activity {
 
         dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
         url = getIntent().getStringExtra("url");
-//        final Drawable drawable = getDrawableFromLocal(url);
-        Drawable drawable = getDrawableFromParseUrl(url);
+
+        final Drawable drawable;
+
+        if(getDrawableFromLocal(url) != null) {
+            drawable =  getDrawableFromLocal(url);
+        }
+        else {
+            drawable = getDrawableFromParseUrl(url);
+        }
+
         applyDrawableToCode(drawable);
-
-
-
     }
 
     private void applyDrawableToCode(final Drawable drawable) {
@@ -98,7 +100,7 @@ public class CropActivity extends Activity {
                         intent.putExtra("profileImg", profileImg);
                         setResult(RESULT_OK, intent);
 
-                        deleteSavedImg(url);
+                        //deleteSavedImg(url);
 
                         finish();
                     }
@@ -128,6 +130,7 @@ public class CropActivity extends Activity {
         Bitmap x;
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
 

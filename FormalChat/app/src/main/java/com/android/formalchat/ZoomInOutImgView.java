@@ -28,6 +28,7 @@ public class ZoomInOutImgView extends ImageView {
     public ZoomInOutImgView(Context context, Drawable image, int pX, int pY) {
         super(context);
         this.image = image;
+
         squareDimension = (int)(getResources().getDimension(R.dimen.croppingSquare)/getResources().getDisplayMetrics().density);
         int pxs = (int) (squareDimension * getResources().getDisplayMetrics().density);
 //         image.setBounds(0, 0, pxs, pxs);
@@ -46,11 +47,6 @@ public class ZoomInOutImgView extends ImageView {
             int imgHeight = image.getIntrinsicHeight(); // 533
             int imgWidth = image.getIntrinsicWidth();   // 395
             double minimisationNumber;
-
-            Log.v("formalchat", "square dimens: " + squareDimension);
-            Log.v("formalchat", "imgHeight: " + imgHeight);
-            Log.v("formalchat", "imgWidth: " + imgWidth);
-
 
             if (imgHeight > squareDimension && imgWidth > squareDimension) {
                 if (imgHeight > rootLayoutHeight) {
