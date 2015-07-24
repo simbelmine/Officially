@@ -564,6 +564,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         Bitmap myBitmap = BitmapFactory.decodeFile(path + "/" + pictureName);
         profilePic.setImageBitmap(myBitmap);
         swipeContainer.setRefreshing(false);
+        profileProgressBar.setVisibility(View.GONE);
     }
 
     private void loadSmallProfilePicFromParse() {
