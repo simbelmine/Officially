@@ -406,10 +406,20 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                         photos_btn_counter = 0;
                     }
 
-                    updateUserImagesCounter();
+                    if(isVideoExists()) {
+                        addVideoToCounter(photos_btn_counter);
+                    }
+                    else {
+                        updateUserImagesCounter();
+                    }
                 }
             });
         }
+    }
+
+    private void addVideoToCounter(int photos_btn_counter) {
+        this.photos_btn_counter = photos_btn_counter+1;
+        updateUserImagesCounter();
     }
 
     private void updateUserImagesCounter() {

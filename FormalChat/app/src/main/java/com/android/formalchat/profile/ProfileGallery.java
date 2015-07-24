@@ -271,9 +271,8 @@ public class ProfileGallery extends DrawerActivity {
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
+                ArrayList<String> imagesPaths = new ArrayList<>();
                 if (list.size() > 0) {
-                    ArrayList<String> imagesPaths = new ArrayList<>();
-
                     if (videoExists) {
                         imagesPaths = addVideoToPaths(imagesPaths);
                     }
@@ -287,6 +286,11 @@ public class ProfileGallery extends DrawerActivity {
 
                 } else {
                     Log.v("formalchat", "listsize is 0 ");
+                    // If list with images is 0, but there is a video
+                    if (videoExists) {
+                        imagesPaths = addVideoToPaths(imagesPaths);
+                        initAdapter(imagesPaths);
+                    }
                 }
 
                 if (e != null) {
