@@ -15,6 +15,7 @@ import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -117,27 +118,29 @@ public class ProfileAddImageDialog extends DialogFragment {
         if(resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 if (requestCode == ACTIVITY_SELECT_IMAGE) {
-                    drawable = getSelectedImage(data, requestCode);
-                    saveToParse(drawable);
-                    //saveThumbnail(data);
-                    saveToLocalStorage(drawable);
+
+                    processTakenImage(data, 800);
+//                    drawable = getSelectedImage(data, requestCode);
+//                    saveToParse(drawable);
+//                    //saveThumbnail(data);
+//                    saveToLocalStorage(drawable);
                 }
             }
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
                 drawable = getSelectedImage(data, requestCode);
-                saveToParse(drawable);
+                saveToParse(getActivity(), drawable);
                 //saveToLocalStorage(getCameraImageThumbnail(drawable, 300));
-                saveToLocalStorage(drawable);
+//                saveToLocalStorage(drawable);
             }
 
             getDialog().dismiss();
         }
     }
 
-    private void saveThumbnail(Intent data) {
-        Drawable drawable = getThumbImage(data);
-        saveToLocalStorage(drawable);
-    }
+//    private void saveThumbnail(Intent data) {
+//        Drawable drawable = getThumbImage(data);
+//        saveToLocalStorage(drawable);
+//    }
 
     private void onClickTakePhoto() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -176,17 +179,18 @@ public class ProfileAddImageDialog extends DialogFragment {
         }
     }
 
-    private void saveToParse(final Drawable drawableL) {
+    private void saveToParse(final Activity activity, final Drawable drawableL) {
         ParseUser parseUser = ParseUser.getCurrentUser();
         final String userName = parseUser.getUsername();
         final ParseFile imgFile = drawableToParseFile(drawableL);
         final UserImages userImages = new UserImages();
 
-        if(isNetworkAvailable()) {
+        if(isNetworkAvailable(activity)) {
             userImages.setUserName(userName);
             userImages.setPhotoFile(imgFile);
             //show notification for uploading
             showUploadNotification(
+                    activity,
                     R.string.picture_upload_notif_title,
                     R.string.picture_upload_notif_text,
                     R.drawable.upload_icon,
@@ -194,13 +198,14 @@ public class ProfileAddImageDialog extends DialogFragment {
             userImages.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-//                    saveToLocalStorage(drawableL);
+                    saveToLocalStorage(drawableL);
                     if(e == null) {
                         onDoneSaveTransaction();
                     }
                     else {
                         Log.e("formalchat", "Error saving: " + e.getMessage());
                         showUploadNotification(
+                                activity,
                                 R.string.picture_upload_notif_title,
                                 R.string.picture_upload_notif_text_warning,
                                 R.drawable.upload_icon_wrong,
@@ -214,29 +219,32 @@ public class ProfileAddImageDialog extends DialogFragment {
             // This is NOT allowed;
             // Remove Toast form "ADD" image button
             // -----------------------------//
-            userImages.saveEventually(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e == null) {
-                        Log.v("formalchat", "saveEventually: It was saved Successfully");
-//                        saveToLocalStorage(drawableL);
-                        userImages.setUserName(userName);
-                        userImages.setPhotoFile(imgFile);
-                        userImages.saveInBackground();
-
-                    } else {
-                        Log.v("formalchat", "saveEventually: " + e.getMessage());
-                    }
-                }
-            });
+//            userImages.saveEventually(new SaveCallback() {
+//                @Override
+//                public void done(ParseException e) {
+//                    if (e == null) {
+//                        Log.v("formalchat", "saveEventually: It was saved Successfully");
+////                        saveToLocalStorage(drawableL);
+//                        userImages.setUserName(userName);
+//                        userImages.setPhotoFile(imgFile);
+//                        userImages.saveInBackground();
+//
+//                    } else {
+//                        Log.v("formalchat", "saveEventually: " + e.getMessage());
+//                    }
+//                }
+//            });
         }
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+    private boolean isNetworkAvailable(Activity activity) {
+        if(activity != null) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
 
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        return false;
     }
 
     private void onDoneSaveTransaction() {
@@ -251,9 +259,9 @@ public class ProfileAddImageDialog extends DialogFragment {
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(sender);
     }
 
-    private void showUploadNotification(int titleId, int textId, int drawableId, boolean ongoing) {
-        notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationBuilder = new NotificationCompat.Builder(getActivity());
+    private void showUploadNotification(Activity activity, int titleId, int textId, int drawableId, boolean ongoing) {
+        notificationManager = (NotificationManager) activity.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationBuilder = new NotificationCompat.Builder(activity);
         notificationBuilder.setContentTitle("Picture Upload")
                 .setContentText("Download in progress")
                 .setSmallIcon(R.drawable.upload_icon)
@@ -316,19 +324,19 @@ public class ProfileAddImageDialog extends DialogFragment {
         return null;
     }
 
-    private Drawable getThumbImage(Intent data) {
-        if(data != null) {
-            return getDrawableFromIntent(data, 300);
-        }
-        return null;
-    }
+//    private Drawable getThumbImage(Intent data) {
+//        if(data != null) {
+//            return getDrawableFromIntent(data, 300);
+//        }
+//        return null;
+//    }
 
-    private Drawable getCameraImageThumbnail(Drawable drawable, int maxImgSize) {
-        Bitmap bitmapFromDrawable = ((BitmapDrawable)drawable).getBitmap();
-        Bitmap thumbBitmap = ThumbnailUtils.extractThumbnail(bitmapFromDrawable, maxImgSize, maxImgSize);
-
-       return new BitmapDrawable(getResources(), thumbBitmap);
-    }
+//    private Drawable getCameraImageThumbnail(Drawable drawable, int maxImgSize) {
+//        Bitmap bitmapFromDrawable = ((BitmapDrawable)drawable).getBitmap();
+//        Bitmap thumbBitmap = ThumbnailUtils.extractThumbnail(bitmapFromDrawable, maxImgSize, maxImgSize);
+//
+//        return new BitmapDrawable(getResources(), thumbBitmap);
+//    }
 
     private Drawable getGalleryImage(Intent data) {
         if(data != null) {
@@ -344,7 +352,7 @@ public class ProfileAddImageDialog extends DialogFragment {
         if(selectedImage != null) {
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            Cursor cursor = this.getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             cursor.moveToFirst();
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -357,8 +365,54 @@ public class ProfileAddImageDialog extends DialogFragment {
             return drawable;
         }
 
-    return null;
-}
+        return null;
+    }
+
+    private void processTakenImage(Intent data, int maxImgSize) {
+        Uri selectedImage = data.getData();
+        if(selectedImage != null) {
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = this.getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String filePath = cursor.getString(columnIndex);
+            cursor.close();
+
+
+            new MyAsyncTask(getActivity()).execute(filePath, maxImgSize);
+        }
+    }
+
+    private class MyAsyncTask extends AsyncTask<Object, Void, Drawable> {
+        Activity activity;
+
+        public MyAsyncTask(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        protected Drawable doInBackground(Object... params) {
+            Drawable drawable;
+            String filePath = (String)params[0];
+            int maxImgSize = (int)params[1];
+
+            Bitmap yourSelectedImage = getLessResolutionImg(filePath, maxImgSize);
+            Bitmap compressedImage = compressBitmapImg(yourSelectedImage);
+            drawable = new BitmapDrawable(activity.getApplicationContext().getResources(), compressedImage);
+
+            return drawable;
+        }
+
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            if(drawable != null) {
+                Log.v("formalchat", "CONTEXT = " + activity);
+                saveToParse(activity, drawable);
+            }
+        }
+    }
 
     private Bitmap compressBitmapImg(Bitmap bitmapImg) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
