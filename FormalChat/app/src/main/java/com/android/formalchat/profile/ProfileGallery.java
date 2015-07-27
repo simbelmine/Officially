@@ -8,7 +8,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -37,6 +39,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -251,7 +254,7 @@ public class ProfileGallery extends DrawerActivity {
     private BroadcastReceiver onNoticeUploadVideo = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-           galleryAdapter.notifyDataSetChanged();
+            galleryAdapter.notifyDataSetChanged();
         }
     };
 
@@ -302,7 +305,7 @@ public class ProfileGallery extends DrawerActivity {
 
     private void initAdapter(ArrayList<String> imagesPaths) {
         if (galleryAdapter != null) {
-            galleryAdapter.updateImages(imagesPaths);
+            galleryAdapter.updateImages(imagesPaths, user);
         } else {
             galleryAdapter = new ProfileGalleryAdapter(activity, getApplicationContext(), imagesPaths, user);
             gridView.setAdapter(galleryAdapter);

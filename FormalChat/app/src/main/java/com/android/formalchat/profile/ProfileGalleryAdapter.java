@@ -25,11 +25,17 @@ import android.widget.VideoView;
 import com.android.formalchat.R;
 import com.android.formalchat.VideoDownloadService;
 import com.android.formalchat.VideoShowActivity;
+import com.parse.GetCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,10 +70,11 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         this.user = user;
     }
 
-    public void updateImages(List<String> paths) {
-       // this.images.clear();
+    public void updateImages(List<String> paths, ParseUser user) {
+        // this.images.clear();
         //this.images.addAll(paths_);
         this.images = paths;
+        this.user = user;
         this.notifyDataSetChanged();
     }
 
@@ -138,33 +145,82 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         if(isVideo(position)) {
             downloadVideoIfNotExists();
             reCreateImageView(img);
-            setVideoImgOnClickListener(img);
+            setVideoImgOnClickListener(img, position);
             progressBar.setVisibility(View.GONE);
         }
         else {
+
             String thumbnailPath = getImageThumbnailPath(images.get(position));
 
-            if(getBitmapFactoryOptions(thumbnailPath) != null) {
-                int imageHeight = getBitmapFactoryOptions(thumbnailPath).outHeight;
-                int imageWidth = getBitmapFactoryOptions(thumbnailPath).outWidth;
+            if(thumbnailPath != null) {
+                loadPictureToGrid(img, position, thumbnailPath, progressBar);
+            }
+            else {
+                downloadPictureBeforeLoadToGrid(img, position, thumbnailPath, progressBar);
+            }
 
-                if (imageHeight > 0 && imageWidth > 0) {
+        }
+    }
 
-                    Picasso.with(context).load("file://" + thumbnailPath).resize(imageWidth / 4,
-                            imageHeight / 4).into(img, new Callback() {
+    private void downloadPictureBeforeLoadToGrid(final ImageView img, final int position, final String thumbnailPath, final ProgressBar progressBar) {
+        Log.v("formalchat", "User =    " + user.getUsername());
+
+        ParseQuery<ParseObject> query = new ParseQuery<>("UserImages");
+        query.whereEqualTo("userName", user.getUsername());
+        query.whereEqualTo("photo", getLongerImageNameFromUri(images.get(position)));
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if (e == null && parseObject != null) {
+                    ParseFile imageFile = parseObject.getParseFile("photo");
+                    imageFile.getDataInBackground(new GetDataCallback() {
                         @Override
-                        public void onSuccess() {
-                            addImageOnClickListener(img, position);
-                            img.setVisibility(View.VISIBLE);
-                            progressBar.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onError() {
-
+                        public void done(byte[] bytes, ParseException e) {
+                            saveImageToLocal(bytes, position);
+                            loadPictureToGrid(img, position, thumbnailPath, progressBar);
                         }
                     });
                 }
+            }
+        });
+    }
+
+    private void saveImageToLocal(byte[] fileBytes, int position) {
+        String shortName = getShortImageNameFromUri(images.get(position));
+        File file = new File(dir, filePath + shortName);
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            bos.write(fileBytes);
+            bos.flush();
+            bos.close();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private void loadPictureToGrid(final ImageView img, final int position, String thumbnailPath, final ProgressBar progressBar) {
+        if(getBitmapFactoryOptions(thumbnailPath) != null) {
+            int imageHeight = getBitmapFactoryOptions(thumbnailPath).outHeight;
+            int imageWidth = getBitmapFactoryOptions(thumbnailPath).outWidth;
+
+            if (imageHeight > 0 && imageWidth > 0) {
+
+                Picasso.with(context).load("file://" + thumbnailPath).resize(imageWidth / 4,
+                        imageHeight / 4).into(img, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        addImageOnClickListener(img, position);
+                        img.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
             }
         }
     }
@@ -219,6 +275,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             createTargetFolderIfNotExists();
 
             tmpFile = new File(dir, filePath + shortName);
+
             if (!tmpFile.exists()) {
                 startVideoDownloadService();
             } else {
@@ -296,7 +353,11 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     public String getShortImageNameFromUri(String url) {
-        return url.substring(url.lastIndexOf("-")+1);
+        return url.substring(url.lastIndexOf("-") + 1);
+    }
+
+    public String getLongerImageNameFromUri(String url) {
+        return url.substring(url.lastIndexOf("/")+1);
     }
 
     private void startVideoDownloadService() {
@@ -316,21 +377,29 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setVisibility(View.VISIBLE);
 //        imageView.setImageBitmap(thumbnail);
-        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
+//        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
+
+        Picasso.with(context).load(R.drawable.play_gimp).into(imageView);
     }
 
-    private void setVideoImgOnClickListener(ImageView imageView) {
+    private void setVideoImgOnClickListener(ImageView imageView, final int position) {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openVideoShowActivity();
+                openVideoShowActivity(position);
             }
         });
     }
 
-    private void openVideoShowActivity() {
+    private void openVideoShowActivity(int position) {
         Intent intent = new Intent(activity, VideoShowActivity.class);
-        intent.putExtra("videoUri", videoUri.toString());
+
+        if(user != ParseUser.getCurrentUser()) {
+            intent.putExtra("videoUri", images.get(position));
+        }
+        else {
+            intent.putExtra("videoUri", videoUri.toString());
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
