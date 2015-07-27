@@ -258,9 +258,9 @@ public class DrawerActivity extends FragmentActivity {
         File[] files_list = dir.listFiles();
 
         for(int f = 0; f < files_list.length; f++) {
-            if("blurred_profile.jpg".equals(files_list[f].getName())) {
+//            if("blurred_profile.jpg".equals(files_list[f].getName())) {
                 files_list[f].delete();
-            }
+//            }
         }
 
 
