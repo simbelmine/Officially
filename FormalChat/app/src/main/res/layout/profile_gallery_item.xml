@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical|center_horizontal">
+
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
@@ -15,4 +16,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
+
+ <ImageView
+     android:id="@+id/multi_select_icon"
+     android:layout_width="30dp"
+     android:layout_height="30dp"
+     android:layout_gravity="right"
+     android:layout_margin="5dp"
+     android:visibility="invisible"
+     android:src="@drawable/check"/>
 </FrameLayout>

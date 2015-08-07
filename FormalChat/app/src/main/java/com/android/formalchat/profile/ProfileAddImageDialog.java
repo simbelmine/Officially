@@ -119,7 +119,8 @@ public class ProfileAddImageDialog extends DialogFragment {
             if (data != null) {
                 if (requestCode == ACTIVITY_SELECT_IMAGE) {
 
-                    processTakenImage(data, 800);
+                    Log.v("formalchat", "data = " + data);
+                    //processTakenImage(data, 800);
 //                    drawable = getSelectedImage(data, requestCode);
 //                    saveToParse(drawable);
 //                    //saveThumbnail(data);

@@ -40,6 +40,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,12 +63,15 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private Bitmap thumbnail;
     private Uri videoUri;
     private ParseUser user;
+    private ArrayList<Integer> selectedItems;
 
     public ProfileGalleryAdapter(Activity activity, Context context, List<String> paths, ParseUser user) {
         this.activity = activity;
         this.context = context;
         this.images = paths;
         this.user = user;
+
+        selectedItems = new ArrayList<>();
     }
 
     public void updateImages(List<String> paths, ParseUser user) {
@@ -94,18 +98,18 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, final ViewGroup parent) {
         // **************************//
         //**** To Do: Recycle grid views DOESN'T work ****//
         // *************************//
 
-        ViewHolder viewHolder;
+        final ViewHolder viewHolder;
 
         if(convertView == null) {
             viewHolder = new ViewHolder();
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.viewpager_item, parent, false);
+            convertView = inflater.inflate(R.layout.profile_gallery_item, parent, false);
             convertView.setTag(viewHolder);
         }
         else {
@@ -116,8 +120,9 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         viewHolder.progressBar.setVisibility(View.VISIBLE);
         viewHolder.videoView = (VideoView) convertView.findViewById(R.id.video);
         viewHolder.img = (ImageView) convertView.findViewById(R.id.image);
+        viewHolder.multiSelectIcon = (ImageView) convertView.findViewById(R.id.multi_select_icon);
 
-        populateImages(viewHolder.img, viewHolder.progressBar, position);
+        populateImages(viewHolder.img, viewHolder.multiSelectIcon, viewHolder.progressBar, position);
 
         return convertView;
     }
@@ -126,6 +131,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         ProgressBar progressBar;
         VideoView videoView;
         ImageView img;
+        ImageView multiSelectIcon;
     }
 
 
@@ -141,30 +147,40 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         });
     }
 
-    private void populateImages(final ImageView img, final ProgressBar progressBar, final int position) {
-        if(isVideo(position)) {
+    private void populateImages(ImageView img, final ImageView multiSelectionIcon, final ProgressBar progressBar, final int position) {
+        if (isVideo(position)) {
+
             downloadVideoIfNotExists();
             reCreateImageView(img);
             setVideoImgOnClickListener(img, position);
             progressBar.setVisibility(View.GONE);
-        }
-        else {
 
+        } else {
             String thumbnailPath = getImageThumbnailPath(images.get(position));
 
-            if(thumbnailPath != null) {
-                loadPictureToGrid(img, position, thumbnailPath, progressBar);
+            if (thumbnailPath != null) {
+                loadPictureToGrid(img, multiSelectionIcon, position, thumbnailPath, progressBar);
+            } else {
+                downloadPictureBeforeLoadToGrid(img, multiSelectionIcon, position, thumbnailPath, progressBar);
             }
-            else {
-                downloadPictureBeforeLoadToGrid(img, position, thumbnailPath, progressBar);
-            }
+
+            showSelectionIconIfSelected(multiSelectionIcon, position);
 
         }
     }
 
-    private void downloadPictureBeforeLoadToGrid(final ImageView img, final int position, final String thumbnailPath, final ProgressBar progressBar) {
-        Log.v("formalchat", "User =    " + user.getUsername());
+    private void showSelectionIconIfSelected(ImageView multiSelectionIcon, int position) {
+        Log.v("formalchat", "pos = " + position);
+        Log.v("formalchat", "positions = " + selectedItems);
 
+        if (selectedItems.contains(position)) {
+            multiSelectionIcon.setVisibility(View.VISIBLE);
+        } else {
+            multiSelectionIcon.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void downloadPictureBeforeLoadToGrid(final ImageView img, final ImageView multiSelectionIcon, final int position, final String thumbnailPath, final ProgressBar progressBar) {
         ParseQuery<ParseObject> query = new ParseQuery<>("UserImages");
         query.whereEqualTo("userName", user.getUsername());
         query.whereEqualTo("photo", getLongerImageNameFromUri(images.get(position)));
@@ -177,7 +193,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                         @Override
                         public void done(byte[] bytes, ParseException e) {
                             saveImageToLocal(bytes, position);
-                            loadPictureToGrid(img, position, thumbnailPath, progressBar);
+                            loadPictureToGrid(img, multiSelectionIcon, position, thumbnailPath, progressBar);
                         }
                     });
                 }
@@ -200,7 +216,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     }
 
-    private void loadPictureToGrid(final ImageView img, final int position, String thumbnailPath, final ProgressBar progressBar) {
+    private void loadPictureToGrid(final ImageView img, final ImageView multiSelectIcon, final int position, String thumbnailPath, final ProgressBar progressBar) {
         if(getBitmapFactoryOptions(thumbnailPath) != null) {
             int imageHeight = getBitmapFactoryOptions(thumbnailPath).outHeight;
             int imageWidth = getBitmapFactoryOptions(thumbnailPath).outWidth;
@@ -212,6 +228,8 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                     @Override
                     public void onSuccess() {
                         addImageOnClickListener(img, position);
+                        addImageOnLongClickListener(img, multiSelectIcon, position);
+
                         img.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.GONE);
                     }
@@ -223,6 +241,17 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                 });
             }
         }
+    }
+
+    private void addImageOnLongClickListener(ImageView img, final ImageView multiSelectIcon, final int position) {
+        img.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                multiSelectIcon.setVisibility(View.VISIBLE);
+                selectedItems.add(position);
+                return true;
+            }
+        });
     }
 
     private BitmapFactory.Options getBitmapFactoryOptions(String thumbnailPath) {
