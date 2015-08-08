@@ -118,9 +118,7 @@ public class ProfileAddImageDialog extends DialogFragment {
         if(resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 if (requestCode == ACTIVITY_SELECT_IMAGE) {
-
-                    Log.v("formalchat", "data = " + data);
-                    //processTakenImage(data, 800);
+                    processTakenImage(data, 800);
 //                    drawable = getSelectedImage(data, requestCode);
 //                    saveToParse(drawable);
 //                    //saveThumbnail(data);
@@ -129,6 +127,12 @@ public class ProfileAddImageDialog extends DialogFragment {
             }
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
                 drawable = getSelectedImage(data, requestCode);
+                showUploadNotification(
+                        getActivity(),
+                        R.string.picture_upload_notif_title,
+                        R.string.picture_upload_notif_text,
+                        R.drawable.upload_icon,
+                        true);
                 saveToParse(getActivity(), drawable);
                 //saveToLocalStorage(getCameraImageThumbnail(drawable, 300));
 //                saveToLocalStorage(drawable);
@@ -189,13 +193,6 @@ public class ProfileAddImageDialog extends DialogFragment {
         if(isNetworkAvailable(activity)) {
             userImages.setUserName(userName);
             userImages.setPhotoFile(imgFile);
-            //show notification for uploading
-            showUploadNotification(
-                    activity,
-                    R.string.picture_upload_notif_title,
-                    R.string.picture_upload_notif_text,
-                    R.drawable.upload_icon,
-                    true);
             userImages.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -382,6 +379,12 @@ public class ProfileAddImageDialog extends DialogFragment {
             cursor.close();
 
 
+            showUploadNotification(
+                    getActivity(),
+                    R.string.picture_upload_notif_title,
+                    R.string.picture_upload_notif_text,
+                    R.drawable.upload_icon,
+                    true);
             new MyAsyncTask(getActivity()).execute(filePath, maxImgSize);
         }
     }
@@ -410,6 +413,8 @@ public class ProfileAddImageDialog extends DialogFragment {
         protected void onPostExecute(Drawable drawable) {
             if(drawable != null) {
                 Log.v("formalchat", "CONTEXT = " + activity);
+
+                //show notification for uploading
                 saveToParse(activity, drawable);
             }
         }
