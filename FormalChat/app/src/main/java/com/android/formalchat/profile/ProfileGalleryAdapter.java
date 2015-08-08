@@ -12,7 +12,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +53,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private static final int RESULT_OK = -1;
     private static final String OUT_VID_EXTENSION = "mp4";
     private static final int OUT_VID_EXT_SHIFT = 3;
+    public static final String ACTION_DELETE_ALL = "DeleteAllGalleryPics";
     private File dir = Environment.getExternalStorageDirectory();
     private String filePath = "/.formal_chat/";
     private String fileName;
@@ -64,6 +65,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private Uri videoUri;
     private ParseUser user;
     private ArrayList<Integer> selectedItems;
+    private boolean atLeastOnePicSelected;
 
     public ProfileGalleryAdapter(Activity activity, Context context, List<String> paths, ParseUser user) {
         this.activity = activity;
@@ -71,15 +73,25 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         this.images = paths;
         this.user = user;
 
+        atLeastOnePicSelected = false;
         selectedItems = new ArrayList<>();
     }
 
     public void updateImages(List<String> paths, ParseUser user) {
-        // this.images.clear();
-        //this.images.addAll(paths_);
+        atLeastOnePicSelected = false;
+        selectedItems = new ArrayList<>();
+
         this.images = paths;
         this.user = user;
         this.notifyDataSetChanged();
+    }
+
+    public List<String> getImagePaths() {
+        return images;
+    }
+
+    public ArrayList<Integer> getSelectedItems() {
+        return selectedItems;
     }
 
     @Override
@@ -170,9 +182,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     private void showSelectionIconIfSelected(ImageView multiSelectionIcon, int position) {
-        Log.v("formalchat", "pos = " + position);
-        Log.v("formalchat", "positions = " + selectedItems);
-
         if (selectedItems.contains(position)) {
             multiSelectionIcon.setVisibility(View.VISIBLE);
         } else {
@@ -249,9 +258,18 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             public boolean onLongClick(View v) {
                 multiSelectIcon.setVisibility(View.VISIBLE);
                 selectedItems.add(position);
+                if(!atLeastOnePicSelected) {
+                    sendUpdateMessageToMenu();
+                    atLeastOnePicSelected = true;
+                }
                 return true;
             }
         });
+    }
+
+    private void sendUpdateMessageToMenu() {
+        Intent intent = new Intent(ACTION_DELETE_ALL);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private BitmapFactory.Options getBitmapFactoryOptions(String thumbnailPath) {

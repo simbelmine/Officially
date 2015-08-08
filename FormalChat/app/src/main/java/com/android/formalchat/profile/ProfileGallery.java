@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentManager;
@@ -22,11 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -64,6 +59,7 @@ public class ProfileGallery extends DrawerActivity {
     private DrawerLayout drawerLayout;
     private ListView leftDrawerList;
     private SwipeRefreshLayout swipeContainer;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,22 +143,32 @@ public class ProfileGallery extends DrawerActivity {
     protected void onResume() {
         super.onResume();
 
+        // Picture Upload
         IntentFilter intentFilterPictureUpload = new IntentFilter(ProfileAddImageDialog.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onNoticePictureUpload, intentFilterPictureUpload);
+        // Video Upload
         IntentFilter intentFilterUploadVideo = new IntentFilter(VideoUploadService.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeUploadVideo, intentFilterUploadVideo);
+        // Video Download
         IntentFilter intentFilterDownloadVideo = new IntentFilter(VideoDownloadService.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeDownloadVideo, intentFilterDownloadVideo);
+        // Picture Delete
         IntentFilter intentFilterDeletedPicture = new IntentFilter(FullImageActivity.ACTION_DELETED);
         LocalBroadcastManager.getInstance(this).registerReceiver(onNoticePictureDeleted, intentFilterDeletedPicture);
+        // Delete All pictures (by selection)
+        IntentFilter intentFilterDeleteAllPictures = new IntentFilter(ProfileGalleryAdapter.ACTION_DELETE_ALL);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNoticeDeleteAllPictures, intentFilterDeleteAllPictures);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNoticePictureUpload);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNoticeUploadVideo);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onNoticeDownloadVideo);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNoticePictureDeleted);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onNoticeDeleteAllPictures);
     }
 
     @Override
@@ -182,9 +188,19 @@ public class ProfileGallery extends DrawerActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.gallery_menu, menu);
+        hideOptionFromMenu(R.id.delete_all);
         return true;
+    }
+
+    private void hideOptionFromMenu(int itemId) {
+        menu.findItem(itemId).setVisible(false);
+    }
+
+    private void showOptionFromMenu(int itemId) {
+        menu.findItem(itemId).setVisible(true);
     }
 
     @Override
@@ -211,8 +227,76 @@ public class ProfileGallery extends DrawerActivity {
                     drawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;
+            case R.id.delete_all:
+                if(galleryAdapter != null) {
+                    ArrayList<String> shortSelectedImageNames = getShortImageNames(getPicNamesByPosition());
+                    deleteAllonParse(shortSelectedImageNames);
+                }
+                return true;
             default:
                 return false;
+        }
+    }
+
+    private ArrayList<String> getShortImageNames(ArrayList<String> picNamesByPosition) {
+        ArrayList<String> shortNames = new ArrayList<>();
+        for(String longName : picNamesByPosition) {
+            shortNames.add(getParseImgNameFromUri(longName));
+        }
+
+        return shortNames;
+    }
+
+    private ArrayList<String> getPicNamesByPosition() {
+        ArrayList<String> selectedImageNames = new ArrayList<>();
+        if(galleryAdapter != null) {
+            List<String> imagePaths = galleryAdapter.getImagePaths();
+            ArrayList<Integer> selectedImagePositions = galleryAdapter.getSelectedItems();
+
+            if (selectedImagePositions != null && imagePaths != null) {
+                for (Integer position : selectedImagePositions) {
+                    if(position < imagePaths.size()) {
+                        selectedImageNames.add(imagePaths.get(position));
+                    }
+                }
+            }
+        }
+
+        return  selectedImageNames;
+    }
+
+    private void deleteAllonParse(ArrayList<String> picNamesByPosition) {
+        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+        parseQuery.whereContainedIn("photo", picNamesByPosition);
+
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> imagesList, ParseException e) {
+                if (e == null) {
+                    if (imagesList.size() > 0) {
+                        deleteAllonLocal(imagesList);
+                        for(ParseObject po : imagesList) {
+                            po.deleteInBackground();
+                        }
+
+                       sendBroadcastMessage(FullImageActivity.ACTION_DELETED);
+                    }
+                } else {
+                    Log.e("formalchat", "Delete command: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void deleteAllonLocal(List<ParseObject> selectedItems) {
+        File dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
+
+        for(ParseObject po : selectedItems) {
+            String fileName = getShortImageNameFromUri(((ParseFile) po.get("photo")).getName());
+            File file = new File(dir, fileName);
+            if(file.exists()) {
+                file.delete();
+            }
         }
     }
 
@@ -267,6 +351,15 @@ public class ProfileGallery extends DrawerActivity {
         public void onReceive(Context context, Intent intent) {
             if (isNetworkAvailable()) {
                 populateResourcesFromParse();
+            }
+        }
+    };
+
+    private BroadcastReceiver onNoticeDeleteAllPictures = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isNetworkAvailable()) {
+                showOptionFromMenu(R.id.delete_all);
             }
         }
     };
@@ -336,5 +429,18 @@ public class ProfileGallery extends DrawerActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public String getParseImgNameFromUri(String name) {
+        return name.substring(name.lastIndexOf("/")+1);
+    }
+
+    public String getShortImageNameFromUri(String name) {
+        return name.substring(name.lastIndexOf("-")+1);
+    }
+
+    private void sendBroadcastMessage(String action) {
+        Intent sender = new Intent(action);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(sender);
     }
 }
