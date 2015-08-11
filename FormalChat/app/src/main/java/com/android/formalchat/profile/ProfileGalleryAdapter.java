@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,16 +148,75 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
 
-    private void addImageOnClickListener(ImageView img, final int position) {
+    private void addImageOnClickListener(ImageView img, final ImageView multiselectIcon, final int position) {
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(context, FullImageActivity.class);
-                i.putExtra("url", images.get(position));
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
+                if (atLeastOnePicSelected) {
+                    if (isPositionSelected(position)) {
+                        unselectImage(multiselectIcon, position);
+                    }
+                } else {
+                    openOnFullScreen(position);
+                }
             }
         });
+    }
+
+    private void addImageOnLongClickListener(ImageView img, final ImageView multiSelectIcon, final int position) {
+        img.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                multiSelectIcon.setVisibility(View.VISIBLE);
+                selectedItems.add(position);
+                if (!atLeastOnePicSelected) {
+                    atLeastOnePicSelected = true;
+                    sendUpdateMessageToMenu();
+                }
+                return true;
+            }
+        });
+    }
+
+    private boolean isPositionSelected(int position) {
+        if(selectedItems.contains(position)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void unselectImage(ImageView multiselectIcon, int position) {
+        multiselectIcon.setVisibility(View.GONE);
+        removeFromSelected(position);
+    }
+
+    private void removeFromSelected(int position) {
+        Log.v("formalchat", "selectedItems : " + selectedItems);
+        Log.v("formalchat", "position : " + position);
+
+        for(int i = 0; i < selectedItems.size(); i++) {
+            if(selectedItems.get(i) == position) {
+                selectedItems.remove(i);
+            }
+        }
+
+        if(selectedItems.size() == 0) {
+            hideDeleteFromMenu();
+        }
+
+        Log.v("formalchat", "selectedItems AFTER: " + selectedItems);
+    }
+
+    private void hideDeleteFromMenu() {
+        atLeastOnePicSelected = false;
+        sendUpdateMessageToMenu();
+    }
+
+    private void openOnFullScreen(int position) {
+        Intent i = new Intent(context, FullImageActivity.class);
+        i.putExtra("url", images.get(position));
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
     }
 
     private void populateImages(ImageView img, final ImageView multiSelectionIcon, final ProgressBar progressBar, final int position) {
@@ -236,7 +296,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                         imageHeight / 4).into(img, new Callback() {
                     @Override
                     public void onSuccess() {
-                        addImageOnClickListener(img, position);
+                        addImageOnClickListener(img, multiSelectIcon, position);
                         addImageOnLongClickListener(img, multiSelectIcon, position);
 
                         img.setVisibility(View.VISIBLE);
@@ -252,23 +312,9 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         }
     }
 
-    private void addImageOnLongClickListener(ImageView img, final ImageView multiSelectIcon, final int position) {
-        img.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                multiSelectIcon.setVisibility(View.VISIBLE);
-                selectedItems.add(position);
-                if(!atLeastOnePicSelected) {
-                    sendUpdateMessageToMenu();
-                    atLeastOnePicSelected = true;
-                }
-                return true;
-            }
-        });
-    }
-
     private void sendUpdateMessageToMenu() {
         Intent intent = new Intent(ACTION_DELETE_ALL);
+        intent.putExtra("showDeleteAll", atLeastOnePicSelected);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

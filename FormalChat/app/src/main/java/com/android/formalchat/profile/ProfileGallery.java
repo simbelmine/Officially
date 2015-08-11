@@ -359,7 +359,14 @@ public class ProfileGallery extends DrawerActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (isNetworkAvailable()) {
-                showOptionFromMenu(R.id.delete_all);
+                if(intent.hasExtra("showDeleteAll")) {
+                    if(intent.getBooleanExtra("showDeleteAll", false)) {
+                        showOptionFromMenu(R.id.delete_all);
+                    }
+                    else {
+                        hideOptionFromMenu(R.id.delete_all);
+                    }
+                }
             }
         }
     };
