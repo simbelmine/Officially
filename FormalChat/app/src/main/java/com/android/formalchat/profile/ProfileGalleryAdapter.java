@@ -69,6 +69,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private ParseUser user;
     private ArrayList<Integer> selectedItems;
     private boolean atLeastOnePicSelected;
+    private ViewHolder viewHolder;
 
     public ProfileGalleryAdapter(Activity activity, Context context, List<String> paths, ParseUser user) {
         this.activity = activity;
@@ -118,8 +119,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         //**** To Do: Recycle grid views DOESN'T work ****//
         // *************************//
 
-        final ViewHolder viewHolder;
-
         if(convertView == null) {
             viewHolder = new ViewHolder();
 
@@ -137,7 +136,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         viewHolder.img = (ImageView) convertView.findViewById(R.id.image);
         viewHolder.multiSelectIcon = (ImageView) convertView.findViewById(R.id.multi_select_icon);
 
-        populateImages(viewHolder.img, viewHolder.multiSelectIcon, viewHolder.progressBar, position);
+        populateImages(viewHolder.img, viewHolder.multiSelectIcon, position);
 
         return convertView;
     }
@@ -216,20 +215,20 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         context.startActivity(i);
     }
 
-    private void populateImages(ImageView img, final ImageView multiSelectionIcon, final ProgressBar progressBar, final int position) {
+    private void populateImages(ImageView img, final ImageView multiSelectionIcon, final int position) {
         if (isVideo(position)) {
             downloadVideoIfNotExists();
-            reCreateImageView(img, progressBar);
+            loadVideoImage(img);
             setVideoImgOnClickListener(img, position);
-//            progressBar.setVisibility(View.GONE);
-
-        } else {
+        }
+        else {
             String thumbnailPath = getImageThumbnailPath(images.get(position));
 
             if (thumbnailPath != null) {
-                loadPictureToGrid(img, multiSelectionIcon, position, thumbnailPath, progressBar);
-            } else {
-                downloadPictureBeforeLoadToGrid(img, multiSelectionIcon, position, thumbnailPath, progressBar);
+                loadPictureToGrid(img, multiSelectionIcon, position, thumbnailPath);
+            }
+            else {
+                downloadPictureBeforeLoadToGrid(img, multiSelectionIcon, position, thumbnailPath);
             }
 
             showSelectionIconIfSelected(multiSelectionIcon, position);
@@ -245,7 +244,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         }
     }
 
-    private void downloadPictureBeforeLoadToGrid(final ImageView img, final ImageView multiSelectionIcon, final int position, final String thumbnailPath, final ProgressBar progressBar) {
+    private void downloadPictureBeforeLoadToGrid(final ImageView img, final ImageView multiSelectionIcon, final int position, final String thumbnailPath) {
         ParseQuery<ParseObject> query = new ParseQuery<>("UserImages");
         query.whereEqualTo("userName", user.getUsername());
         query.whereEqualTo("photo", getLongerImageNameFromUri(images.get(position)));
@@ -258,7 +257,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                         @Override
                         public void done(byte[] bytes, ParseException e) {
                             saveImageToLocal(bytes, position);
-                            loadPictureToGrid(img, multiSelectionIcon, position, thumbnailPath, progressBar);
+                            loadPictureToGrid(img, multiSelectionIcon, position, thumbnailPath);
                         }
                     });
                 }
@@ -281,13 +280,14 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     }
 
-    private void loadPictureToGrid(final ImageView img, final ImageView multiSelectIcon, final int position, String thumbnailPath, final ProgressBar progressBar) {
+    private void loadPictureToGrid(final ImageView img, final ImageView multiSelectIcon, final int position, String thumbnailPath) {
         if(getBitmapFactoryOptions(thumbnailPath) != null) {
             int imageHeight = getBitmapFactoryOptions(thumbnailPath).outHeight;
             int imageWidth = getBitmapFactoryOptions(thumbnailPath).outWidth;
 
             if (imageHeight > 0 && imageWidth > 0) {
 
+                viewHolder.progressBar.setVisibility(View.GONE);
                 Picasso.with(context).load("file://" + thumbnailPath).resize(imageWidth / 4,
                         imageHeight / 4).into(img, new Callback() {
                     @Override
@@ -296,7 +296,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                         addImageOnLongClickListener(img, multiSelectIcon, position);
 
                         img.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -457,7 +456,26 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         context.startService(intent);
     }
 
-    private void reCreateImageView(ImageView imageView, ProgressBar progressBar) {
+    private void loadVideoImage(ImageView imageView) {
+
+
+//        imageView.setImageBitmap(thumbnail);
+//        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
+
+        if(isVideoThumbnailExistsLocal()) {
+            recreateImageView(imageView);
+            Picasso.with(context).load("file://" + dir + filePath + videoThumbName).into(imageView);
+            viewHolder.progressBar.setVisibility(View.GONE);
+        }
+        else {
+            if(user != null) {
+                new saveVideoThumbnailToLocal(imageView).execute();
+            }
+        }
+//        Picasso.with(context).load(R.drawable.play_gimp).into(imageView);
+    }
+
+    private void recreateImageView(ImageView imageView) {
         float gallery_item_h = context.getResources().getDimension(R.dimen.gallery_item_h);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -465,29 +483,15 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setVisibility(View.VISIBLE);
-  
-//        imageView.setImageBitmap(thumbnail);
-//        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
-
-        if(isVideoThumbnailExistsLocal()) {
-            Picasso.with(context).load("file://" + dir + filePath + videoThumbName).into(imageView);
-            progressBar.setVisibility(View.GONE);
-        }
-        else {
-            if(user != null) {
-                new saveVideoThumbnailToLocal(imageView, progressBar).execute();
-            }
-        }
-//        Picasso.with(context).load(R.drawable.play_gimp).into(imageView);
     }
+
 
     public class saveVideoThumbnailToLocal extends AsyncTask<String, Integer, Integer>
     {
         ImageView imageView;
-        ProgressBar progressBar;
-        public saveVideoThumbnailToLocal(ImageView imageView, ProgressBar progressBar) {
+
+        public saveVideoThumbnailToLocal(ImageView imageView) {
             this.imageView = imageView;
-            this.progressBar = progressBar;
         }
 
         @Override
@@ -510,17 +514,23 @@ public class ProfileGalleryAdapter extends BaseAdapter {
                             FileOutputStream fos = new FileOutputStream(thumb);
                             overlayedBitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
                             fos.close();
-
-                            Picasso.with(context).load("file://" + filePath + videoThumbName).into(imageView);
-                            progressBar.setVisibility(View.GONE);
-
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
                     }
                 });
             }
-            return null;
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if(result == 1) {
+                recreateImageView(imageView);
+                Picasso.with(context).load("file://" + filePath + videoThumbName).into(imageView);
+                viewHolder.progressBar.setVisibility(View.GONE);
+                notifyDataSetChanged();
+            }
         }
     }
 
