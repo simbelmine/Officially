@@ -19,7 +19,9 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +33,7 @@ import java.util.Collection;
 public class VideoUploadService extends IntentService {
     public static final String ACTION = "VideoUpload";
     private static final int ID = 1;
+    private static final String VIDEO_THUMB_NAME = "thumbnail_video.jpg";
     private NotificationManager notificationManager;
     private NotificationCompat.Builder notificationBuilder;
     private String destinationFolder;
@@ -45,12 +48,16 @@ public class VideoUploadService extends IntentService {
         destinationFolder = intent.getStringExtra("destinationFolder");
         out_videoName = intent.getStringExtra("out_videoName");
 
-        File videoFile = getVideoFile(destinationFolder);
-        saveVideoToParse(videoFile, out_videoName);
+        File videoFile = getVideoFile(destinationFolder, "out");
+        File thumbnailFile = getVideoFile(destinationFolder, "thumbnail");
+        saveVideoToParse(videoFile, thumbnailFile, out_videoName);
     }
 
-    private File getVideoFile(String destinationFolder) {
-        Collection<File> files =  FileUtils.listFiles(new File(destinationFolder), new PrefixFileFilter("out"), null);
+    private File getVideoFile(String destinationFolder, String prefix) {
+        Collection<File> files =  FileUtils.listFiles(new File(destinationFolder), new PrefixFileFilter(prefix), null);
+
+        Log.v("formalchat", "get File result = " + files);
+
         if(files.size() != 0) {
             return (File)files.toArray()[0];
         }
@@ -58,27 +65,36 @@ public class VideoUploadService extends IntentService {
         return null;
     }
 
-    private void saveVideoToParse(File videoFile, String videoName) {
+    private void saveVideoToParse(File videoFile, File thumbnailFile, String videoName) {
         ParseUser user = ParseUser.getCurrentUser();
-        try {
-            byte[] data = FileUtils.readFileToByteArray(videoFile); //Convert any file, image or video into byte array
-            ParseFile parseFile = new ParseFile(videoName, data);
+        ParseFile videoParseFile = createParseFile(videoFile, videoName);
+        ParseFile thumbnailParseFile = createParseFile(thumbnailFile, VIDEO_THUMB_NAME);
 
-            if(isNetworkAvailable()) {
-                saveInBackground(user, parseFile);
-            }
-            else {
-                showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning, R.drawable.upload_icon_wrong);
-            }
-
-        } catch (IOException e) {
-            Log.e("formalchat", e.getMessage());
+        if(isNetworkAvailable()) {
+            saveInBackground(user, videoParseFile, thumbnailParseFile);
+        }
+        else {
+            showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning, R.drawable.upload_icon_wrong);
         }
     }
 
-    private void saveInBackground(ParseUser user, ParseFile parseFile) {
+    private ParseFile createParseFile(File file, String name) {
+        try {
+            byte[] data = FileUtils.readFileToByteArray(file); //Convert any file, image or video into byte array
+            ParseFile parseFile = new ParseFile(name, data);
+            return parseFile;
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private void saveInBackground(ParseUser user, ParseFile parseFile, ParseFile thumbnailParseFile) {
         Log.v("formalchat", "saveInBackground...");
         user.put("video", parseFile);
+        user.put("video_thumbnail", thumbnailParseFile);
         user.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

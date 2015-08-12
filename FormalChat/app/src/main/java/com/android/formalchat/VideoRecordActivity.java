@@ -2,17 +2,29 @@ package com.android.formalchat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.netcompss.ffmpeg4android.CommandValidationException;
 import com.netcompss.ffmpeg4android.GeneralUtils;
+import com.netcompss.ffmpeg4android.Prefs;
+import com.netcompss.loader.LoadJNI;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -22,7 +34,18 @@ import java.util.Date;
 public class VideoRecordActivity extends Activity implements View.OnClickListener{
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     private static final String VIDEO_EXTENSION = ".mp4";
+    private static final String VIDEO_OUT_FOLDER = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/";
+    private static final String VIDEO_OUT_NAME = "out_VID_intro.mp4";
+    private static final String VIDEO_OUT_FILE_PATH = VIDEO_OUT_FOLDER + VIDEO_OUT_NAME;
     private Button startRecordingBtn;
+
+
+    String workFolder = null;
+    String initialVideoFolder = null;
+    String initialVideoPath = null;
+    String initialVideoPathOut = null;
+    String vkLogPath = null;
+    private boolean commandValidationFailedFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +53,29 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
         setContentView(R.layout.video_record_layout);
 
         init();
+        initVideoUtils();
         setOnclickListeners();
     }
 
     private void init() {
         startRecordingBtn = (Button) findViewById(R.id.start_record_video_btn);
+    }
+
+    private void initVideoUtils() {
+        initialVideoFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/videokit/";
+        initialVideoPath = initialVideoFolder + "in" + VIDEO_EXTENSION;
+        initialVideoPathOut = initialVideoFolder + "out" + VIDEO_EXTENSION;
+
+        Log.i(Prefs.TAG, getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
+        workFolder = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
+        Log.i(Prefs.TAG, "workFolder (license and logs location) path: " + workFolder);
+        vkLogPath = workFolder + "vk.log";
+        Log.i(Prefs.TAG, "vk log (native log) path: " + vkLogPath);
+
+        GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(this, workFolder);
+        GeneralUtils.copyDemoVideoFromAssetsToSDIfNeeded(this, initialVideoFolder);
+        int rc = GeneralUtils.isLicenseValid(getApplicationContext(), workFolder);
+        Log.i(Prefs.TAG, "License check RC: " + rc);
     }
 
     private void setOnclickListeners() {
@@ -74,13 +115,21 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
     }
 
     private void compressVideo(String startFolder, String videoName) {
-        Intent intent = new Intent(this, VideoCompressService.class);
-        intent.putExtra("destinationFolder", startFolder);
-        intent.putExtra("videoName", videoName);
+        //     GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(this, startFolder);
 
-        GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(this, startFolder);
+//        Intent intent = new Intent(this, VideoCompressService.class);
+//        intent.putExtra("destinationFolder", startFolder);
+//        intent.putExtra("videoName", videoName);
+//
+//        startService(intent);
 
-        startService(intent);
+        Log.i(Prefs.TAG, "run clicked.");
+        if (GeneralUtils.checkIfFileExistAndNotEmpty(initialVideoPath)) {
+            new TranscdingBackground(this).execute();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), initialVideoPath + " not found", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void dispatchTakeVideoIntent() {
@@ -103,11 +152,158 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
         }
         // Create a media file name
         String videoName = "VID_intro";
-        File mediaFile = new File(root, videoName + VIDEO_EXTENSION);
+        //File mediaFile = new File(root, videoName + VIDEO_EXTENSION);
+        File mediaFile = new File(initialVideoPath);
         return mediaFile;
     }
 
     private static String getTimeStamp() {
         return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    }
+
+
+    public class TranscdingBackground extends AsyncTask<String, Integer, Integer>
+    {
+        Activity _act;
+
+        public TranscdingBackground (Activity act) {
+            _act = act;
+        }
+
+        protected Integer doInBackground(String... paths) {
+            Log.i(Prefs.TAG, "doInBackground started...");
+
+            // delete previous log
+            GeneralUtils.deleteFileUtil(workFolder + "/vk.log");
+
+            PowerManager powerManager = (PowerManager)_act.getSystemService(Activity.POWER_SERVICE);
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VK_LOCK");
+            Log.d(Prefs.TAG, "Acquire wake lock");
+            wakeLock.acquire();
+
+            //String commandStr = "ffmpeg -y -i /sdcard/videokit/in.mp4 -strict experimental -vf transpose=1 -s 160x120 -r 30 -aspect 4:3 -ab 48000 -ac 2 -ar 22050 -b 2097k /sdcard/videokit/out.mp4";
+            String commandStr = "ffmpeg -y -i " + initialVideoPath + " -strict experimental -s 320x240 -r 25 -vcodec mpeg4 -b 1000k -ab 64k -ac 2 -ar 22050 " + initialVideoPathOut;
+
+
+            ///////////// Set Command using code (overriding the UI EditText) /////
+            //String commandStr = "ffmpeg -y -i /sdcard/videokit/in.mp4 -strict experimental -s 320x240 -r 30 -aspect 3:4 -ab 48000 -ac 2 -ar 22050 -vcodec mpeg4 -b 2097152 /sdcard/videokit/out.mp4";
+            //String[] complexCommand = {"ffmpeg", "-y" ,"-i", "/sdcard/videokit/in.mp4","-strict","experimental","-s", "160x120","-r","25", "-vcodec", "mpeg4", "-b", "150k", "-ab","48000", "-ac", "2", "-ar", "22050", "/sdcard/videokit/out.mp4"};
+            ///////////////////////////////////////////////////////////////////////
+
+
+            LoadJNI vk = new LoadJNI();
+            try {
+
+                //vk.run(complexCommand, workFolder, getApplicationContext());
+                vk.run(GeneralUtils.utilConvertToComplex(commandStr), workFolder, getApplicationContext());
+
+                // running without command validation
+                //vk.run(complexCommand, workFolder, getApplicationContext(), false);
+
+                // copying vk.log (internal native log) to the videokit folder
+                GeneralUtils.copyFileToFolder(vkLogPath, initialVideoFolder);
+
+            } catch (CommandValidationException e) {
+                Log.e(Prefs.TAG, "vk run exeption.", e);
+                commandValidationFailedFlag = true;
+
+            } catch (Throwable e) {
+                Log.e(Prefs.TAG, "vk run exeption.", e);
+            }
+            finally {
+                if (wakeLock.isHeld())
+                    wakeLock.release();
+                else{
+                    Log.i(Prefs.TAG, "Wake lock is already released, doing nothing");
+                }
+            }
+            Log.i(Prefs.TAG, "doInBackground finished");
+            return Integer.valueOf(0);
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        @Override
+        protected void onCancelled() {
+            Log.i(Prefs.TAG, "onCancelled");
+            //progressDialog.dismiss();
+            super.onCancelled();
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            Log.i(Prefs.TAG, "onPostExecute");
+            super.onPostExecute(result);
+
+            // finished Toast
+            String rc = null;
+            if (commandValidationFailedFlag) {
+                rc = "Command Vaidation Failed";
+            }
+            else {
+                rc = GeneralUtils.getReturnCodeFromLog(vkLogPath);
+            }
+            final String status = rc;
+
+
+            Log.v("formalchat", "STATUS = " + status);
+            if(status.equals("Transcoding Status: Finished OK")) {
+                moveOutVideoToProjectDir();
+                deleteOldFile();
+
+                createVideoThumbnail();
+                startUploadService();
+            }
+        }
+    }
+
+    private void moveOutVideoToProjectDir() {
+        if(new File(initialVideoPath).exists()) {
+            try {
+                File sourceFile = new File(initialVideoPathOut);
+                File destinationFile = new File(VIDEO_OUT_FILE_PATH);
+                FileUtils.copyFile(sourceFile, destinationFile);
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void deleteOldFile() {
+        if(new File(initialVideoPath).exists()) {
+            new File(initialVideoFolder + "out.mp4").delete();
+        }
+    }
+
+    private void createVideoThumbnail() {
+        if(new File(VIDEO_OUT_FILE_PATH).exists()) {
+            File videoThumbnailFile = new File(VIDEO_OUT_FOLDER, "thumbnail_video.jpg");
+            Bitmap thumb = ThumbnailUtils.createVideoThumbnail(VIDEO_OUT_FILE_PATH,
+                    MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+
+            saveThumbnailToLocal(videoThumbnailFile, thumb);
+        }
+    }
+
+    private void saveThumbnailToLocal(File videoThumbnailFile, Bitmap thumb) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(videoThumbnailFile);
+            thumb.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void startUploadService() {
+        Intent intent = new Intent(VideoRecordActivity.this, VideoUploadService.class);
+        intent.putExtra("destinationFolder", VIDEO_OUT_FOLDER);
+        intent.putExtra("out_videoName", VIDEO_OUT_NAME);
+        startService(intent);
     }
 }

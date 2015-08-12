@@ -3,9 +3,14 @@ package com.android.formalchat;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.PowerManager;
+import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -26,7 +32,6 @@ import java.util.Collection;
  * Created by Sve on 4/13/15.
  */
 public class VideoCompressService extends IntentService {
-
     private String ffmpeg_workFolder = null;
     private String vkLogPath = null;
     private boolean commandValidationFailedFlag = false;
@@ -57,7 +62,7 @@ public class VideoCompressService extends IntentService {
 //        Log.i("formalchat", "vk log (native log) path: " + vkLogPath);
 
 //        GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(activity, workFolder);
-//        GeneralUtils.copyDemoVideoFromAssetsToSDIfNeeded(activity, demoVideoFolder);
+//        GeneralUtils.copyDemoVideoFromAssetsToSDIfNeeded(activity, initialVideoFolder);
 
         //workFolder = destinationFolder;
         //vkLogPath = workFolder + "vk.log";
@@ -73,7 +78,7 @@ public class VideoCompressService extends IntentService {
             Toast.makeText(getApplicationContext(), destinationFolder + " not found", Toast.LENGTH_LONG).show();
         }
 
-        int rc = GeneralUtils.isLicenseValid(getApplicationContext(), getApplicationContext().getFilesDir() + "/");
+        int rc = GeneralUtils.isLicenseValid(getApplicationContext(), ffmpeg_workFolder);
         Log.i("formalchat", "License check RC: " + rc);
     }
 
@@ -121,6 +126,8 @@ public class VideoCompressService extends IntentService {
                 //vk.run(complexCommand, workFolder, getApplicationContext(), false);
 
                 // copying vk.log (internal native log) to the videokit folder
+//                GeneralUtils.copyFileToFolder(vkLogPath, destinationFolder);
+
                 GeneralUtils.copyFileToFolder(vkLogPath, destinationFolder);
 
             } catch (CommandValidationException e) {
@@ -156,6 +163,7 @@ public class VideoCompressService extends IntentService {
             Log.i("formalchat", "onPostExecute");
             super.onPostExecute(result);
 
+            Log.e("formalchat", "onPostExecute result = " + result);
             // finished Toast
             String rc = null;
             if (commandValidationFailedFlag) {
@@ -176,6 +184,7 @@ public class VideoCompressService extends IntentService {
                 //Toast.makeText(VideoCompressService.this, status, Toast.LENGTH_LONG).show();
 //                Toast.makeText(VideoCompressService.this, "Your Video will appear shortly on your wall.", Toast.LENGTH_LONG).show();
 
+                createVideoThumbnail();
                 startUploadService(destinationFolder, out_videoName);
 
 //                File videoFile = getVideoFile(destinationFolder);
@@ -191,4 +200,26 @@ public class VideoCompressService extends IntentService {
         }
     }
 
+    private void createVideoThumbnail() {
+        if(new File(destinationVideoPathOut).exists()) {
+            File videoThumbnailFile = new File(destinationFolder, "video_thumbnail.jpg");
+            Bitmap thumb = ThumbnailUtils.createVideoThumbnail(destinationVideoPathOut,
+                    MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+
+            saveThumbnailToLocal(videoThumbnailFile, thumb);
+        }
+    }
+
+    private void saveThumbnailToLocal(File videoThumbnailFile, Bitmap thumb) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(videoThumbnailFile);
+            thumb.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
 }

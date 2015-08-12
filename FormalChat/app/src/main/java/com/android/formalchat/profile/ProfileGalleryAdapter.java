@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
@@ -57,6 +58,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     public static final String ACTION_DELETE_ALL = "DeleteAllGalleryPics";
     private File dir = Environment.getExternalStorageDirectory();
     private String filePath = "/.formal_chat/";
+    private String videoThumbName = "thumbnail_video.jpg";
     private String fileName;
     private File tmpFile;
     private ParseFile videoFile;
@@ -191,9 +193,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     }
 
     private void removeFromSelected(int position) {
-        Log.v("formalchat", "selectedItems : " + selectedItems);
-        Log.v("formalchat", "position : " + position);
-
         for(int i = 0; i < selectedItems.size(); i++) {
             if(selectedItems.get(i) == position) {
                 selectedItems.remove(i);
@@ -203,8 +202,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         if(selectedItems.size() == 0) {
             hideDeleteFromMenu();
         }
-
-        Log.v("formalchat", "selectedItems AFTER: " + selectedItems);
     }
 
     private void hideDeleteFromMenu() {
@@ -221,11 +218,10 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     private void populateImages(ImageView img, final ImageView multiSelectionIcon, final ProgressBar progressBar, final int position) {
         if (isVideo(position)) {
-
             downloadVideoIfNotExists();
-            reCreateImageView(img);
+            reCreateImageView(img, progressBar);
             setVideoImgOnClickListener(img, position);
-            progressBar.setVisibility(View.GONE);
+//            progressBar.setVisibility(View.GONE);
 
         } else {
             String thumbnailPath = getImageThumbnailPath(images.get(position));
@@ -372,7 +368,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             if (!tmpFile.exists()) {
                 startVideoDownloadService();
             } else {
-                thumbnail = getVideoThumbnail();
+               // thumbnail = getVideoThumbnail();
             }
         }
     }
@@ -461,7 +457,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         context.startService(intent);
     }
 
-    private void reCreateImageView(ImageView imageView) {
+    private void reCreateImageView(ImageView imageView, ProgressBar progressBar) {
         float gallery_item_h = context.getResources().getDimension(R.dimen.gallery_item_h);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -469,10 +465,72 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setVisibility(View.VISIBLE);
+  
 //        imageView.setImageBitmap(thumbnail);
 //        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
 
-        Picasso.with(context).load(R.drawable.play_gimp).into(imageView);
+        if(isVideoThumbnailExistsLocal()) {
+            Picasso.with(context).load("file://" + dir + filePath + videoThumbName).into(imageView);
+            progressBar.setVisibility(View.GONE);
+        }
+        else {
+            if(user != null) {
+                new saveVideoThumbnailToLocal(imageView, progressBar).execute();
+            }
+        }
+//        Picasso.with(context).load(R.drawable.play_gimp).into(imageView);
+    }
+
+    public class saveVideoThumbnailToLocal extends AsyncTask<String, Integer, Integer>
+    {
+        ImageView imageView;
+        ProgressBar progressBar;
+        public saveVideoThumbnailToLocal(ImageView imageView, ProgressBar progressBar) {
+            this.imageView = imageView;
+            this.progressBar = progressBar;
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            final File thumb = new File(dir, filePath + videoThumbName);
+            if (!thumb.exists()) {
+                ((ParseFile) user.get("video_thumbnail")).getDataInBackground(new GetDataCallback() {
+                    @Override
+                    public void done(byte[] bytes, ParseException e) {
+                        try {
+                            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(thumb));
+                            bos.write(bytes);
+                            bos.flush();
+                            bos.close();
+
+                            Bitmap playImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_g_);
+                            Bitmap thumbBitmap = BitmapFactory.decodeFile(thumb.getAbsolutePath());
+                            Bitmap overlayedBitmap = overlayThumbnailWithPlayIcon(thumbBitmap, playImage);
+
+                            FileOutputStream fos = new FileOutputStream(thumb);
+                            overlayedBitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
+                            fos.close();
+
+                            Picasso.with(context).load("file://" + filePath + videoThumbName).into(imageView);
+                            progressBar.setVisibility(View.GONE);
+
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+            }
+            return null;
+        }
+    }
+
+
+    private boolean isVideoThumbnailExistsLocal() {
+        if(new File(dir, filePath + videoThumbName).exists()) {
+            return true;
+        }
+
+        return false;
     }
 
     private void setVideoImgOnClickListener(ImageView imageView, final int position) {
