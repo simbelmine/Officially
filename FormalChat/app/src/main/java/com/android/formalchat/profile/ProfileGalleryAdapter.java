@@ -14,7 +14,6 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,6 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedOutputStream;
@@ -69,7 +67,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private ParseUser user;
     private ArrayList<Integer> selectedItems;
     private boolean atLeastOnePicSelected;
-    private ViewHolder viewHolder;
+    private ProgressBar progressBar;
 
     public ProfileGalleryAdapter(Activity activity, Context context, List<String> paths, ParseUser user) {
         this.activity = activity;
@@ -119,6 +117,8 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         //**** To Do: Recycle grid views DOESN'T work ****//
         // *************************//
 
+        ViewHolder viewHolder;
+
         if(convertView == null) {
             viewHolder = new ViewHolder();
 
@@ -131,12 +131,14 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         }
 
         viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
-        viewHolder.progressBar.setVisibility(View.VISIBLE);
+        this.progressBar = viewHolder.progressBar;
+        progressBar.setVisibility(View.VISIBLE);
         viewHolder.videoView = (VideoView) convertView.findViewById(R.id.video);
         viewHolder.img = (ImageView) convertView.findViewById(R.id.image);
         viewHolder.multiSelectIcon = (ImageView) convertView.findViewById(R.id.multi_select_icon);
 
-        populateImages(viewHolder.img, viewHolder.multiSelectIcon, position);
+        showSelectionIconIfSelected(viewHolder.multiSelectIcon, position);
+        loadPictureToGrid(viewHolder.img, viewHolder.multiSelectIcon, position);
 
         return convertView;
     }
@@ -215,26 +217,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         context.startActivity(i);
     }
 
-    private void populateImages(ImageView img, final ImageView multiSelectionIcon, final int position) {
-        if (isVideo(position)) {
-            downloadVideoIfNotExists();
-            loadVideoImage(img);
-            setVideoImgOnClickListener(img, position);
-        }
-        else {
-            String thumbnailPath = getImageThumbnailPath(images.get(position));
-
-            if (thumbnailPath != null) {
-                loadPictureToGrid(img, multiSelectionIcon, position, thumbnailPath);
-            }
-            else {
-                downloadPictureBeforeLoadToGrid(img, multiSelectionIcon, position, thumbnailPath);
-            }
-
-            showSelectionIconIfSelected(multiSelectionIcon, position);
-
-        }
-    }
 
     private void showSelectionIconIfSelected(ImageView multiSelectionIcon, int position) {
         if (selectedItems.contains(position)) {
@@ -244,29 +226,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         }
     }
 
-    private void downloadPictureBeforeLoadToGrid(final ImageView img, final ImageView multiSelectionIcon, final int position, final String thumbnailPath) {
-        ParseQuery<ParseObject> query = new ParseQuery<>("UserImages");
-        query.whereEqualTo("userName", user.getUsername());
-        query.whereEqualTo("photo", getLongerImageNameFromUri(images.get(position)));
-        query.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                if (e == null && parseObject != null) {
-                    ParseFile imageFile = parseObject.getParseFile("photo");
-                    imageFile.getDataInBackground(new GetDataCallback() {
-                        @Override
-                        public void done(byte[] bytes, ParseException e) {
-                            saveImageToLocal(bytes, position);
-                            loadPictureToGrid(img, multiSelectionIcon, position, thumbnailPath);
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private void saveImageToLocal(byte[] fileBytes, int position) {
-        String shortName = getShortImageNameFromUri(images.get(position));
+    private void saveImageToLocal(byte[] fileBytes, String shortName) {
         File file = new File(dir, filePath + shortName);
         try {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
@@ -280,30 +240,44 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     }
 
-    private void loadPictureToGrid(final ImageView img, final ImageView multiSelectIcon, final int position, String thumbnailPath) {
-        if(getBitmapFactoryOptions(thumbnailPath) != null) {
-            int imageHeight = getBitmapFactoryOptions(thumbnailPath).outHeight;
-            int imageWidth = getBitmapFactoryOptions(thumbnailPath).outWidth;
+//    22:18:45.828  26631-27583/com.android.formalchat E/pix﹕ 1920 1080 2073600
+//            08-12 22:18:47.767  26631-27583/com.android.formalchat E/pix﹕ 1920 1080 2073600
 
-            if (imageHeight > 0 && imageWidth > 0) {
+    private void loadPictureToGrid(final ImageView img, final ImageView multiSelectIcon, final int position) {
+//        if(getAfterLastSlashUriName(thumbnailPath).equals(videoThumbName)){
+        if(getShortImageNameFromUri(images.get(position)).equals(videoThumbName)){
+            img.setVisibility(View.VISIBLE);
+            setVideoImgOnClickListener(img, position);
+//            Picasso.with(context).load("file://" + thumbnailPath).into(img);
+            Picasso.with(context).load(images.get(position))
+                    .into(img);
+            progressBar.setVisibility(View.GONE);
+        }
+        else {
+//            if (getBitmapFactoryOptions(thumbnailPath) != null) {
+//                BitmapFactory.Options options = getBitmapFactoryOptions(thumbnailPath);
+//                int imageHeight = options.outHeight;
+//                int imageWidth = options.outWidth;
+//
+//                if (imageHeight > 0 && imageWidth > 0) {
 
-                viewHolder.progressBar.setVisibility(View.GONE);
-                Picasso.with(context).load("file://" + thumbnailPath).resize(imageWidth / 4,
-                        imageHeight / 4).into(img, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        addImageOnClickListener(img, multiSelectIcon, position);
-                        addImageOnLongClickListener(img, multiSelectIcon, position);
+            addImageOnClickListener(img, multiSelectIcon, position);
+            addImageOnLongClickListener(img, multiSelectIcon, position);
+//                    Picasso.with(context).load("file://" + thumbnailPath)
+//                            //.resize(imageWidth / 4, imageHeight / 4)
+//                            .resize(20, 20)
+//                            .into(img);
 
-                        img.setVisibility(View.VISIBLE);
-                    }
 
-                    @Override
-                    public void onError() {
+            Picasso.with(context).load(images.get(position))
+                    //.resize(imageWidth / 4, imageHeight / 4)
+                    .resize(200, 200)
+                    .into(img);
 
-                    }
-                });
-            }
+
+            progressBar.setVisibility(View.GONE);
+//                }
+//            }
         }
     }
 
@@ -321,26 +295,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             return options;
         }
         return null;
-    }
-
-    private String getImageThumbnailPath(String path) {
-        String shortName = getShortImageNameFromUri(path);
-        File tmpFile = new File(dir, filePath + shortName);
-        if (tmpFile.exists()) {
-            return tmpFile.getAbsolutePath();
-        }
-
-        return null;
-    }
-
-    private boolean isVideo(int position) {
-        String path = images.get(position);
-        String extension = getExtention(path);
-
-        if(OUT_VID_EXTENSION.equals(extension)) {
-            return true;
-        }
-        return false;
     }
 
     private String getExtention(String path) {
@@ -367,7 +321,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             if (!tmpFile.exists()) {
                 startVideoDownloadService();
             } else {
-               // thumbnail = getVideoThumbnail();
+                // thumbnail = getVideoThumbnail();
             }
         }
     }
@@ -377,45 +331,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         if (!targetFolder.exists()) {
             targetFolder.mkdir();
         }
-    }
-
-    private Bitmap getVideoThumbnail() {
-        createTargetFolderIfNotExists();
-
-        File videoThumbnail = new File(dir, filePath + "video_thumbnail.jpg");
-        if(videoThumbnail.exists()) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap = BitmapFactory.decodeFile(videoThumbnail.getAbsolutePath(), options);
-            return bitmap;
-        }
-        else {
-            Bitmap thumb = ThumbnailUtils.createVideoThumbnail(videoUri.getPath(),
-                    MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
-            Bitmap playImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_g_);
-
-            return overlayThumbnailWithPlayIcon(thumb, playImage);
-        }
-    }
-
-    private String getVideoThumbnailPath(Bitmap videoThumbnail) {
-        createTargetFolderIfNotExists();
-
-        File thumb = new File(dir, filePath + "video_thumbnail.jpg");
-        try {
-            if (!thumb.exists()) {
-                FileOutputStream outStream = new FileOutputStream(thumb);
-                videoThumbnail.compress(Bitmap.CompressFormat.PNG, 0, outStream);
-                outStream.close();
-            }
-
-            return thumb.getAbsolutePath();
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
     }
 
     private Bitmap overlayThumbnailWithPlayIcon(Bitmap thumb, Bitmap playImage) {
@@ -434,7 +349,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     private Bitmap compressBitmapImg(Bitmap bitmapImg) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmapImg.compress(Bitmap.CompressFormat.PNG, 90, outputStream);
+        bitmapImg.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
         byte[] imageArray = outputStream.toByteArray();
 
         return BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
@@ -444,7 +359,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         return url.substring(url.lastIndexOf("-") + 1);
     }
 
-    public String getLongerImageNameFromUri(String url) {
+    public String getAfterLastSlashUriName(String url) {
         return url.substring(url.lastIndexOf("/")+1);
     }
 
@@ -454,93 +369,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         intent.putExtra(VideoDownloadService.FILEPATH, filePath);
 
         context.startService(intent);
-    }
-
-    private void loadVideoImage(ImageView imageView) {
-
-
-//        imageView.setImageBitmap(thumbnail);
-//        Picasso.with(context).load("file://"+getVideoThumbnailPath(thumbnail)).into(imageView);
-
-        if(isVideoThumbnailExistsLocal()) {
-            recreateImageView(imageView);
-            Picasso.with(context).load("file://" + dir + filePath + videoThumbName).into(imageView);
-            viewHolder.progressBar.setVisibility(View.GONE);
-        }
-        else {
-            if(user != null) {
-                new saveVideoThumbnailToLocal(imageView).execute();
-            }
-        }
-//        Picasso.with(context).load(R.drawable.play_gimp).into(imageView);
-    }
-
-    private void recreateImageView(ImageView imageView) {
-        float gallery_item_h = context.getResources().getDimension(R.dimen.gallery_item_h);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                (int) gallery_item_h);
-        imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setVisibility(View.VISIBLE);
-    }
-
-
-    public class saveVideoThumbnailToLocal extends AsyncTask<String, Integer, Integer>
-    {
-        ImageView imageView;
-
-        public saveVideoThumbnailToLocal(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            final File thumb = new File(dir, filePath + videoThumbName);
-            if (!thumb.exists()) {
-                ((ParseFile) user.get("video_thumbnail")).getDataInBackground(new GetDataCallback() {
-                    @Override
-                    public void done(byte[] bytes, ParseException e) {
-                        try {
-                            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(thumb));
-                            bos.write(bytes);
-                            bos.flush();
-                            bos.close();
-
-                            Bitmap playImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_g_);
-                            Bitmap thumbBitmap = BitmapFactory.decodeFile(thumb.getAbsolutePath());
-                            Bitmap overlayedBitmap = overlayThumbnailWithPlayIcon(thumbBitmap, playImage);
-
-                            FileOutputStream fos = new FileOutputStream(thumb);
-                            overlayedBitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
-                            fos.close();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                });
-            }
-            return 1;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            if(result == 1) {
-                recreateImageView(imageView);
-                Picasso.with(context).load("file://" + filePath + videoThumbName).into(imageView);
-                viewHolder.progressBar.setVisibility(View.GONE);
-                notifyDataSetChanged();
-            }
-        }
-    }
-
-
-    private boolean isVideoThumbnailExistsLocal() {
-        if(new File(dir, filePath + videoThumbName).exists()) {
-            return true;
-        }
-
-        return false;
     }
 
     private void setVideoImgOnClickListener(ImageView imageView, final int position) {

@@ -426,7 +426,7 @@ public class ProfileGallery extends DrawerActivity {
     }
 
     private ArrayList<String> addVideoToPaths(ArrayList<String> imagesPaths) {
-        String videoPath = user.getParseFile("video").getUrl();
+        String videoPath = user.getParseFile("video_thumbnail").getUrl();
         imagesPaths.add(videoPath);
         return imagesPaths;
     }
