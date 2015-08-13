@@ -3,6 +3,9 @@ package com.android.formalchat;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,6 +25,7 @@ import com.netcompss.loader.LoadJNI;
 
 import org.apache.commons.io.FileUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -283,9 +287,34 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
             File videoThumbnailFile = new File(VIDEO_OUT_FOLDER, "thumbnail_video.jpg");
             Bitmap thumb = ThumbnailUtils.createVideoThumbnail(VIDEO_OUT_FILE_PATH,
                     MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+            Bitmap playIcon = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.play_g_white);
+            Bitmap overlayedBitmap = overlayThumbnailWithPlayIcon(thumb, playIcon);
 
-            saveThumbnailToLocal(videoThumbnailFile, thumb);
+            saveThumbnailToLocal(videoThumbnailFile, overlayedBitmap);
         }
+    }
+
+    private Bitmap overlayThumbnailWithPlayIcon(Bitmap thumb, Bitmap playImage) {
+        Bitmap overlayBmp = Bitmap.createBitmap(thumb.getWidth(), thumb.getHeight(), thumb.getConfig());
+        float columnWidth = getResources().getDimension(R.dimen.grid_column_width);
+        Bitmap play = Bitmap.createScaledBitmap(playImage, (int)columnWidth/2, (int)columnWidth/2, true);
+
+        Canvas canvas = new Canvas(overlayBmp);
+        canvas.drawBitmap(thumb, new Matrix(), null);
+        canvas.drawBitmap(play, (int) columnWidth / 2 - (play.getHeight() / 3), (int) columnWidth / 2, null);
+
+        overlayBmp = compressBitmapImg(overlayBmp);
+
+        return overlayBmp;
+    }
+
+    private Bitmap compressBitmapImg(Bitmap bitmapImg) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmapImg.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        byte[] imageArray = outputStream.toByteArray();
+
+        return BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
     }
 
     private void saveThumbnailToLocal(File videoThumbnailFile, Bitmap thumb) {

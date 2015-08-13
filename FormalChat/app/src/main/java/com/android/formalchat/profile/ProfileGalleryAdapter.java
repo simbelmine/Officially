@@ -8,17 +8,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
@@ -26,12 +22,7 @@ import android.widget.VideoView;
 import com.android.formalchat.R;
 import com.android.formalchat.VideoDownloadService;
 import com.android.formalchat.VideoShowActivity;
-import com.parse.GetCallback;
-import com.parse.GetDataCallback;
-import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
@@ -331,28 +322,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         if (!targetFolder.exists()) {
             targetFolder.mkdir();
         }
-    }
-
-    private Bitmap overlayThumbnailWithPlayIcon(Bitmap thumb, Bitmap playImage) {
-        Bitmap overlayBmp = Bitmap.createBitmap(thumb.getWidth(), thumb.getHeight(), thumb.getConfig());
-        float columnWidth = context.getResources().getDimension(R.dimen.grid_column_width);
-        Bitmap play = Bitmap.createScaledBitmap(playImage, (int)columnWidth/2, (int)columnWidth/2, true);
-
-        Canvas canvas = new Canvas(overlayBmp);
-        canvas.drawBitmap(thumb, new Matrix(), null);
-        canvas.drawBitmap(play, (int) columnWidth / 2 - (play.getHeight() / 3), (int) columnWidth / 2, null);
-
-        overlayBmp = compressBitmapImg(overlayBmp);
-
-        return overlayBmp;
-    }
-
-    private Bitmap compressBitmapImg(Bitmap bitmapImg) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmapImg.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-        byte[] imageArray = outputStream.toByteArray();
-
-        return BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
     }
 
     public String getShortImageNameFromUri(String url) {

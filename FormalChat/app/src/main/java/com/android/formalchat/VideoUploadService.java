@@ -19,9 +19,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,15 +46,13 @@ public class VideoUploadService extends IntentService {
         destinationFolder = intent.getStringExtra("destinationFolder");
         out_videoName = intent.getStringExtra("out_videoName");
 
-        File videoFile = getVideoFile(destinationFolder, "out");
-        File thumbnailFile = getVideoFile(destinationFolder, "thumbnail");
+        File videoFile = getFileFromLocal(destinationFolder, "out");
+        File thumbnailFile = getFileFromLocal(destinationFolder, "thumbnail");
         saveVideoToParse(videoFile, thumbnailFile, out_videoName);
     }
 
-    private File getVideoFile(String destinationFolder, String prefix) {
+    private File getFileFromLocal(String destinationFolder, String prefix) {
         Collection<File> files =  FileUtils.listFiles(new File(destinationFolder), new PrefixFileFilter(prefix), null);
-
-        Log.v("formalchat", "get File result = " + files);
 
         if(files.size() != 0) {
             return (File)files.toArray()[0];
@@ -101,12 +97,12 @@ public class VideoUploadService extends IntentService {
                 if (e == null) {
                     Log.v("formalchat", "saveInBackground...in...");
                     onDoneSaveTransaction();
-                }
-                else {
+                } else {
                     Log.e("formalchat", e.getMessage());
                     showVideoUploadedNotification(R.string.video_upload_notif_title, R.string.video_upload_notif_text_warning, R.drawable.upload_icon_wrong);
                     return;
                 }
+                deleteThumbnailFileFromLocal();
             }
         });
     }
@@ -147,6 +143,13 @@ public class VideoUploadService extends IntentService {
 
         if(startFolder.exists() && destinationFolder.exists()) {
             startFolder.renameTo(destinationFolder);
+        }
+    }
+
+    private void deleteThumbnailFileFromLocal() {
+        File thumbnail = new File(destinationFolder + VIDEO_THUMB_NAME);
+        if(thumbnail.exists()) {
+            thumbnail.delete();
         }
     }
 
