@@ -30,6 +30,7 @@ import com.android.formalchat.R;
 import com.android.formalchat.VideoDownloadService;
 import com.android.formalchat.VideoRecordActivity;
 import com.android.formalchat.VideoUploadService;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -266,7 +267,7 @@ public class ProfileGallery extends DrawerActivity {
     }
 
     private void deleteAllonParse(ArrayList<String> picNamesByPosition) {
-        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");
+        ParseQuery<ParseObject> parseQuery = new ParseQuery("UserImages");
         parseQuery.whereContainedIn("photo", picNamesByPosition);
 
         parseQuery.findInBackground(new FindCallback<ParseObject>() {
@@ -276,10 +277,17 @@ public class ProfileGallery extends DrawerActivity {
                     if (imagesList.size() > 0) {
                         deleteAllonLocal(imagesList);
                         for(ParseObject po : imagesList) {
-                            po.deleteInBackground();
+                            po.deleteInBackground(new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    Log.v("formalchat", "Picture has been deleted successfully");
+                                }
+                            });
                         }
 
-                       sendBroadcastMessage(FullImageActivity.ACTION_DELETED);
+                        galleryAdapter.clearSelectedItems();
+                        sendBroadcastMessage(FullImageActivity.ACTION_DELETED, null, false);
+                        sendBroadcastMessage(ProfileGalleryAdapter.ACTION_DELETE_ALL, "showDeleteAll", false);
                     }
                 } else {
                     Log.e("formalchat", "Delete command: " + e.getMessage());
@@ -352,6 +360,7 @@ public class ProfileGallery extends DrawerActivity {
             if (isNetworkAvailable()) {
                 populateResourcesFromParse();
             }
+            galleryAdapter.clearSelectedItems();
         }
     };
 
@@ -416,7 +425,7 @@ public class ProfileGallery extends DrawerActivity {
 
     private void initAdapter(ArrayList<String> imagesPaths, ArrayList<String> imageThumbnailsPaths) {
         if (galleryAdapter != null) {
-            galleryAdapter.updateImages(imageThumbnailsPaths, user);
+            galleryAdapter.updateImages(imagesPaths, imageThumbnailsPaths, user);
         } else {
             galleryAdapter = new ProfileGalleryAdapter(activity, getApplicationContext(), imagesPaths, imageThumbnailsPaths, user);
             gridView.setAdapter(galleryAdapter);
@@ -453,8 +462,11 @@ public class ProfileGallery extends DrawerActivity {
         return name.substring(name.lastIndexOf("-")+1);
     }
 
-    private void sendBroadcastMessage(String action) {
+    private void sendBroadcastMessage(String action, String extraName, boolean extraValue) {
         Intent sender = new Intent(action);
+        if(extraName != null) {
+            sender.putExtra(extraName, extraValue);
+        }
         LocalBroadcastManager.getInstance(this).sendBroadcast(sender);
     }
 }

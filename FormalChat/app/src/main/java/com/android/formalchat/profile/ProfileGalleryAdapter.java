@@ -73,21 +73,29 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         selectedItems = new ArrayList<>();
     }
 
-    public void updateImages(List<String> imageThumbnailsPaths, ParseUser user) {
+    public void updateImages(List<String> paths, List<String> imageThumbnailsPaths, ParseUser user) {
         atLeastOnePicSelected = false;
         selectedItems = new ArrayList<>();
 
+        this.images = paths;
         this.imageThumbnailsPaths = imageThumbnailsPaths;
         this.user = user;
         this.notifyDataSetChanged();
     }
 
     public List<String> getImagePaths() {
+        return images;
+    }
+    public List<String> getImageThumbnailsPaths() {
         return imageThumbnailsPaths;
     }
 
     public ArrayList<Integer> getSelectedItems() {
         return selectedItems;
+    }
+
+    public void clearSelectedItems() {
+        selectedItems.clear();
     }
 
     @Override
