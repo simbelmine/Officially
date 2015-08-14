@@ -379,24 +379,29 @@ public class ProfileGallery extends DrawerActivity {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 ArrayList<String> imagesPaths = new ArrayList<>();
+                ArrayList<String> imageThumbnailsPaths = new ArrayList<>();
                 if (list.size() > 0) {
                     if (videoExists) {
-                        imagesPaths = addVideoToPaths(imagesPaths);
+                        imageThumbnailsPaths = addVideoToPaths(imageThumbnailsPaths);
                     }
 
                     for (ParseObject po : list) {
-                        String picUrl = ((ParseFile) po.get("thumbnail_photo")).getUrl();
+                        String picUrl = ((ParseFile) po.get("photo")).getUrl();
                         imagesPaths.add(picUrl);
+
+                        String picThumbnailUrl = ((ParseFile) po.get("thumbnail_photo")).getUrl();
+                        imageThumbnailsPaths.add(picThumbnailUrl);
                     }
+
                     //gridView.setAdapter(new ProfileGalleryAdapter(activity, getApplicationContext(), imagePaths));
-                    initAdapter(imagesPaths);
+                    initAdapter(imagesPaths, imageThumbnailsPaths);
 
                 } else {
                     Log.v("formalchat", "listsize is 0 ");
                     // If list with images is 0, but there is a video
                     if (videoExists) {
-                        imagesPaths = addVideoToPaths(imagesPaths);
-                        initAdapter(imagesPaths);
+                        imageThumbnailsPaths = addVideoToPaths(imageThumbnailsPaths);
+                        initAdapter(imagesPaths, imageThumbnailsPaths);
                     }
                 }
 
@@ -407,11 +412,11 @@ public class ProfileGallery extends DrawerActivity {
         });
     }
 
-    private void initAdapter(ArrayList<String> imagesPaths) {
+    private void initAdapter(ArrayList<String> imagesPaths, ArrayList<String> imageThumbnailsPaths) {
         if (galleryAdapter != null) {
-            galleryAdapter.updateImages(imagesPaths, user);
+            galleryAdapter.updateImages(imageThumbnailsPaths, user);
         } else {
-            galleryAdapter = new ProfileGalleryAdapter(activity, getApplicationContext(), imagesPaths, user);
+            galleryAdapter = new ProfileGalleryAdapter(activity, getApplicationContext(), imagesPaths, imageThumbnailsPaths, user);
             gridView.setAdapter(galleryAdapter);
         }
     }

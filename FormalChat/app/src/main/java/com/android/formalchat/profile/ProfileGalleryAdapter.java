@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import java.util.List;
  */
 public class ProfileGalleryAdapter extends BaseAdapter {
     private List<String> images;
+    private List<String> imageThumbnailsPaths;
     private Context context;
     /////// ***** For the Video File *****
     private static final int RESULT_OK = -1;
@@ -60,27 +62,28 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private boolean atLeastOnePicSelected;
     private ProgressBar progressBar;
 
-    public ProfileGalleryAdapter(Activity activity, Context context, List<String> paths, ParseUser user) {
+    public ProfileGalleryAdapter(Activity activity, Context context, List<String> paths, List<String> imageThumbnailsPaths, ParseUser user) {
         this.activity = activity;
         this.context = context;
         this.images = paths;
+        this.imageThumbnailsPaths = imageThumbnailsPaths;
         this.user = user;
 
         atLeastOnePicSelected = false;
         selectedItems = new ArrayList<>();
     }
 
-    public void updateImages(List<String> paths, ParseUser user) {
+    public void updateImages(List<String> imageThumbnailsPaths, ParseUser user) {
         atLeastOnePicSelected = false;
         selectedItems = new ArrayList<>();
 
-        this.images = paths;
+        this.imageThumbnailsPaths = imageThumbnailsPaths;
         this.user = user;
         this.notifyDataSetChanged();
     }
 
     public List<String> getImagePaths() {
-        return images;
+        return imageThumbnailsPaths;
     }
 
     public ArrayList<Integer> getSelectedItems() {
@@ -89,12 +92,12 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return images.size();
+        return imageThumbnailsPaths.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return images.get(position);
+        return imageThumbnailsPaths.get(position);
     }
 
     @Override
@@ -203,7 +206,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     private void openOnFullScreen(int position) {
         Intent i = new Intent(context, FullImageActivity.class);
-        i.putExtra("url", images.get(position));
+        i.putExtra("url", images.get(position-1));
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
     }
@@ -236,11 +239,11 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     private void loadPictureToGrid(final ImageView img, final ImageView multiSelectIcon, final int position) {
 //        if(getAfterLastSlashUriName(thumbnailPath).equals(videoThumbName)){
-        if(getShortImageNameFromUri(images.get(position)).equals(videoThumbName)){
+        if(getShortImageNameFromUri(imageThumbnailsPaths.get(position)).equals(videoThumbName)){
             img.setVisibility(View.VISIBLE);
             setVideoImgOnClickListener(img, position);
 //            Picasso.with(context).load("file://" + thumbnailPath).into(img);
-            Picasso.with(context).load(images.get(position))
+            Picasso.with(context).load(imageThumbnailsPaths.get(position))
                     .into(img);
             progressBar.setVisibility(View.GONE);
         }
@@ -260,7 +263,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 //                            .into(img);
 
 
-            Picasso.with(context).load(images.get(position))
+            Picasso.with(context).load(imageThumbnailsPaths.get(position))
                     .into(img);
 
 
@@ -351,7 +354,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         Intent intent = new Intent(activity, VideoShowActivity.class);
 
         if(user != ParseUser.getCurrentUser()) {
-            intent.putExtra("videoUri", images.get(position));
+            intent.putExtra("videoUri", imageThumbnailsPaths.get(position));
         }
         else {
             intent.putExtra("videoUri", videoUri.toString());
