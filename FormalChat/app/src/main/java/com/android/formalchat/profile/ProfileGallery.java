@@ -382,7 +382,8 @@ public class ProfileGallery extends DrawerActivity {
                 ArrayList<String> imageThumbnailsPaths = new ArrayList<>();
                 if (list.size() > 0) {
                     if (videoExists) {
-                        imageThumbnailsPaths = addVideoToPaths(imageThumbnailsPaths);
+                        imagesPaths = addVideoToPaths(imagesPaths, "video");
+                        imageThumbnailsPaths = addVideoToPaths(imageThumbnailsPaths, "video_thumbnail");
                     }
 
                     for (ParseObject po : list) {
@@ -400,7 +401,8 @@ public class ProfileGallery extends DrawerActivity {
                     Log.v("formalchat", "listsize is 0 ");
                     // If list with images is 0, but there is a video
                     if (videoExists) {
-                        imageThumbnailsPaths = addVideoToPaths(imageThumbnailsPaths);
+                        imagesPaths = addVideoToPaths(imagesPaths, "video");
+                        imageThumbnailsPaths = addVideoToPaths(imageThumbnailsPaths, "video_thumbnail");
                         initAdapter(imagesPaths, imageThumbnailsPaths);
                     }
                 }
@@ -430,10 +432,10 @@ public class ProfileGallery extends DrawerActivity {
         return false;
     }
 
-    private ArrayList<String> addVideoToPaths(ArrayList<String> imagesPaths) {
-        String videoPath = user.getParseFile("video_thumbnail").getUrl();
-        imagesPaths.add(videoPath);
-        return imagesPaths;
+    private ArrayList<String> addVideoToPaths(ArrayList<String> paths, String videoParseTag) {
+        String videoPath = user.getParseFile(videoParseTag).getUrl();
+        paths.add(videoPath);
+        return paths;
     }
 
     private boolean isNetworkAvailable() {

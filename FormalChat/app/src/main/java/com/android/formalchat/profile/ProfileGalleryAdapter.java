@@ -206,7 +206,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
     private void openOnFullScreen(int position) {
         Intent i = new Intent(context, FullImageActivity.class);
-        i.putExtra("url", images.get(position-1));
+        i.putExtra("url", images.get(position));
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
     }
@@ -353,11 +353,15 @@ public class ProfileGalleryAdapter extends BaseAdapter {
     private void openVideoShowActivity(int position) {
         Intent intent = new Intent(activity, VideoShowActivity.class);
 
-        if(user != ParseUser.getCurrentUser()) {
-            intent.putExtra("videoUri", imageThumbnailsPaths.get(position));
-        }
-        else {
-            intent.putExtra("videoUri", videoUri.toString());
+//        if(user != ParseUser.getCurrentUser()) {
+//            intent.putExtra("videoUri", images.get(position));
+//        }
+//        else {
+//            intent.putExtra("videoUri", videoUri.toString());
+//        }
+
+        if(user != null) {
+            intent.putExtra("videoUri", images.get(position));
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
