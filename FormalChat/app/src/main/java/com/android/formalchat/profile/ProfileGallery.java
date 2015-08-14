@@ -385,7 +385,7 @@ public class ProfileGallery extends DrawerActivity {
                     }
 
                     for (ParseObject po : list) {
-                        String picUrl = ((ParseFile) po.get("photo")).getUrl();
+                        String picUrl = ((ParseFile) po.get("thumbnail_photo")).getUrl();
                         imagesPaths.add(picUrl);
                     }
                     //gridView.setAdapter(new ProfileGalleryAdapter(activity, getApplicationContext(), imagePaths));

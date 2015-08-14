@@ -261,8 +261,6 @@ public class ProfileGalleryAdapter extends BaseAdapter {
 
 
             Picasso.with(context).load(images.get(position))
-                    //.resize(imageWidth / 4, imageHeight / 4)
-                    .resize(200, 200)
                     .into(img);
 
 

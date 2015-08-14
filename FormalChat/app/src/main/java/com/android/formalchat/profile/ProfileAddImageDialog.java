@@ -67,6 +67,7 @@ public class ProfileAddImageDialog extends DialogFragment {
     private NotificationManager notificationManager;
     private NotificationCompat.Builder notificationBuilder;
     private int id = 1;
+    private Activity activity;
 
     @Nullable
     @Override
@@ -133,7 +134,10 @@ public class ProfileAddImageDialog extends DialogFragment {
                         R.string.picture_upload_notif_text,
                         R.drawable.upload_icon,
                         true);
-                saveToParse(getActivity(), drawable);
+                Drawable pictureThumbnail = createPictureThumbnail(drawable);
+                if(pictureThumbnail != null) {
+                    saveToParse(getActivity(), drawable, pictureThumbnail);
+                }
                 //saveToLocalStorage(getCameraImageThumbnail(drawable, 300));
 //                saveToLocalStorage(drawable);
             }
@@ -142,7 +146,13 @@ public class ProfileAddImageDialog extends DialogFragment {
         }
     }
 
-//    private void saveThumbnail(Intent data) {
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = activity;
+    }
+
+    //    private void saveThumbnail(Intent data) {
 //        Drawable drawable = getThumbImage(data);
 //        saveToLocalStorage(drawable);
 //    }
@@ -184,15 +194,17 @@ public class ProfileAddImageDialog extends DialogFragment {
         }
     }
 
-    private void saveToParse(final Activity activity, final Drawable drawableL) {
+    private void saveToParse(final Activity activity, final Drawable drawableL, Drawable pictureThumbnail) {
         ParseUser parseUser = ParseUser.getCurrentUser();
         final String userName = parseUser.getUsername();
         final ParseFile imgFile = drawableToParseFile(drawableL);
+        final ParseFile imgThumbnailFile = drawableToParseFile(pictureThumbnail);
         final UserImages userImages = new UserImages();
 
         if(isNetworkAvailable(activity)) {
             userImages.setUserName(userName);
             userImages.setPhotoFile(imgFile);
+            userImages.setPhotoThumbnailFile(imgThumbnailFile);
             userImages.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -385,14 +397,14 @@ public class ProfileAddImageDialog extends DialogFragment {
                     R.string.picture_upload_notif_text,
                     R.drawable.upload_icon,
                     true);
-            new MyAsyncTask(getActivity()).execute(filePath, maxImgSize);
+            new CompressImageTask(getActivity()).execute(filePath, maxImgSize);
         }
     }
 
-    private class MyAsyncTask extends AsyncTask<Object, Void, Drawable> {
+    private class CompressImageTask extends AsyncTask<Object, Void, Drawable> {
         Activity activity;
 
-        public MyAsyncTask(Activity activity) {
+        public CompressImageTask(Activity activity) {
             this.activity = activity;
         }
 
@@ -411,11 +423,9 @@ public class ProfileAddImageDialog extends DialogFragment {
 
         @Override
         protected void onPostExecute(Drawable drawable) {
-            if(drawable != null) {
-                Log.v("formalchat", "CONTEXT = " + activity);
-
-                //show notification for uploading
-                saveToParse(activity, drawable);
+            Drawable pictureThumbnail = createPictureThumbnail(drawable);
+            if(drawable != null && pictureThumbnail != null) {
+                saveToParse(activity, drawable, pictureThumbnail);
             }
         }
     }
@@ -442,6 +452,22 @@ public class ProfileAddImageDialog extends DialogFragment {
         options.inJustDecodeBounds = false;
 
         return BitmapFactory.decodeFile(filePath, options);
+    }
+
+    private Bitmap getLessResolutionImgByByteArray(byte[] bitmapBytes, int maxTargetLength) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        // First decode with inJustDecodeBounds=true to check dimensions
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length, options);
+        //int maxTargetLength = 400;
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, maxTargetLength, maxTargetLength);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length, options);
     }
 
     private int getScreenWidth() {
@@ -471,6 +497,23 @@ public class ProfileAddImageDialog extends DialogFragment {
 
         return inSampleSize;
     }
+
+    private Drawable createPictureThumbnail(Drawable drawable) {
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//        byte[] byteArray = stream.toByteArray();
+//        Bitmap yourSelectedImage = getLessResolutionImgByByteArray(byteArray, 400);
+//        Bitmap thumbnail = compressBitmapImg(yourSelectedImage);
+
+        int scaleWidth = bitmap.getWidth()/4;
+        int scaleHeight = bitmap.getHeight()/4;
+
+        Bitmap thumbnail = ThumbnailUtils.extractThumbnail(bitmap, scaleWidth, scaleHeight);
+        return new BitmapDrawable(activity.getResources(), thumbnail);
+    }
+
 
     private Uri getOutputMediaFileUri(int type) {
         return Uri.fromFile(getOutputMediaFile(type));

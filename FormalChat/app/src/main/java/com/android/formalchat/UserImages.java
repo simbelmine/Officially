@@ -28,4 +28,8 @@ public class UserImages extends ParseObject {
     public void setPhotoFile(ParseFile file) {
         put("photo", file);
     }
+
+    public void setPhotoThumbnailFile(ParseFile file) {
+        put("thumbnail_photo", file);
+    }
 }
