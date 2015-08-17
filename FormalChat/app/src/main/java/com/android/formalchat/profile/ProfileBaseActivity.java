@@ -61,7 +61,6 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private SharedPreferences sharedPreferences;
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
-    private String profileImgPath;
     private ParseUser user;
     private ArrayList<String> imagePaths;
     private Activity activity;
@@ -123,9 +122,10 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
 
-        registerRecivers();
+        registerReceivers();
 
         if(isNetworkAvailable()) {
+            setProfileImages();
             populateInfoFromParse();
         }
         else {
@@ -144,6 +144,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private BroadcastReceiver onPictureUploadNotice = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            setProfileImages();
             startGalleryPhotosCounter();
         }
     };
@@ -151,6 +152,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private BroadcastReceiver onPictureDeletedNotice = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.v("formalchat", "onPictureDeletedNotice");
+            setProfileImages();
             startGalleryPhotosCounter();
         }
     };
@@ -178,14 +181,17 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         }
     };
 
-    private void registerRecivers() {
+    private void registerReceivers() {
+        // Picture Uploaded
         IntentFilter intentFilterPictureUploaded = new IntentFilter(ProfileAddImageDialog.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onPictureUploadNotice, intentFilterPictureUploaded);
+        // Picture Deleted
         IntentFilter intentFilterPictureDeleted = new IntentFilter(FullImageActivity.ACTION_DELETED);
         LocalBroadcastManager.getInstance(this).registerReceiver(onPictureDeletedNotice, intentFilterPictureDeleted);
+        // Profile Picture Uploaded
         IntentFilter intentFilterProfilePictureUploaded = new IntentFilter(FullImageActivity.ACTION_UPLOADED_PROFILE_PIC);
         LocalBroadcastManager.getInstance(this).registerReceiver(onProfilePictureUploadedNotice, intentFilterProfilePictureUploaded);
-
+        // Big Profile Pic Downloaded
         IntentFilter intentFilterBigProfilePicDownload = new IntentFilter(RetrieveBlurredImageService.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onDonwloadBigProfPicNotice, intentFilterBigProfilePicDownload);
     }
@@ -194,7 +200,6 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onPictureUploadNotice);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onPictureDeletedNotice);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onProfilePictureUploadedNotice);
-
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onDonwloadBigProfPicNotice);
     }
 
@@ -317,10 +322,10 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void setProfileImages() {
-        getProfileImgPath();
+        String profileImgPath = getProfileImgPath();
         if(isNetworkAvailable()) {
             loadBigProfilePic();
-            loadSmallProfilePicFromParse();
+            loadSmallProfilePicFromParse(profileImgPath);
         }
     }
 
@@ -504,7 +509,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         startService(intent);
     }
 
-    private void getProfileImgPath() {
+    private String getProfileImgPath() {
+        String profileImgPath = null;
         if(user != null) {
             if (user.has("profileImg")) {
                 ParseFile pic = user.getParseFile("profileImg");
@@ -513,6 +519,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                 }
             }
         }
+
+        return profileImgPath;
     }
 
     private boolean isNetworkAvailable() {
@@ -557,8 +565,10 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         File[] files_list = dir.listFiles();
 
         for(int f = 0; f < files_list.length; f++) {
-            if(PROFILE_PIC_BLURRED.equals(files_list[f].getName())) {
-                return true;
+            if(files_list[f].exists()) {
+                if (PROFILE_PIC_BLURRED.equals(files_list[f].getName())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -573,15 +583,25 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
             pictureName = PROFILE_PIC_BLURRED_REMOTE;
         }
 
-        Bitmap myBitmap = BitmapFactory.decodeFile(path + "/" + pictureName);
-        profilePic.setImageBitmap(myBitmap);
+        String bluredImgPath = path + "/" + pictureName;
+        File bluredImg = new File(bluredImgPath);
+        if(bluredImg.exists()) {
+            Bitmap myBitmap = BitmapFactory.decodeFile(bluredImgPath);
+            profilePic.setImageBitmap(myBitmap);
+        }
+        else {
+            profilePic.setImageDrawable(getResources().getDrawable(R.drawable.background));
+        }
         swipeContainer.setRefreshing(false);
         profileProgressBar.setVisibility(View.GONE);
     }
 
-    private void loadSmallProfilePicFromParse() {
+    private void loadSmallProfilePicFromParse(String profileImgPath) {
         if(profileImgPath != null) {
             Picasso.with(this).load(profileImgPath).into(smallProfilePic);
+        }
+        else {
+            Picasso.with(this).load(R.drawable.profile_pic).into(smallProfilePic);
         }
     }
 

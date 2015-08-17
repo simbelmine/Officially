@@ -100,7 +100,7 @@ public class CropActivity extends Activity {
                         intent.putExtra("profileImg", profileImg);
                         setResult(RESULT_OK, intent);
 
-                        //deleteSavedImg(url);
+                        deleteSavedImg(url);
 
                         finish();
                     }
@@ -146,18 +146,21 @@ public class CropActivity extends Activity {
     private void downloadImg(String img_url, File imgFile) {
         try {
             URL url = new URL(img_url);
-            InputStream is = url.openStream();
-            OutputStream os = new FileOutputStream(imgFile);
+            if(url != null) {
+                // *** To Do: call InputStream in an AsyncTask
+                InputStream is = url.openStream();
+                OutputStream os = new FileOutputStream(imgFile);
 
-            byte[] b = new byte[2048];
-            int length;
+                byte[] b = new byte[2048];
+                int length;
 
-            while ((length = is.read(b)) != -1) {
-                os.write(b, 0, length);
+                while ((length = is.read(b)) != -1) {
+                    os.write(b, 0, length);
+                }
+
+                is.close();
+                os.close();
             }
-
-            is.close();
-            os.close();
         }
         catch (IOException ex) {
             Log.e("formalchat", ex.getMessage());

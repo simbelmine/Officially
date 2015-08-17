@@ -54,7 +54,7 @@ public class RetrieveBlurredImageService extends IntentService {
             query.getFirstInBackground(new GetCallback<ParseUser>() {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
-                    if(e == null) {
+                    if (e == null) {
                         user = parseUser;
                         retrieveBlurredImage();
                     }
@@ -142,10 +142,13 @@ public class RetrieveBlurredImageService extends IntentService {
         String picName = getPicNameByExtraValue();
         File fileToSave = new File(path + "/" + picName);
         try {
-            out = new FileOutputStream(fileToSave);
-            bitmapToSave.compress(Bitmap.CompressFormat.PNG, 100, out);
+            if(fileToSave != null) {
+                out = new FileOutputStream(fileToSave);
+                bitmapToSave.compress(Bitmap.CompressFormat.PNG, 100, out);
+            }
         }
         catch(IOException e) {
+            Log.e("formalchat", "Blurred Image file not found in local");
             e.printStackTrace();
         }
         finally {
@@ -155,6 +158,7 @@ public class RetrieveBlurredImageService extends IntentService {
                 }
             }
             catch (IOException e) {
+                Log.e("formalchat", "Blurred Image out stream: close problem");
                 e.printStackTrace();
             }
         }
