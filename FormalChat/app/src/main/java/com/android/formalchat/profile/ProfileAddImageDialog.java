@@ -208,7 +208,7 @@ public class ProfileAddImageDialog extends DialogFragment {
             userImages.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-                    saveToLocalStorage(drawableL);
+//                    saveToLocalStorage(drawableL);
                     if(e == null) {
                         onDoneSaveTransaction();
                     }
