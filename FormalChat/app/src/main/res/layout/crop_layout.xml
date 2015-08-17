@@ -24,4 +24,9 @@
         android:text="@string/done"
         android:textColor="@color/white"
         android:background="@color/border_green"/>
+    <ProgressBar
+        android:id="@+id/crop_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 </FrameLayout>

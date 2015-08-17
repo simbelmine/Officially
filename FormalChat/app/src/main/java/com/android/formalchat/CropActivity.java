@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,8 +18,16 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.android.formalchat.profile.FullImageActivity;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,7 +36,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by Sve on 3/31/15.
@@ -39,6 +50,8 @@ public class CropActivity extends Activity {
     private Button doneEditing;
     private String url;
 
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,14 +62,51 @@ public class CropActivity extends Activity {
 
         final Drawable drawable;
 
-        if(getDrawableFromLocal(url) != null) {
-            drawable =  getDrawableFromLocal(url);
-        }
-        else {
-            drawable = getDrawableFromParseUrl(url);
-        }
+//        if(getDrawableFromLocal(url) != null) {
+//            drawable =  getDrawableFromLocal(url);
+//        }
+//        else {
+//            drawable = getDrawableFromParseUrl(url);
+//        }
+//
+//        applyDrawableToCode(drawable);
 
-        applyDrawableToCode(drawable);
+        progressBar = (ProgressBar) findViewById(R.id.crop_progressBar);
+        showImage(progressBar);
+
+    }
+
+    private void showImage(final ProgressBar progressBar) {
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<>("UserImages");
+        parseQuery.whereEqualTo("photo", getParseImgNameFromUri(url));
+        parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                Log.v("formalchat", "po = " + parseObject);
+                if(e == null && parseObject != null) {
+                    ParseFile img = parseObject.getParseFile("photo");
+                    img.getDataInBackground(new GetDataCallback() {
+                        @Override
+                        public void done(byte[] bytes, ParseException e) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+
+                            applyDrawableToCode(drawable);
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public String getParseImgNameFromUri(String name) {
+        return name.substring(name.lastIndexOf("/")+1);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void applyDrawableToCode(final Drawable drawable) {
@@ -146,24 +196,53 @@ public class CropActivity extends Activity {
     private void downloadImg(String img_url, File imgFile) {
         try {
             URL url = new URL(img_url);
-            if(url != null) {
-                // *** To Do: call InputStream in an AsyncTask
-                InputStream is = url.openStream();
-                OutputStream os = new FileOutputStream(imgFile);
-
-                byte[] b = new byte[2048];
-                int length;
-
-                while ((length = is.read(b)) != -1) {
-                    os.write(b, 0, length);
-                }
-
-                is.close();
-                os.close();
-            }
+            new DownloadImageAsynchronously(url, imgFile).execute();
         }
-        catch (IOException ex) {
-            Log.e("formalchat", ex.getMessage());
+        catch (MalformedURLException ex) {
+            Log.e("formalchat", "MalformedURLException: CropActivity : download image");
+            ex.printStackTrace();
+        }
+
+
+    }
+
+    private class DownloadImageAsynchronously extends AsyncTask<Void, Void, String> {
+        private URL url;
+        private File imgFile;
+        public DownloadImageAsynchronously(URL url, File imgFile) {
+            this.url = url;
+            this.imgFile = imgFile;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(url != null) {
+                try {
+                    InputStream is = url.openStream();
+                    OutputStream os = new FileOutputStream(imgFile);
+
+                    byte[] b = new byte[2048];
+                    int length;
+
+                    while ((length = is.read(b)) != -1) {
+                        os.write(b, 0, length);
+                    }
+
+                    is.close();
+                    os.close();
+                }
+                catch (IOException ex) {
+                    Log.e("formalchat", ex.getMessage());
+                }
+            }
+            return "Success";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if(result.equals("Success")) {
+
+            }
         }
     }
 
