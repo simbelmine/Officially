@@ -91,6 +91,9 @@ public class RetrieveBlurredImageService extends IntentService {
                                     }
                                 });
                             }
+                            else {
+                                sendBroadcastMessage(false);
+                            }
                         }
                     } else {
                         sendBroadcastMessage(false);

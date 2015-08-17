@@ -51,6 +51,7 @@ public class FullImageActivity extends Activity {
     private ImageView menuBtn;
     private boolean isVisible = true;
     private String url;
+    ParseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class FullImageActivity extends Activity {
         editor = sharedPreferences.edit();
         Intent i = getIntent();
         url = i.getExtras().getString("url");
+        user = ParseUser.getCurrentUser();
 
         fullScreenView = (ImageView) findViewById(R.id.full_screen_img);
         Picasso.with(this)
@@ -208,7 +210,6 @@ public class FullImageActivity extends Activity {
     }
 
     private void setImageAsProfile(byte[] profileImg) {
-        ParseUser user = ParseUser.getCurrentUser();
         ParseFile parseProfImg = new ParseFile(profileImg);
         user.put("profileImg", parseProfImg);
         user.put("profileImgName", getShortImageNameFromUri());
@@ -224,9 +225,15 @@ public class FullImageActivity extends Activity {
             public void done(List<ParseObject> imagesList, ParseException e) {
                 if(e == null) {
                     if(imagesList.size() > 0) {
-                        imagesList.get(0).deleteInBackground();
-                        deleteImageFromLocalStorage();
-                        sendBroadcastMessage(ACTION_DELETED);
+                        ParseObject currentParseObject = imagesList.get(0);
+                        ProfileGalleryUtils profileGalleryUtils = new ProfileGalleryUtils(getApplicationContext(), user, currentParseObject);
+
+                        if(profileGalleryUtils.isProfilePic()) {
+                            profileGalleryUtils.deleteProfileImgFromParse();
+                        }
+                        profileGalleryUtils.deleteImgFromParse();
+
+//                        deleteImageFromLocalStorage();
                         finish();
                     }
                 }

@@ -275,18 +275,19 @@ public class ProfileGallery extends DrawerActivity {
             public void done(List<ParseObject> imagesList, ParseException e) {
                 if (e == null) {
                     if (imagesList.size() > 0) {
-                        deleteAllonLocal(imagesList);
+//                        deleteAllonLocal(imagesList);
+
                         for(ParseObject po : imagesList) {
-                            po.deleteInBackground(new DeleteCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    Log.v("formalchat", "Picture has been deleted successfully");
-                                }
-                            });
+                            ProfileGalleryUtils profileGalleryUtils = new ProfileGalleryUtils(getApplicationContext(), user, po);
+
+                            if(profileGalleryUtils.isProfilePic()) {
+                                profileGalleryUtils.deleteProfileImgFromParse();
+                            }
+
+                            profileGalleryUtils.deleteImgFromParse();
                         }
 
                         galleryAdapter.clearSelectedItems();
-                        sendBroadcastMessage(FullImageActivity.ACTION_DELETED, null, false);
                         sendBroadcastMessage(ProfileGalleryAdapter.ACTION_DELETE_ALL, "showDeleteAll", false);
                     }
                 } else {
@@ -357,10 +358,10 @@ public class ProfileGallery extends DrawerActivity {
     private BroadcastReceiver onNoticePictureDeleted = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            galleryAdapter.clearSelectedItems();
             if (isNetworkAvailable()) {
                 populateResourcesFromParse();
             }
-            galleryAdapter.clearSelectedItems();
         }
     };
 

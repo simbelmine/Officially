@@ -508,7 +508,9 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         if(user != null) {
             if (user.has("profileImg")) {
                 ParseFile pic = user.getParseFile("profileImg");
-                profileImgPath = pic.getUrl();
+                if(pic != null) {
+                    profileImgPath = pic.getUrl();
+                }
             }
         }
     }
