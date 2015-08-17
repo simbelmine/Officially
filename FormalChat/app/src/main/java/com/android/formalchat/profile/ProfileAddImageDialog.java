@@ -272,10 +272,10 @@ public class ProfileAddImageDialog extends DialogFragment {
     private void showUploadNotification(Activity activity, int titleId, int textId, int drawableId, boolean ongoing) {
         notificationManager = (NotificationManager) activity.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationBuilder = new NotificationCompat.Builder(activity);
-        notificationBuilder.setContentTitle("Picture Upload")
-                .setContentText("Download in progress")
-                .setSmallIcon(R.drawable.upload_icon)
-                .setOngoing(true);
+        notificationBuilder.setContentTitle(getResources().getString(titleId))
+                .setContentText(getResources().getString(textId))
+                .setSmallIcon(drawableId)
+                .setOngoing(ongoing);
 
         new Thread(
                 new Runnable() {
