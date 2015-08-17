@@ -230,10 +230,10 @@ public class FullImageActivity extends Activity {
 
                         if(profileGalleryUtils.isProfilePic()) {
                             profileGalleryUtils.deleteProfileImgFromParse();
+                            profileGalleryUtils.deleteBlurrredImageFromLocal();
                         }
                         profileGalleryUtils.deleteImgFromParse();
 
-//                        deleteImageFromLocalStorage();
                         finish();
                     }
                 }
@@ -244,19 +244,7 @@ public class FullImageActivity extends Activity {
         });
     }
 
-    private void deleteImageFromLocalStorage() {
-        File dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
-        File[] dirImages = dir.listFiles();
 
-        if(dirImages.length != 0) {
-            for(File img : dirImages) {
-                if(getShortImageNameFromUri().equals(img.getName())) {
-                    img.delete();
-                    return;
-                }
-            }
-        }
-    }
 
     private void sendBroadcastMessage(String action) {
         Intent sender = new Intent(action);

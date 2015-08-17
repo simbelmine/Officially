@@ -282,6 +282,7 @@ public class ProfileGallery extends DrawerActivity {
 
                             if(profileGalleryUtils.isProfilePic()) {
                                 profileGalleryUtils.deleteProfileImgFromParse();
+                                profileGalleryUtils.deleteBlurrredImageFromLocal();
                             }
 
                             profileGalleryUtils.deleteImgFromParse();

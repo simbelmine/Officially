@@ -2,6 +2,7 @@ package com.android.formalchat.profile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -13,12 +14,14 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.io.File;
 import java.util.List;
 
 /**
  * Created by Sve on 8/16/15.
  */
 public class ProfileGalleryUtils {
+    private String blurredImgName = "blurred_profile.jpg";
     private Context context;
     private ParseUser user;
     private ParseObject parseObject;
@@ -86,5 +89,19 @@ public class ProfileGalleryUtils {
     private void sendBroadcastMessage(String action) {
         Intent sender = new Intent(action);
         LocalBroadcastManager.getInstance(context).sendBroadcast(sender);
+    }
+
+    public void deleteBlurrredImageFromLocal() {
+        File dir = new File(Environment.getExternalStorageDirectory() + "/.formal_chat");
+        File[] dirImages = dir.listFiles();
+
+        if(dirImages.length != 0) {
+            for(File img : dirImages) {
+                if(blurredImgName.equals(img.getName())) {
+                    img.delete();
+                    return;
+                }
+            }
+        }
     }
 }
