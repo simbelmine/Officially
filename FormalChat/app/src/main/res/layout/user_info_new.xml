@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/dotted_line"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:textStyle="italic"
             android:layout_margin="@dimen/motto_margin"
             android:text="@string/motto"/>
@@ -60,13 +60,14 @@
                 android:layout_toRightOf="@+id/drinking_icon"
                 android:paddingLeft="@dimen/label_padding"
                 android:gravity="left"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
                 android:layout_height="@dimen/dashed_line_height"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft ="@dimen/dashed_line_margin_l"
+                android:textColor="@color/action_bar"
                 android:background="@drawable/dotted_line"/>
         </RelativeLayout>
         <RelativeLayout
@@ -80,7 +81,6 @@
                 android:id="@+id/smoking_icon"
                 android:layout_width="@dimen/icons_size"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/drinking_icon"
                 android:src="@drawable/smoking_g"/>
             <TextView
                 android:id="@+id/smoking_edit"
@@ -89,7 +89,7 @@
                 android:layout_toRightOf="@+id/smoking_icon"
                 android:paddingLeft="@dimen/label_padding"
                 android:gravity="left"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -117,7 +117,7 @@
                 android:layout_toRightOf="@+id/religion_icon"
                 android:paddingLeft="@dimen/label_padding"
                 android:gravity="left"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -145,7 +145,7 @@
                 android:layout_toRightOf="@+id/height_icon"
                 android:paddingLeft="@dimen/label_padding"
                 android:gravity="left"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -173,7 +173,7 @@
                 android:layout_toRightOf="@+id/body_icon"
                 android:paddingLeft="@dimen/label_padding"
                 android:gravity="left"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -203,7 +203,7 @@
                 android:layout_height="match_parent"
                 android:paddingLeft="@dimen/label_padding"
                 android:text="@string/name_lbl"
-                android:textColor="@color/action_bar"
+                android:textColor="@color/items"
                 />
             <TextView
                 android:id="@+id/name_edit"
@@ -212,7 +212,7 @@
                 android:layout_toRightOf="@+id/name_lbl"
                 android:gravity="right"
                 android:paddingRight="@dimen/label_padding"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:textStyle="italic"
                 />
             <TextView
@@ -233,7 +233,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingLeft="@dimen/label_padding"
-                android:textColor="@color/action_bar"
+                android:textColor="@color/items"
                 android:text="@string/age_lbl"
                 />
             <TextView
@@ -243,7 +243,7 @@
                 android:layout_toRightOf="@+id/age_lbl"
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 />
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -264,7 +264,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/relationship_lbl"
                 android:paddingLeft="@dimen/label_padding"
-                android:textColor="@color/action_bar" />
+                android:textColor="@color/items" />
             <TextView
                 android:id="@+id/relationship_edit"
                 android:layout_width="match_parent"
@@ -273,7 +273,7 @@
                 android:layout_marginBottom="@dimen/label_margin_bottom"
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -294,7 +294,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/children_lbl"
                 android:paddingLeft="@dimen/label_padding"
-                android:textColor="@color/action_bar" />
+                android:textColor="@color/items" />
             <TextView
                 android:id="@+id/children_edit"
                 android:layout_width="match_parent"
@@ -303,7 +303,7 @@
                 android:layout_marginBottom="@dimen/label_margin_bottom"
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -324,7 +324,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/ethnicity_lbl"
                 android:paddingLeft="@dimen/label_padding"
-                android:textColor="@color/action_bar" />
+                android:textColor="@color/items" />
             <TextView
                 android:id="@+id/ethnicity_edit"
                 android:layout_width="match_parent"
@@ -333,7 +333,7 @@
                 android:layout_marginBottom="@dimen/label_margin_bottom"
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -355,7 +355,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/education_lbl"
                 android:paddingLeft="@dimen/label_padding"
-                android:textColor="@color/action_bar" />
+                android:textColor="@color/items" />
             <TextView
                 android:id="@+id/education_edit"
                 android:layout_width="match_parent"
@@ -364,7 +364,7 @@
                 android:layout_marginBottom="@dimen/label_margin_bottom"
                 android:paddingRight="@dimen/label_padding"
                 android:gravity="right"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
             <TextView
                 android:layout_width="@dimen/dashed_line_width"
@@ -384,7 +384,7 @@
                 android:id="@+id/about_me_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/label_height"
-                android:textColor="@color/action_bar"
+                android:textColor="@color/items"
                 android:text="@string/about_me_lbl" />
             <TextView
                 android:id="@+id/about_me_edit"
@@ -393,7 +393,7 @@
                 android:gravity="left"
                 android:layout_below="@+id/about_me_lbl"
                 android:background="@drawable/dotted_line"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/introduction_none_txt"/>
         </RelativeLayout>
 
@@ -407,7 +407,7 @@
                 android:id="@+id/perfect_smn_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/label_height"
-                android:textColor="@color/action_bar"
+                android:textColor="@color/items"
                 android:text="@string/perfect_smn_lbl" />
             <TextView
                 android:id="@+id/perfect_smn_edit"
@@ -416,7 +416,7 @@
                 android:gravity="left"
                 android:layout_below="@+id/perfect_smn_lbl"
                 android:background="@drawable/dotted_line"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/multi_txt"/>
         </RelativeLayout>
 
@@ -430,7 +430,7 @@
                 android:id="@+id/perfect_date_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/label_height"
-                android:textColor="@color/action_bar"
+                android:textColor="@color/items"
                 android:text="@string/perfect_date_lbl" />
             <TextView
                 android:id="@+id/perfect_date_edit"
@@ -439,33 +439,39 @@
                 android:gravity="left"
                 android:layout_below="@+id/perfect_date_lbl"
                 android:background="@drawable/dotted_line"
-                android:textColor="@color/items"
+                android:textColor="@color/action_bar"
                 android:text="@string/multi_txt"/>
         </RelativeLayout>
 
         <!-- ##########   Hobbies    ########### -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/label_padding"
-            android:layout_marginBottom="@dimen/label_margin_bottom">
+            android:layout_height="@dimen/label_height"
+            android:layout_marginBottom="@dimen/label_margin_bottom"
+            >
             <TextView
                 android:id="@+id/interests_lbl"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/label_height"
+                android:layout_height="match_parent"
                 android:text="@string/interests_lbl"
-                android:textColor="@color/action_bar" />
+                android:paddingLeft="@dimen/label_padding"
+                android:textColor="@color/items" />
             <TextView
                 android:id="@+id/interests_edit"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/label_height_multi"
-                android:layout_below="@+id/interests_lbl"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/interests_lbl"
                 android:layout_marginBottom="@dimen/label_margin_bottom"
                 android:paddingRight="@dimen/label_padding"
-                android:gravity="left"
-                android:background="@drawable/dotted_line"
-                android:textColor="@color/items"
+                android:gravity="right"
+                android:textColor="@color/action_bar"
                 android:text="@string/choice_txt"/>
+            <TextView
+                android:layout_width="@dimen/dashed_line_width"
+                android:layout_height="@dimen/dashed_line_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dashed_line_margin_r"
+                android:background="@drawable/dotted_line"/>
         </RelativeLayout>
 
         <RelativeLayout

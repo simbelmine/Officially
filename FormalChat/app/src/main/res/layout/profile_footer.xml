@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/items"
+        android:textColor="@color/action_bar"
         android:textStyle="italic"
         android:layout_margin="@dimen/motto_margin"
         android:text="@string/motto"/>
@@ -54,6 +54,7 @@
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="center"
+            android:textColor="@color/action_bar"
             android:text="location..."/>
     </LinearLayout>
 
@@ -79,7 +80,7 @@
             android:layout_toRightOf="@+id/interested_in_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </LinearLayout>
     <LinearLayout
@@ -102,7 +103,7 @@
             android:layout_toRightOf="@+id/interested_in_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </LinearLayout>
     <LinearLayout
@@ -125,7 +126,7 @@
             android:layout_toRightOf="@+id/interested_in_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </LinearLayout>
     <LinearLayout
@@ -148,7 +149,7 @@
             android:layout_toRightOf="@+id/height_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </LinearLayout>
     <LinearLayout
@@ -171,7 +172,7 @@
             android:layout_toRightOf="@+id/interested_in_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </LinearLayout>
 
@@ -194,7 +195,7 @@
             android:layout_height="match_parent"
             android:text="@string/relationship_lbl"
             android:paddingLeft="@dimen/label_padding"
-            android:textColor="@color/action_bar" />
+            android:textColor="@color/items" />
         <TextView
             android:id="@+id/relationship_edit"
             android:layout_width="match_parent"
@@ -203,7 +204,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
@@ -218,7 +219,7 @@
             android:layout_height="match_parent"
             android:text="@string/children_lbl"
             android:paddingLeft="@dimen/label_padding"
-            android:textColor="@color/action_bar" />
+            android:textColor="@color/items" />
         <TextView
             android:id="@+id/children_edit"
             android:layout_width="match_parent"
@@ -227,7 +228,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
@@ -242,7 +243,7 @@
             android:layout_height="match_parent"
             android:text="@string/ethnicity_lbl"
             android:paddingLeft="@dimen/label_padding"
-            android:textColor="@color/action_bar" />
+            android:textColor="@color/items" />
         <TextView
             android:id="@+id/ethnicity_edit"
             android:layout_width="match_parent"
@@ -251,7 +252,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
@@ -267,7 +268,7 @@
             android:layout_height="match_parent"
             android:text="@string/education_lbl"
             android:paddingLeft="@dimen/label_padding"
-            android:textColor="@color/action_bar" />
+            android:textColor="@color/items" />
         <TextView
             android:id="@+id/education_edit"
             android:layout_width="match_parent"
@@ -276,7 +277,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
@@ -290,7 +291,7 @@
             android:id="@+id/about_me_lbl"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/label_height"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/items"
             android:text="@string/about_me_lbl" />
         <TextView
             android:id="@+id/about_me_edit"
@@ -298,7 +299,7 @@
             android:layout_height="@dimen/label_height_multi"
             android:gravity="left"
             android:layout_below="@+id/about_me_lbl"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/multi_txt"/>
     </RelativeLayout>
 
@@ -312,7 +313,7 @@
             android:id="@+id/perfect_smn_lbl"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/label_height"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/items"
             android:text="@string/perfect_smn_lbl" />
         <TextView
             android:id="@+id/perfect_smn_edit"
@@ -320,7 +321,7 @@
             android:layout_height="@dimen/label_height_multi"
             android:gravity="left"
             android:layout_below="@+id/perfect_smn_lbl"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/multi_txt"/>
     </RelativeLayout>
 
@@ -334,7 +335,7 @@
             android:id="@+id/perfect_date_lbl"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/label_height"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/items"
             android:text="@string/perfect_date_lbl" />
         <TextView
             android:id="@+id/perfect_date_edit"
@@ -342,7 +343,7 @@
             android:layout_height="@dimen/label_height_multi"
             android:gravity="left"
             android:layout_below="@+id/perfect_date_lbl"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/multi_txt"/>
     </RelativeLayout>
 
@@ -358,7 +359,7 @@
             android:layout_height="@dimen/label_height"
             android:text="@string/interests_lbl"
 
-            android:textColor="@color/action_bar" />
+            android:textColor="@color/items" />
         <TextView
             android:id="@+id/interests_edit"
             android:layout_width="match_parent"
@@ -367,7 +368,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/items"
+            android:textColor="@color/action_bar"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
