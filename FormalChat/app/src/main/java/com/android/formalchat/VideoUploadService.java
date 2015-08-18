@@ -115,6 +115,7 @@ public class VideoUploadService extends IntentService {
                 .setSmallIcon(drawableId)
                 .setOngoing(false)
                 .setContentIntent(getPendingIntent());
+        notificationBuilder.setAutoCancel(true);
         notificationManager.notify(ID, notificationBuilder.build());
     }
 
