@@ -64,18 +64,22 @@
                     android:theme="@style/QuestionsDialogTheme"/>
         <activity   android:name=".CropImageActivity"
                     android:theme="@style/QuestionsDialogTheme"/>
-        <activity android:name=".VideoRecordActivity"/>
-        <activity android:name=".VideoShowActivity"/>
-        <activity android:name=".profile.ProfileViewGallery"/>
-        <activity android:name=".profile.ProfileGallery"/>
-        <activity android:name=".profile.ProfileActivityRemote"/>
-        <activity android:name=".profile.ProfileBaseActivity"/>
+        <activity   android:name=".VideoRecordActivity"/>
+        <activity   android:name=".VideoShowActivity"/>
+        <activity   android:name=".profile.ProfileViewGallery"/>
+        <activity   android:name=".profile.ProfileGallery"/>
+        <activity   android:name=".profile.ProfileActivityRemote"/>
+        <activity   android:name=".profile.ProfileBaseActivity"/>
+        <activity   android:name=".chat.ChatActivity"
+                    android:windowSoftInputMode="adjustResize|stateHidden"
+            />
 
 
-        <service android:name=".VideoUploadService"/>
-        <service android:name=".VideoDownloadService"/>
-        <service android:name=".VideoCompressService"/>
-        <service android:name=".RetrieveBlurredImageService"/>
+        <service    android:name=".VideoUploadService"/>
+        <service    android:name=".VideoDownloadService"/>
+        <service    android:name=".VideoCompressService"/>
+        <service    android:name=".RetrieveBlurredImageService"
+            />
     </application>
 
 </manifest>

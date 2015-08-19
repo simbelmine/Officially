@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.formalchat.chat.ChatActivity;
 import com.android.formalchat.profile.ProfileActivityCurrent;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -224,7 +225,7 @@ public class DrawerActivity extends FragmentActivity {
                 break;
             case 1:
                 onItemSelected(position);
-                launchActivity(ProfileActivityCurrent.class, position);
+                launchActivity(ChatActivity.class, position);
                 break;
             case 2:
                 logOut();
