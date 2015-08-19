@@ -17,7 +17,7 @@
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/chatSendButton"
             android:autoText="true"
-            android:hint="type message"/>
+            android:hint="Say something nice..."/>
 
         <Button
             android:id="@+id/chatSendButton"

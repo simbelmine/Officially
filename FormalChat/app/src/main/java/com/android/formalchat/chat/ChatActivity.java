@@ -36,7 +36,7 @@ public class ChatActivity extends DrawerActivity {
         initView();
         init();
 
-        setOnSendMsgListener();
+        setOnClickListeners();
         loadDummyHistory();
     }
 
@@ -70,7 +70,7 @@ public class ChatActivity extends DrawerActivity {
         sendButton = (Button) findViewById(R.id.chatSendButton);
     }
 
-    private void setOnSendMsgListener() {
+    private void setOnClickListeners() {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

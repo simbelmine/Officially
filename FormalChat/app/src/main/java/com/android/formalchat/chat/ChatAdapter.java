@@ -56,7 +56,7 @@ public class ChatAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if(convertView == null) {
-            convertView = inflater.inflate(R.layout.chat_bubble_layout, null);
+            convertView = inflater.inflate(R.layout.chat_message_layout, null);
             holder = createViewHolder(convertView);
             convertView.setTag(holder);
         }
