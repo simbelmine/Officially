@@ -85,7 +85,7 @@ public class ChatAdapter extends BaseAdapter {
     private ViewHolder createViewHolder(View convertView) {
         ViewHolder holder = new ViewHolder();
         holder.txtMessage = (TextView) convertView.findViewById(R.id.textMessage);
-        holder.txtInfo = (TextView) convertView.findViewById(R.id.txtInfo);
+        holder.txtInfo = (TextView) convertView.findViewById(R.id.currDate);
         holder.contentLayout = (LinearLayout) convertView.findViewById(R.id.content);
         holder.contentWithBG = (LinearLayout) convertView.findViewById(R.id.contentWithBackground);
 
@@ -94,45 +94,45 @@ public class ChatAdapter extends BaseAdapter {
 
     private void setAlignment(ViewHolder holder, boolean isMe) {
         if(!isMe) {
-            holder.contentWithBG.setBackgroundResource(R.drawable.chat_bubble_out);
+            holder.contentWithBG.setBackgroundResource(R.drawable.chat_bubble_in);
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.contentWithBG.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
+            layoutParams.gravity = Gravity.LEFT;
             holder.contentWithBG.setLayoutParams(layoutParams);
 
             RelativeLayout.LayoutParams rlLayoutParams = (RelativeLayout.LayoutParams) holder.contentLayout.getLayoutParams();
-            rlLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
-            rlLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            rlLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
+            rlLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             holder.contentLayout.setLayoutParams(rlLayoutParams);
 
             layoutParams = (LinearLayout.LayoutParams) holder.txtMessage.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
+            layoutParams.gravity = Gravity.LEFT;
             holder.txtMessage.setLayoutParams(layoutParams);
             holder.txtMessage.setTextColor(context.getResources().getColor(R.color.white));
 
             layoutParams = (LinearLayout.LayoutParams) holder.txtInfo.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
+            layoutParams.gravity = Gravity.LEFT;
             holder.txtInfo.setLayoutParams(layoutParams);
         }
         else {
-            holder.contentWithBG.setBackgroundResource(R.drawable.chat_bubble_in);
+            holder.contentWithBG.setBackgroundResource(R.drawable.chat_bubble_out);
 
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.contentWithBG.getLayoutParams();
-            layoutParams.gravity = Gravity.LEFT;
+            layoutParams.gravity = Gravity.RIGHT;
             holder.contentWithBG.setLayoutParams(layoutParams);
 
             RelativeLayout.LayoutParams lp =
                     (RelativeLayout.LayoutParams) holder.contentLayout.getLayoutParams();
-            lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
-            lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
+            lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             holder.contentLayout.setLayoutParams(lp);
             layoutParams = (LinearLayout.LayoutParams) holder.txtMessage.getLayoutParams();
-            layoutParams.gravity = Gravity.LEFT;
+            layoutParams.gravity = Gravity.RIGHT;
             holder.txtMessage.setLayoutParams(layoutParams);
             holder.txtMessage.setTextColor(context.getResources().getColor(R.color.white));
 
             layoutParams = (LinearLayout.LayoutParams) holder.txtInfo.getLayoutParams();
-            layoutParams.gravity = Gravity.LEFT;
+            layoutParams.gravity = Gravity.RIGHT;
             holder.txtInfo.setLayoutParams(layoutParams);
         }
     }

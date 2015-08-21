@@ -9,13 +9,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         >
         <TextView
-            android:id="@+id/txtInfo"
+            android:id="@+id/currDate"
             android:layout_width="wrap_content"
             android:layout_height="30sp"
-            android:layout_gravity="right"
+            android:layout_gravity="left"
             android:textSize="12sp"
             android:textColor="@color/action_bar"
             />
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_gravity="right"
+            android:layout_gravity="left"
             android:background="@drawable/chat_bubble_in"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

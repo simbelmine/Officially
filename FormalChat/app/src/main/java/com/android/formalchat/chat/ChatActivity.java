@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -89,6 +90,7 @@ public class ChatActivity extends DrawerActivity {
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onIncommingMessage);
+        closeSoftKeyboard();
     }
 
     private void setTitle() {
@@ -116,7 +118,6 @@ public class ChatActivity extends DrawerActivity {
     }
 
     private void setOnClickListeners() {
-
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,12 +139,6 @@ public class ChatActivity extends DrawerActivity {
                     findInBackground(friendQuery);
                 }
 
-
-
-
-
-
-
 //                String messageText = messageEdit.getText().toString();
 //                if (TextUtils.isEmpty(messageText)) {
 //                    return;
@@ -159,6 +154,14 @@ public class ChatActivity extends DrawerActivity {
 //                displayMessage(chatMessage);
             }
         });
+    }
+
+    private void closeSoftKeyboard() {
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void findInBackground(ParseQuery<ParseUser> friendQuery) {
