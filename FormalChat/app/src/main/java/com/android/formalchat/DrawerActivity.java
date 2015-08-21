@@ -255,16 +255,20 @@ public class DrawerActivity extends FragmentActivity {
 
     private void deleteNotSharableFiles() {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
-        File dir = new File(path);
-        File[] files_list = dir.listFiles();
+        if (path != null) {
+            File dir = new File(path);
+            File[] files_list = dir.listFiles();
 
-        for(int f = 0; f < files_list.length; f++) {
+            if (files_list!= null && files_list.length > 0) {
+                for (int f = 0; f < files_list.length; f++) {
 //            if("blurred_profile.jpg".equals(files_list[f].getName())) {
-                files_list[f].delete();
+                    if (files_list[f].exists()) {
+                        files_list[f].delete();
+                    }
 //            }
+                }
+            }
         }
-
-
     }
 }
 
