@@ -43,12 +43,13 @@ public class VideoDownloadService extends IntentService {
 
 
         ParseFile videoFile = getFileFromParse();
-        String parseFileName = getParseFileName(videoFile);
-        String fileName = getShortImageNameFromUri(parseFileName);
-        File tmpFile = new File(dirPath + filePath + fileName);
+        if(videoFile != null) {
+            String parseFileName = getParseFileName(videoFile);
+            String fileName = getShortImageNameFromUri(parseFileName);
+            File tmpFile = new File(dirPath + filePath + fileName);
 
-        downloadVideo(videoFile, tmpFile);
-
+            downloadVideo(videoFile, tmpFile);
+        }
     }
 
     private ParseFile getFileFromParse() {

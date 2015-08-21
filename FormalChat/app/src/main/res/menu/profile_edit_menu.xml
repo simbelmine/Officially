@@ -6,4 +6,7 @@
     <item
         android:id="@+id/profile_remote"
         android:title="@string/menu_profile_remote"/>
+    <item
+        android:id="@+id/chat"
+        android:title="Chat"/>
 </menu>

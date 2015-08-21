@@ -73,6 +73,7 @@
         <activity   android:name=".chat.ChatActivity"
                     android:windowSoftInputMode="adjustResize|stateHidden"
             />
+        <activity   android:name=".chat.AllChatsActivity"/>
 
 
         <service    android:name=".VideoUploadService"/>

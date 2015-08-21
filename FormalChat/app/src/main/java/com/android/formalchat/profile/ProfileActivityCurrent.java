@@ -7,6 +7,7 @@ import android.widget.PopupMenu;
 
 import com.android.formalchat.R;
 import com.android.formalchat.UserInfoActivity;
+import com.android.formalchat.chat.ChatActivity;
 
 /**
  * Created by Sve on 2/4/15.
@@ -52,6 +53,9 @@ public class ProfileActivityCurrent extends ProfileBaseActivity {
                 return true;
             case R.id.profile_remote:
                 onStartActivity(ProfileActivityRemote.class, null, null);
+                return true;
+            case R.id.chat:
+                onStartActivity(ChatActivity.class, null, null);
                 return true;
             default:
                 return false;
