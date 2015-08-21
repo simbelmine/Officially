@@ -76,6 +76,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     protected ImageView got_it_img;                     // Remote Profile
     protected RelativeLayout help_video_layout;         // Remote Profile
     protected ImageButton edit_feb_btn;                 // User's Profile
+    protected ImageButton chat_feb_button;
+    protected  String userName;
 
     private TextView name;
     private TextView gender;
@@ -243,6 +245,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         progressLayout = (RelativeLayout) findViewById(R.id.progress_layout);
         zodiacSign = (ImageView) findViewById(R.id.zodiac_sign);
         initSwipeContainer();
+        chat_feb_button = (ImageButton) findViewById(R.id.feb_chat_button);
 
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
@@ -288,7 +291,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
 
     private void loadDataAccordingUser() {
         if(getIntent().hasExtra("userNameMain")) {
-            String userName = getIntent().getStringExtra("userNameMain");
+            userName = getIntent().getStringExtra("userNameMain");
 
             if(!userName.equals("")) {
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -445,6 +448,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
 //        got_it_img.setOnClickListener(this);
         smallProfilePic.setOnClickListener(this);
         photos_btn.setOnClickListener(this);
+
+        chat_feb_button.setOnClickListener(this);
     }
 
     @Override

@@ -41,7 +41,9 @@ public class ChatActivity extends DrawerActivity {
     private ChatAdapter chatAdapter;
     private ArrayList<ChatMessage> chatHistory;
 
+    private String senderId;
     private ParseUser friend;
+    private String remoteUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class ChatActivity extends DrawerActivity {
         initView();
         init();
 
+        remoteUserName = getIntent().getStringExtra("username_remote");
 
         setOnClickListeners();
         loadDummyHistory();
@@ -62,6 +65,7 @@ public class ChatActivity extends DrawerActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent != null) {
+                senderId = intent.getStringExtra("senderId");
 
                 ChatMessage chatMessage = new ChatMessage();
                 chatMessage.setId(122); // dummy
@@ -117,47 +121,23 @@ public class ChatActivity extends DrawerActivity {
             @Override
             public void onClick(View v) {
                 ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
-                friendQuery.whereEqualTo("username", "dan@dan.bg");
-                friendQuery.findInBackground(new FindCallback<ParseUser>() {
-                    @Override
-                    public void done(List<ParseUser> parseUsers, ParseException e) {
-                        if(e == null && parseUsers.size() > 0) {
-                            friend = parseUsers.get(0);
-                            MessagingUser sender = (MessagingUser) ParseUser.getCurrentUser();
-                            String senderId = sender.getObjectId();
-                            String receiverId = friend.getObjectId();
 
-                            // Create message object
-                            Log.v(FormalChatApplication.TAG, "txt = " + messageEdit.getText());
-                            Message message = Message.newInstance(senderId, receiverId, messageEdit.getText().toString());
+                Log.v(FormalChatApplication.TAG, "senderId = " + senderId);
+                Log.v(FormalChatApplication.TAG, "remoteUserName = " + remoteUserName);
 
-                            // Create Pubnub object
-                            Pubnub pubnub = new Pubnub(getString(R.string.pubnub_publish_key),
-                                    getString(R.string.pubnub_subscribe_key));
+                if(senderId != null && remoteUserName == null) {
+                    friendQuery.whereEqualTo("objectId", senderId);
+                    findInBackground(friendQuery);
+                }
+                else if(senderId == null && remoteUserName != null) {
+                    friendQuery.whereEqualTo("username", remoteUserName);
+                    findInBackground(friendQuery);
+                }
+                else if(senderId != null && remoteUserName != null) {
+                    friendQuery.whereEqualTo("username", remoteUserName);
+                    findInBackground(friendQuery);
+                }
 
-                            // Send the message
-                            sender.sendMessage(ChatActivity.this, pubnub, message);
-
-                            // Show message to Chat
-                            String messageText = messageEdit.getText().toString();
-                            if (TextUtils.isEmpty(messageText)) {
-                                return;
-                            }
-                            ChatMessage chatMessage = new ChatMessage();
-                            chatMessage.setId(122); // dummy
-                            chatMessage.setMessage(messageText);
-                            chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-                            chatMessage.setIsMe(true);
-
-                            messageEdit.setText("");
-                            displayMessage(chatMessage);
-                        }
-                        else {
-                            Toast.makeText(getApplicationContext(), "Please enter message in field", Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                });
 
 
 
@@ -177,6 +157,49 @@ public class ChatActivity extends DrawerActivity {
 //
 //                messageEdit.setText("");
 //                displayMessage(chatMessage);
+            }
+        });
+    }
+
+    private void findInBackground(ParseQuery<ParseUser> friendQuery) {
+        friendQuery.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> parseUsers, ParseException e) {
+                if(e == null && parseUsers.size() > 0) {
+                    friend = parseUsers.get(0);
+                    MessagingUser sender = (MessagingUser) ParseUser.getCurrentUser();
+                    String senderId = sender.getObjectId();
+                    String receiverId = friend.getObjectId();
+
+                    // Create message object
+                    Log.v(FormalChatApplication.TAG, "txt = " + messageEdit.getText());
+                    Message message = Message.newInstance(senderId, receiverId, messageEdit.getText().toString());
+
+                    // Create Pubnub object
+                    Pubnub pubnub = new Pubnub(getString(R.string.pubnub_publish_key),
+                            getString(R.string.pubnub_subscribe_key));
+
+                    // Send the message
+                    sender.sendMessage(ChatActivity.this, pubnub, message);
+
+                    // Show message to Chat
+                    String messageText = messageEdit.getText().toString();
+                    if (TextUtils.isEmpty(messageText)) {
+                        return;
+                    }
+                    ChatMessage chatMessage = new ChatMessage();
+                    chatMessage.setId(122); // dummy
+                    chatMessage.setMessage(messageText);
+                    chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+                    chatMessage.setIsMe(true);
+
+                    messageEdit.setText("");
+                    displayMessage(chatMessage);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Please enter message in field", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
     }
