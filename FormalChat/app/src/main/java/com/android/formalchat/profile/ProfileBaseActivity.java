@@ -555,7 +555,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         Intent intent = new Intent(this, RetrieveBlurredImageService.class);
         if(getIntent().hasExtra("userNameMain")) {
             intent.putExtra("remoteProfile", true);
-            intent.putExtra("remoteUserName", user.getUsername());
+            intent.putExtra("remoteUserName", getIntent().getStringExtra("userNameMain"));
         }
         startService(intent);
     }
