@@ -182,7 +182,8 @@
             android:scaleType="centerInside"
             android:elevation="@dimen/FEB_elevation"
             android:background="@drawable/oval_btn_selector"
-            android:src="@drawable/plus"
+            android:src="@drawable/chats_white"
+            android:padding="7dp"
             android:visibility="gone"
             />
 
