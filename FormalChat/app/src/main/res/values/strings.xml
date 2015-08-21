@@ -3,6 +3,11 @@
     <string name="app_id">mBgaFjYuGcSRZpv64YmFb73bCc0iijRTJhbq6P0c</string>
     <string name="client_key">MzXOhtTZuyMiM9S0ZNXXbMM9m8AgBJld1xbbbQhD</string>
 
+    <!-- PubNub keys -->
+    <string name="pubnub_publish_key">pub-c-2ce4f481-85ca-4ffd-9b61-89e4c8ad969e</string>
+    <string name="pubnub_subscribe_key">sub-c-78f1fa4e-4782-11e5-afb6-02ee2ddab7fe</string>
+    <string name="pubnub_secret_key">sec-c-YTRkYWNmMTMtNGMzYi00MzIxLTgxMDktOWJkZjNmZTQ0ZDg1</string>
+
     <string name="take_photo">Take Photo</string>
     <string name="attach_photo">Attach Photo</string>
     <string name="please_complete_the_sign_up">Please complete the sign up form</string>

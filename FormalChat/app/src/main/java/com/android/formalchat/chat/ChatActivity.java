@@ -1,21 +1,34 @@
 package com.android.formalchat.chat;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.formalchat.DrawerActivity;
+import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.pubnub.api.Pubnub;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Sve on 8/18/15.
@@ -28,22 +41,50 @@ public class ChatActivity extends DrawerActivity {
     private ChatAdapter chatAdapter;
     private ArrayList<ChatMessage> chatHistory;
 
+    private ParseUser friend;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((FormalChatApplication) getApplication()).subscribeToMessagingChannel();
+
         super.onCreate(savedInstanceState);
 
         setTitle();
         initView();
         init();
 
+
         setOnClickListeners();
         loadDummyHistory();
     }
 
+    private BroadcastReceiver onIncommingMessage = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent != null) {
+
+                ChatMessage chatMessage = new ChatMessage();
+                chatMessage.setId(122); // dummy
+                chatMessage.setMessage(intent.getStringExtra("message"));
+                chatMessage.setDate(intent.getStringExtra("timeSentMillis"));
+                chatMessage.setIsMe(false);
+
+                displayMessage(chatMessage);
+            }
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
+        IntentFilter iff= new IntentFilter(FormalChatApplication.ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(onIncommingMessage, iff);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onIncommingMessage);
     }
 
     private void setTitle() {
@@ -71,22 +112,71 @@ public class ChatActivity extends DrawerActivity {
     }
 
     private void setOnClickListeners() {
+
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String messageText = messageEdit.getText().toString();
-                if(TextUtils.isEmpty(messageText)) {
-                    return;
-                }
+                ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
+                friendQuery.whereEqualTo("username", "dan@dan.bg");
+                friendQuery.findInBackground(new FindCallback<ParseUser>() {
+                    @Override
+                    public void done(List<ParseUser> parseUsers, ParseException e) {
+                        if(e == null && parseUsers.size() > 0) {
+                            friend = parseUsers.get(0);
+                            MessagingUser sender = (MessagingUser) ParseUser.getCurrentUser();
+                            String senderId = sender.getObjectId();
+                            String receiverId = friend.getObjectId();
 
-                ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setId(122); // dummy
-                chatMessage.setMessage(messageText);
-                chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-                chatMessage.setIsMe(true);
+                            // Create message object
+                            Log.v(FormalChatApplication.TAG, "txt = " + messageEdit.getText());
+                            Message message = Message.newInstance(senderId, receiverId, messageEdit.getText().toString());
 
-                messageEdit.setText("");
-                displayMessage(chatMessage);
+                            // Create Pubnub object
+                            Pubnub pubnub = new Pubnub(getString(R.string.pubnub_publish_key),
+                                    getString(R.string.pubnub_subscribe_key));
+
+                            // Send the message
+                            sender.sendMessage(ChatActivity.this, pubnub, message);
+
+                            // Show message to Chat
+                            String messageText = messageEdit.getText().toString();
+                            if (TextUtils.isEmpty(messageText)) {
+                                return;
+                            }
+                            ChatMessage chatMessage = new ChatMessage();
+                            chatMessage.setId(122); // dummy
+                            chatMessage.setMessage(messageText);
+                            chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+                            chatMessage.setIsMe(true);
+
+                            messageEdit.setText("");
+                            displayMessage(chatMessage);
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "Please enter message in field", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
+
+
+
+
+
+
+//                String messageText = messageEdit.getText().toString();
+//                if (TextUtils.isEmpty(messageText)) {
+//                    return;
+//                }
+//
+//                ChatMessage chatMessage = new ChatMessage();
+//                chatMessage.setId(122); // dummy
+//                chatMessage.setMessage(messageText);
+//                chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+//                chatMessage.setIsMe(true);
+//
+//                messageEdit.setText("");
+//                displayMessage(chatMessage);
             }
         });
     }
@@ -125,4 +215,8 @@ public class ChatActivity extends DrawerActivity {
             displayMessage(message);
         }
     }
+
+
+    // ###### PubNub ###### //
+
 }
