@@ -155,7 +155,7 @@
             android:paddingRight="5dp"
             android:scaleType="centerInside"
             android:elevation="@dimen/FEB_elevation"
-            android:background="@drawable/button_selector_drawable"
+            android:background="@drawable/button_selector_drwbl_purple"
             android:textColor="@color/white"
             android:clickable="true"
             />
@@ -169,7 +169,7 @@
             android:layout_marginBottom="30dp"
             android:scaleType="centerInside"
             android:elevation="@dimen/FEB_elevation"
-            android:background="@drawable/oval_btn_selector"
+            android:background="@drawable/oval_btn_selector_purple"
             android:src="@drawable/plus"
             />
         <ImageButton
@@ -181,7 +181,7 @@
             android:layout_marginBottom="30dp"
             android:scaleType="centerInside"
             android:elevation="@dimen/FEB_elevation"
-            android:background="@drawable/oval_btn_selector"
+            android:background="@drawable/oval_btn_selector_purple"
             android:src="@drawable/chats_white"
             android:padding="7dp"
             android:visibility="gone"

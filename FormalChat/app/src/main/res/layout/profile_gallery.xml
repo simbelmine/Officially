@@ -17,6 +17,6 @@
         android:paddingBottom="@dimen/grid_margin"
         android:stretchMode="columnWidth"
         android:gravity="center"
-        android:background="@color/background"
+        android:background="@color/items_new"
         />
 </android.support.v4.widget.SwipeRefreshLayout>

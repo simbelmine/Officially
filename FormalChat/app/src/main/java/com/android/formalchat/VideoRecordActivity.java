@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -54,11 +55,20 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initActionBar();
         setContentView(R.layout.video_record_layout);
 
         init();
         initVideoUtils();
         setOnclickListeners();
+    }
+
+    private void initActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        getActionBar().setHomeButtonEnabled(false);
+        // Hide Action Bar icon and text
+        getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_purple)));
     }
 
     private void init() {

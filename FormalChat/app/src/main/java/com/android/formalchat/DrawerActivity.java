@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -144,6 +145,7 @@ public class DrawerActivity extends FragmentActivity {
         getActionBar().setHomeButtonEnabled(true);
         // Hide Action Bar icon and text
         getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_purple)));
     }
 
     @Override

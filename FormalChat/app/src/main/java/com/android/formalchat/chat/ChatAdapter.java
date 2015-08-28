@@ -94,7 +94,7 @@ public class ChatAdapter extends BaseAdapter {
 
     private void setAlignment(ViewHolder holder, boolean isMe) {
         if(!isMe) {
-            holder.contentWithBG.setBackgroundResource(R.drawable.chat_bubble_in);
+            holder.contentWithBG.setBackgroundResource(R.drawable.chat_bubble_in_green);
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.contentWithBG.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
             holder.contentWithBG.setLayoutParams(layoutParams);
@@ -114,7 +114,7 @@ public class ChatAdapter extends BaseAdapter {
             holder.txtInfo.setLayoutParams(layoutParams);
         }
         else {
-            holder.contentWithBG.setBackgroundResource(R.drawable.chat_bubble_out);
+            holder.contentWithBG.setBackgroundResource(R.drawable.chat_bubble_out_purple);
 
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.contentWithBG.getLayoutParams();

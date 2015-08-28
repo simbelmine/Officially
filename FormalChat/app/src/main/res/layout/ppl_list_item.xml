@@ -12,22 +12,26 @@
         android:layout_height="@dimen/list_img_size"
         android:scaleType="centerCrop"
         android:layout_margin="@dimen/list_img_margin"
+        android:layout_centerVertical="true"
         android:src="@drawable/profile_pic"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/list_item_txt_height"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="65dp"
         >
         <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="25dp"
             android:text="User's Name"
             android:paddingLeft="@dimen/list_item_txt_padding"
             android:gravity="center|left"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center"
             android:textColor="@color/white"
-            android:background="@color/transp_black_20"
+            android:background="@color/items_new"
             />
     </LinearLayout>
 </RelativeLayout>

@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_gravity="center_vertical|center_horizontal"
     android:foregroundGravity="center|center_horizontal|center_vertical"
-    android:background="@drawable/dialog_semitransparent"
+    android:background="@drawable/dialog_semitransparent_purple"
     >
     <ImageView
         android:id="@+id/mesureRect"
@@ -23,7 +23,7 @@
         android:layout_gravity="top|right"
         android:text="@string/done"
         android:textColor="@color/white"
-        android:background="@color/border_green"/>
+        android:background="@color/items_new"/>
     <ProgressBar
         android:id="@+id/crop_progressBar"
         android:layout_width="wrap_content"

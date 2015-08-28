@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="135dp"
     android:background="@drawable/background">
     <com.android.formalchat.RoundedImageView
         android:id="@+id/picture"
         android:layout_width="@dimen/grid_img_size"
         android:layout_height="@dimen/grid_img_size"
-        android:layout_gravity="center"
+        android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="@dimen/grid_img_margin"
         android:layout_marginBottom="@dimen/grid_img_margin"
         android:src="@drawable/profile_pic"/>
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="25dp"
         android:paddingLeft="@dimen/grid_item_txt_l_r_padding"
         android:paddingRight="@dimen/grid_item_txt_l_r_padding"
         android:paddingTop="@dimen/grid_item_txt_t_b_padding"
@@ -22,7 +22,7 @@
         android:layout_gravity="bottom"
         android:gravity="center_vertical"
         android:textColor="@color/white"
-        android:background="@color/transp_black_20"
+        android:background="@color/items_new"
         android:text="User's Name"
         />
 </FrameLayout>

@@ -26,10 +26,14 @@
     <color name="action_bar_lighter">#408497</color>
     <color name="chat_out_msg">#006784</color>
     <color name="items">#00a5a5</color>
+    <color name="items_new">#4c9689</color>
     <color name="items_40">#4000a5a5</color>
     <color name="border_green">#00b3b4</color>
     <color name="background">#002833</color>
     <color name="background_99">#CC002833</color>
     <color name="gray_green">#5e6573</color>
     <color name="turquoise">#33b5e5</color>
+
+    <color name="action_bar_purple">#3e313c</color>
+    <color name="background_purple">#4d394b</color>
 </resources>

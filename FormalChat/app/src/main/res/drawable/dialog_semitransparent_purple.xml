@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <shape android:shape="rectangle">
+        <gradient
+            android:startColor="@color/action_bar_purple"
+            android:endColor="@color/action_bar_purple"
+            android:angle="0"
+            />
+        <corners android:radius="0.2dp"/>
+        <padding
+            android:left="1dp"
+            android:right="1dp"
+            android:bottom="1dp"
+            android:top="1dp"/>
+        <stroke
+            android:color="@color/items_new"
+            android:width="1dp" />
+    </shape>
+</inset>

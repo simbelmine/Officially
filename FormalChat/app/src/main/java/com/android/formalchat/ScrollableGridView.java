@@ -55,4 +55,10 @@ public class ScrollableGridView extends GridView {
     {
         this.expanded = expanded;
     }
+
+    @Override
+    public void setNumColumns(int numColumns) {
+        numColumns = 3;
+        super.setNumColumns(numColumns);
+    }
 }

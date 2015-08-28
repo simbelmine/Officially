@@ -67,17 +67,17 @@ public class DrawerListAdapter extends BaseAdapter {
         setListIcons(view, position);
 
 
-        if("Logged In".equals(drawerListMenu[position])) {
-            initSwitch(view);
-            switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(!isChecked) {
-                        ((DrawerActivity)context).logOut();
-                    }
-                }
-            });
-        }
+//        if("Logged In".equals(drawerListMenu[position])) {
+//            initSwitch(view);
+//            switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                    if(!isChecked) {
+//                        ((DrawerActivity)context).logOut();
+//                    }
+//                }
+//            });
+//        }
 
         return view;
     }
@@ -101,15 +101,15 @@ public class DrawerListAdapter extends BaseAdapter {
         textView.setText(drawerListMenu[position]);
     }
 
-    private void initSwitch(View view) {
-        switchBtn = (Switch) view.findViewById(R.id.online_switch);
-        switchBtn.setVisibility(View.VISIBLE);
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
-        if (sharedPreferences.getBoolean("loggedIn", false)) {
-            switchBtn.setChecked(true);
-        }
-        else {
-            switchBtn.setChecked(false);
-        }
-    }
+//    private void initSwitch(View view) {
+//        switchBtn = (Switch) view.findViewById(R.id.online_switch);
+//        switchBtn.setVisibility(View.VISIBLE);
+//        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFS_NAME, 0);
+//        if (sharedPreferences.getBoolean("loggedIn", false)) {
+//            switchBtn.setChecked(true);
+//        }
+//        else {
+//            switchBtn.setChecked(false);
+//        }
+//    }
 }

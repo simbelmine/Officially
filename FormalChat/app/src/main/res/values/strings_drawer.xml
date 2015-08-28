@@ -6,7 +6,6 @@
         <item>People</item>
         <item>Chats</item>
         <item>Log Out</item>
-        <item>Logged In</item>
     </string-array>
     <string-array name="menu_icon_list">
         <item>people</item>

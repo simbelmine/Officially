@@ -58,7 +58,7 @@ public class FullImageActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         initActionBar();
-        setContentView(R.layout.full_screen_layout);
+        setContentView(R.layout.gallery_full_screen_img);
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         editor = sharedPreferences.edit();
