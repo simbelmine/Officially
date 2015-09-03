@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -97,6 +98,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initActionBar();
         setContentView(R.layout.login_activity);
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
@@ -109,6 +111,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         setOnEditoInfoListeners();
 
         startCorrectActivity();
+    }
+
+    private void initActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        // Hide Action Bar icon and text
+        getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_purple)));
     }
 
     private void startCorrectActivity() {
