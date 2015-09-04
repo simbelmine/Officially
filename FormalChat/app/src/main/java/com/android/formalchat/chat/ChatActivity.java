@@ -22,8 +22,11 @@ import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.pubnub.api.Pubnub;
 
 import java.text.DateFormat;
@@ -126,15 +129,13 @@ public class ChatActivity extends DrawerActivity {
                 Log.v(FormalChatApplication.TAG, "remote senderId = " + senderId);
                 Log.v(FormalChatApplication.TAG, "remote UserName = " + remoteUserName);
 
-                if(senderId != null && remoteUserName == null) {
+                if (senderId != null && remoteUserName == null) {
                     friendQuery.whereEqualTo("objectId", senderId);
                     findInBackground(friendQuery);
-                }
-                else if(senderId == null && remoteUserName != null) {
+                } else if (senderId == null && remoteUserName != null) {
                     friendQuery.whereEqualTo("username", remoteUserName);
                     findInBackground(friendQuery);
-                }
-                else if(senderId != null && remoteUserName != null) {
+                } else if (senderId != null && remoteUserName != null) {
                     friendQuery.whereEqualTo("username", remoteUserName);
                     findInBackground(friendQuery);
                 }
@@ -168,38 +169,23 @@ public class ChatActivity extends DrawerActivity {
         friendQuery.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> parseUsers, ParseException e) {
-                if(e == null && parseUsers.size() > 0) {
+                if (e == null && parseUsers.size() > 0) {
                     friend = parseUsers.get(0);
                     MessagingUser sender = (MessagingUser) ParseUser.getCurrentUser();
                     String senderId = sender.getObjectId();
                     String receiverId = friend.getObjectId();
 
-                    // Create message object
-                    Log.v(FormalChatApplication.TAG, "txt = " + messageEdit.getText());
-                    Message message = Message.newInstance(senderId, receiverId, messageEdit.getText().toString());
+                    Log.e(FormalChatApplication.TAG, "sender name = " + sender.getUsername() + " id = " + senderId);
+                    Log.e(FormalChatApplication.TAG, "friend receiverId = " + receiverId);
 
-                    // Create Pubnub object
-                    Pubnub pubnub = new Pubnub(getString(R.string.pubnub_publish_key),
-                            getString(R.string.pubnub_subscribe_key));
+                    Message message = createMessageObject(senderId, receiverId);
+                    Pubnub pubnub = createPubNubObject();
+                    sendChatMessage(pubnub, sender, message);
+                    showMessageToChat();
 
-                    // Send the message
-                    sender.sendMessage(ChatActivity.this, pubnub, message);
-
-                    // Show message to Chat
-                    String messageText = messageEdit.getText().toString();
-                    if (TextUtils.isEmpty(messageText)) {
-                        return;
-                    }
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.setId(122); // dummy
-                    chatMessage.setMessage(messageText);
-                    chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-                    chatMessage.setIsMe(true);
-
-                    messageEdit.setText("");
-                    displayMessage(chatMessage);
-                }
-                else {
+                    saveReceiverIdToParseInstalation(receiverId);
+                    sendPushNotificationToUser(receiverId, message);
+                } else {
                     Toast.makeText(getApplicationContext(), "Please enter message in field", Toast.LENGTH_LONG).show();
                 }
 
@@ -207,10 +193,67 @@ public class ChatActivity extends DrawerActivity {
         });
     }
 
+    private Message createMessageObject(String senderId, String receiverId) {
+        Log.v(FormalChatApplication.TAG, "txt = " + messageEdit.getText());
+        return Message.newInstance(senderId, receiverId, messageEdit.getText().toString());
+    }
+
+    private Pubnub createPubNubObject() {
+        return new Pubnub(getString(R.string.pubnub_publish_key),
+                getString(R.string.pubnub_subscribe_key));
+    }
+
+    private void sendChatMessage(Pubnub pubnub, MessagingUser sender, Message message) {
+        sender.sendMessage(ChatActivity.this, pubnub, message);
+    }
+
+    private void showMessageToChat() {
+        String messageText = messageEdit.getText().toString();
+        if (TextUtils.isEmpty(messageText)) {
+            return;
+        }
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setId(122); // dummy
+        chatMessage.setMessage(messageText);
+        chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+        chatMessage.setIsMe(true);
+
+        messageEdit.setText("");
+        displayMessage(chatMessage);
+    }
+
     private void displayMessage(ChatMessage chatMessage) {
         chatAdapter.add(chatMessage);
         chatAdapter.notifyDataSetChanged();
         scroll();
+    }
+
+    private void saveReceiverIdToParseInstalation(String receiverId) {
+        ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+        parseInstallation.put("receiverId", receiverId);
+        parseInstallation.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e == null) {
+                    Log.v(FormalChatApplication.TAG, "Parse Installation was SUCCESSFUL");
+                }
+                else {
+                    Log.e(FormalChatApplication.TAG, "Parse Installation was was NOT SUCCESSFUL");
+                    Log.e(FormalChatApplication.TAG, "Parse Installation Error : " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void sendPushNotificationToUser(String receiverId, Message message) {
+        ParsePush push = new ParsePush();
+//        ParseQuery<ParseInstallation> query = ParseInstallation.getQuery();
+//        query.whereEqualTo("receiverId", receiverId);
+        push.setChannel(receiverId);
+//        push.setQuery(query);
+        //push.sendMessageInBackground(message.getMessageBody(), query);
+        push.setMessage(message.getMessageBody());
+        push.sendInBackground();
     }
 
     private void scroll() {
