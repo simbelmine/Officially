@@ -71,19 +71,7 @@ public class MainActivity extends DrawerActivity {
         isListButtonVisible = true; // Start always with grid view
 
 
-
-        // To track statistics around application
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
-
-        // inform the Parse Cloud that it is ready for notifications
-        // To Do : to create your own Receiver and extend ParsePushBroadcastReceiver
-        // http://stackoverflow.com/questions/26677029/the-method-setdefaultpushcallbackcontext-class-extends-activity-from-the-t
-        PushService.setDefaultPushCallback(this, MainActivity.class);
-        ParseInstallation.getCurrentInstallation().saveInBackground();
-
-
-
-
+        setUpParsePushNotifications();
         setTitle();
         initSharedPreferences();
 
@@ -95,6 +83,14 @@ public class MainActivity extends DrawerActivity {
         setOnRefreshListener();
 
 //        getGridListResults(); // not Needed ,it's called because Spinner position 1 is selected with this
+    }
+
+    private void setUpParsePushNotifications() {
+        // To track statistics around application
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+
+        // inform the Parse Cloud that it is ready for notifications
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 
     @Override
