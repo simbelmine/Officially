@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.AndroidCharacter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +18,14 @@ import android.widget.Toast;
 
 import com.parse.FunctionCallback;
 import com.parse.GetCallback;
+import com.parse.ParseAnalytics;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.PushService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +69,20 @@ public class MainActivity extends DrawerActivity {
         drawerLayout.addView(contentView, 0);
         exit = false;
         isListButtonVisible = true; // Start always with grid view
+
+
+
+        // To track statistics around application
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+
+        // inform the Parse Cloud that it is ready for notifications
+        // To Do : to create your own Receiver and extend ParsePushBroadcastReceiver
+        // http://stackoverflow.com/questions/26677029/the-method-setdefaultpushcallbackcontext-class-extends-activity-from-the-t
+        PushService.setDefaultPushCallback(this, MainActivity.class);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+
+
+
 
         setTitle();
         initSharedPreferences();

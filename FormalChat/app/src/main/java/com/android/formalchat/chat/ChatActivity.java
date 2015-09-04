@@ -123,8 +123,8 @@ public class ChatActivity extends DrawerActivity {
             public void onClick(View v) {
                 ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
 
-                Log.v(FormalChatApplication.TAG, "senderId = " + senderId);
-                Log.v(FormalChatApplication.TAG, "remoteUserName = " + remoteUserName);
+                Log.v(FormalChatApplication.TAG, "remote senderId = " + senderId);
+                Log.v(FormalChatApplication.TAG, "remote UserName = " + remoteUserName);
 
                 if(senderId != null && remoteUserName == null) {
                     friendQuery.whereEqualTo("objectId", senderId);
