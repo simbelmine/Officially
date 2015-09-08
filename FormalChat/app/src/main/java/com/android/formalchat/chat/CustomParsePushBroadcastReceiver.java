@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.widget.Toast;
 
 import com.android.formalchat.R;
 import com.parse.ParsePushBroadcastReceiver;
@@ -15,7 +14,12 @@ import com.parse.ParsePushBroadcastReceiver;
 public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver {
     @Override
     protected void onPushOpen(Context context, Intent intent) {
-        Toast.makeText(context, "The push notification was Clicked!", Toast.LENGTH_SHORT).show();
+//        Bundle bundle = intent.getExtras();
+//        for (String key : bundle.keySet()) {
+//            Object value = bundle.get(key);
+//            Log.d(FormalChatApplication.TAG, String.format("%s *** %s *** (%s)", key,
+//                    value.toString(), value.getClass().getName()));
+//        }
 
         Intent i = new Intent(context, ChatActivity.class);
         i.putExtras(intent.getExtras());
