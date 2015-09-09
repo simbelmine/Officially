@@ -10,6 +10,13 @@
         android:layout_height="match_parent"
         android:padding="20dp">
 
+        <ProgressBar
+            android:id="@+id/chat_progress_bar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"/>
+
         <EditText
             android:id="@+id/messageEdit"
             android:layout_width="match_parent"
@@ -40,8 +47,9 @@
             android:layout_above="@+id/messageEdit"
             android:layout_marginTop="10dp"
             android:listSelector="@color/transp_white"
-            android:transcriptMode="alwaysScroll"
             android:divider="@null"
+            android:transcriptMode="normal"
+            android:stackFromBottom="true"
             />
     </RelativeLayout>
 

@@ -1,6 +1,9 @@
 package com.android.formalchat.chat;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +30,13 @@ public class ChatAdapter extends BaseAdapter {
         this.context = context;
         this.chatMessages = chatMessages;
     }
+
+    public void updateChatMessages(ArrayList<ChatMessage> chatHistory) {
+        this.chatMessages.clear();
+        this.chatMessages.addAll(chatHistory);
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public int getCount() {
@@ -74,6 +86,7 @@ public class ChatAdapter extends BaseAdapter {
 
         return convertView;
     }
+
 
     private static class ViewHolder {
         public TextView txtMessage;

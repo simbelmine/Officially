@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.formalchat.DrawerActivity;
@@ -42,16 +44,20 @@ import java.util.List;
  * Created by Sve on 8/18/15.
  */
 public class ChatActivity extends DrawerActivity {
+    private static final int MESSAGES_TO_LOAD_LIMIT = 20;
     private DrawerLayout drawerLayout;
     private ListView messageContainer;
     private EditText messageEdit;
     private Button sendButton;
+    private ProgressBar chatProgressBar;
     private ChatAdapter chatAdapter;
     private ArrayList<ChatMessage> chatHistory;
 
     private String senderId;
     private ParseUser friend;
     private String remoteUserName;
+
+    private Date lastMessageDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +70,10 @@ public class ChatActivity extends DrawerActivity {
         init();
 
         remoteUserName = getIntent().getStringExtra("username_remote");
+        chatHistory = new ArrayList<>();
 
         setOnClickListeners();
-        loadDummyHistory();
+        setOnMessageContainerScrollListener();
     }
 
     private BroadcastReceiver onIncomingMessage = new BroadcastReceiver() {
@@ -91,6 +98,8 @@ public class ChatActivity extends DrawerActivity {
         super.onResume();
         IntentFilter iff= new IntentFilter(FormalChatApplication.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onIncomingMessage, iff);
+
+        loadChatHistory();
     }
 
     @Override
@@ -122,6 +131,39 @@ public class ChatActivity extends DrawerActivity {
         messageContainer = (ListView) findViewById(R.id.messagesContainer);
         messageEdit = (EditText) findViewById(R.id.messageEdit);
         sendButton = (Button) findViewById(R.id.chatSendButton);
+        chatProgressBar = (ProgressBar) findViewById(R.id.chat_progress_bar);
+    }
+
+    private void setOnMessageContainerScrollListener() {
+        messageContainer.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int currentFirstVisibleItem;
+            private int currentVisibleItemCount;
+            private int currentScrollState;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                this.currentScrollState = scrollState;
+                this.isScrollCompleted(view);
+            }
+
+            private void isScrollCompleted(AbsListView view) {
+                if (this.currentVisibleItemCount > 0 && this.currentScrollState == SCROLL_STATE_IDLE) {
+                    View currView = view.getChildAt(0);
+                    int top = (currView == null) ? 0 : -currView.getTop();
+
+                    if (top == 0) {
+                        chatProgressBar.setVisibility(View.VISIBLE);
+                        loadChatHistory();
+                    }
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                this.currentFirstVisibleItem = firstVisibleItem;
+                this.currentVisibleItemCount = visibleItemCount;
+            }
+        });
     }
 
     private void setOnClickListeners() {
@@ -143,20 +185,6 @@ public class ChatActivity extends DrawerActivity {
                     friendQuery.whereEqualTo("username", remoteUserName);
                     findInBackground(friendQuery);
                 }
-
-//                String messageText = messageEdit.getText().toString();
-//                if (TextUtils.isEmpty(messageText)) {
-//                    return;
-//                }
-//
-//                ChatMessage chatMessage = new ChatMessage();
-//                chatMessage.setId(122); // dummy
-//                chatMessage.setMessage(messageText);
-//                chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-//                chatMessage.setIsMe(true);
-//
-//                messageEdit.setText("");
-//                displayMessage(chatMessage);
             }
         });
     }
@@ -273,7 +301,7 @@ public class ChatActivity extends DrawerActivity {
         messageContainer.setSelection(messageContainer.getCount() - 1);
     }
 
-    private void loadDummyHistory() {
+    private void loadChatHistory() {
         final String senderId = "rVxRWVEQmv";
         if(getIntent().hasExtra("com.parse.Data") || senderId != null) {
 //            try {
@@ -281,84 +309,100 @@ public class ChatActivity extends DrawerActivity {
 //                if(jsonObject.has("senderId")) {
             if(senderId != null) {
 //                    String pushNotificationSenderId = jsonObject.getString("senderId");
-                final String pushNotificationSenderId = senderId;
+                String pushNotificationSenderId = senderId;
                 String currentUserId = ParseUser.getCurrentUser().getObjectId();
-
-                ParseQuery<ParseObject> queryPart1 = ParseQuery.getQuery("Message");
-                queryPart1.whereEqualTo("senderId", currentUserId.toString());
-                queryPart1.whereEqualTo("receiverId", pushNotificationSenderId);
-
-// build second AND condition
-                ParseQuery<ParseObject> queryPart2 = ParseQuery.getQuery("Message");
-                queryPart2.whereEqualTo("senderId", pushNotificationSenderId);
-                queryPart2.whereEqualTo("receiverId", currentUserId.toString());
-
-                List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
-                queries.add(queryPart1);
-                queries.add(queryPart2);
-
-// Compose the OR clause
-                ParseQuery<ParseObject> query = ParseQuery.or(queries);
-
-                query.setLimit(5);
-                query.addDescendingOrder("createdAt");
-
-                query.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if(e == null) {
-                            chatHistory = new ArrayList<>();
-
-                            for(int i = list.size()-1; i >= 0; i--) {
-                                ParseObject po = list.get(i);
-                                ChatMessage msg = new ChatMessage();
-                                msg.setId(list.indexOf(po));
-                                setWhoSentMsg(msg, po.get("senderId"), pushNotificationSenderId);
-                                String message = (String)po.get("messageBody");
-                                msg.setMessage(message);
-                                msg.setDate(DateFormat.getDateTimeInstance().format(po.getDate("timeSent")));
-                                chatHistory.add(msg);
-                            }
-
-                            for(ChatMessage message : chatHistory) {
-                                displayMessage(message);
-                            }
-                        }
-                        else {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                executeGetMessagesQuery(getMessagesQuery(currentUserId, pushNotificationSenderId), pushNotificationSenderId);
             }
 //            }
 //            catch (JSONException ex) {
 //                ex.printStackTrace();
 //            }
         }
+    }
 
+    private void executeGetMessagesQuery(ParseQuery<ParseObject> query, String pushNotificationSenderId) {
+        query.setLimit(MESSAGES_TO_LOAD_LIMIT);
+        query.addDescendingOrder("timeSent");
 
-//        chatHistory = new ArrayList<>();
-//
-//        ChatMessage msg = new ChatMessage();
-//        msg.setId(1); // dummy
-//        msg.setIsMe(false);
-//        msg.setMessage("Hi");
-//        msg.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-//        chatHistory.add(msg);
-//
-//        ChatMessage msg1 = new ChatMessage();
-//        msg1.setId(2);
-//        msg1.setIsMe(false);
-//        msg1.setMessage("How r u doing???");
-//        msg1.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-//        chatHistory.add(msg1);
-//
-        chatAdapter = new ChatAdapter(ChatActivity.this, new ArrayList<ChatMessage>());
-        messageContainer.setAdapter(chatAdapter);
-//
-//        for(ChatMessage message : chatHistory) {
-//            displayMessage(message);
-//        }
+        if(lastMessageDate != null) {
+            query.whereLessThan("timeSent", lastMessageDate);
+            findMessagesInBackground(query, pushNotificationSenderId);
+        }
+        else {
+            findMessagesInBackground(query, pushNotificationSenderId);
+        }
+
+    }
+
+    private void findMessagesInBackground(ParseQuery<ParseObject> query, final String pushNotificationSenderId) {
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null && list.size() > 0) {
+                    updateLastMessageDate(list.get(list.size() - 1).getDate("timeSent"));
+
+                    ArrayList<ChatMessage> currentChatHistory = new ArrayList<>();
+                    for (int i = list.size() - 1; i >= 0; i--) {
+                        ParseObject po = list.get(i);
+
+                        ChatMessage msg = new ChatMessage();
+                        msg.setId(list.indexOf(po));
+                        setWhoSentMsg(msg, po.get("senderId"), pushNotificationSenderId);
+                        String message = (String) po.get("messageBody");
+                        msg.setMessage(message);
+                        msg.setDate(DateFormat.getDateTimeInstance().format(po.getDate("timeSent")));
+                        currentChatHistory.add(msg);
+                    }
+
+                    currentChatHistory.addAll(chatHistory);
+                    chatHistory = new ArrayList<>();
+                    chatHistory = currentChatHistory;
+
+                    initAdapter(chatHistory);
+                } else {
+                    Log.e(FormalChatApplication.TAG, "ChatActivity parse ex: " + e + "  or list with msgs is < 0");
+                    chatProgressBar.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    private void initAdapter(ArrayList<ChatMessage> chatHistory) {
+        if(chatAdapter != null) {
+            chatAdapter.updateChatMessages(chatHistory);
+            setTopPosition();
+        }
+        else {
+            chatAdapter = new ChatAdapter(ChatActivity.this, chatHistory);
+            messageContainer.setAdapter(chatAdapter);
+        }
+    }
+
+    private void setTopPosition() {
+        int top = (messageContainer == null) ? 0 : messageContainer.getTop();
+        messageContainer.setSelectionFromTop(MESSAGES_TO_LOAD_LIMIT, top);
+        chatProgressBar.setVisibility(View.GONE);
+    }
+
+    private void updateLastMessageDate(Date date) {
+        lastMessageDate = date;
+    }
+
+    private ParseQuery<ParseObject> getMessagesQuery(String currentUserId, String pushNotificationSenderId) {
+        ParseQuery<ParseObject> queryPart1 = ParseQuery.getQuery("Message");
+        queryPart1.whereEqualTo("senderId", currentUserId.toString());
+        queryPart1.whereEqualTo("receiverId", pushNotificationSenderId);
+
+        // build second AND condition
+        ParseQuery<ParseObject> queryPart2 = ParseQuery.getQuery("Message");
+        queryPart2.whereEqualTo("senderId", pushNotificationSenderId);
+        queryPart2.whereEqualTo("receiverId", currentUserId.toString());
+
+        List<ParseQuery<ParseObject>> queries = new ArrayList<>();
+        queries.add(queryPart1);
+        queries.add(queryPart2);
+
+        return ParseQuery.or(queries);
     }
 
     private void setWhoSentMsg(ChatMessage msg, Object senderId, String pushNotificationSenderId) {
