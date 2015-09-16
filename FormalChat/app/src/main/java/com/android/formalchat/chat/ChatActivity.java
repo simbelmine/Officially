@@ -23,6 +23,7 @@ import com.android.formalchat.DrawerActivity;
 import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
@@ -58,6 +59,9 @@ public class ChatActivity extends DrawerActivity {
     private String remoteUserName;
 
     private Date lastMessageDate;
+    private ParseObject chatObject;
+    private ParseQuery<ParseObject> query;
+    private boolean chatParticipantsWasSaved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +75,9 @@ public class ChatActivity extends DrawerActivity {
 
         remoteUserName = getIntent().getStringExtra("username_remote");
         chatHistory = new ArrayList<>();
+        chatParticipantsWasSaved = false;
 
+        setChatIdsByUser();
         setOnClickListeners();
         setOnMessageContainerScrollListener();
     }
@@ -215,8 +221,12 @@ public class ChatActivity extends DrawerActivity {
                     sendChatMessage(pubnub, sender, message);
                     showCurrentMessageToChat();
 
-                    saveReceiverIdToParseInstalation(receiverId);
+                    saveReceiverIdToParseInstallation(receiverId);
                     sendPushNotificationToUser(senderId, receiverId, message);
+
+                    if (getIntent().hasExtra("username_remote")) {
+                        makeQueryFromNewChat(chatObject, query);
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Please enter message in field", Toast.LENGTH_LONG).show();
                 }
@@ -255,12 +265,13 @@ public class ChatActivity extends DrawerActivity {
     }
 
     private void displayMessage(ChatMessage chatMessage) {
+        initAdapter();
         chatAdapter.add(chatMessage);
         chatAdapter.notifyDataSetChanged();
         scroll();
     }
 
-    private void saveReceiverIdToParseInstalation(String receiverId) {
+    private void saveReceiverIdToParseInstallation(String receiverId) {
         ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
         parseInstallation.put("receiverId", receiverId);
         parseInstallation.saveInBackground(new SaveCallback() {
@@ -301,22 +312,116 @@ public class ChatActivity extends DrawerActivity {
         messageContainer.setSelection(messageContainer.getCount() - 1);
     }
 
+    private void setChatIdsByUser() {
+        chatObject = new ParseObject("Chat");
+        query = ParseQuery.getQuery("Chat");
+        chatObject.put("userId", ParseUser.getCurrentUser());
+
+        if(getIntent().hasExtra("com.parse.Data")) {
+            makeQueryFromPushNotification();
+        }
+    }
+
+    private void makeQueryFromPushNotification() {
+        try {
+            final JSONObject jsonObject = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
+            query.whereEqualTo("senderId", jsonObject.getString("senderId"));
+            query.whereEqualTo("receiverId", jsonObject.getString("receiverId"));
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> listChatObjects, ParseException e) {
+                    if (e == null && (listChatObjects == null || listChatObjects.size() == 0)
+                            && !chatParticipantsWasSaved) {
+                        saveChatObjFromPushNotification(chatObject, jsonObject);
+                    }
+                }
+            });
+        }
+        catch(JSONException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void makeQueryFromNewChat(final ParseObject chatObject, final ParseQuery<ParseObject> query) {
+        String userName = getIntent().getStringExtra("username_remote");
+        ParseQuery<ParseUser> queryUser = ParseQuery.getUserQuery();
+        queryUser.whereEqualTo("username", userName);
+        queryUser.getFirstInBackground(new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser parseUser, ParseException e) {
+                if (e == null) {
+                    final String senderUserId = parseUser.getObjectId();
+                    query.whereEqualTo("senderId", senderUserId);
+                    query.whereEqualTo("receiverId", ParseUser.getCurrentUser());
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> listChatObjects, ParseException e) {
+                            if (e == null && (listChatObjects == null || listChatObjects.size() == 0)
+                                    && !chatParticipantsWasSaved) {
+                                saveChatObjFromNewChat(chatObject, senderUserId);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void saveChatObjFromPushNotification(ParseObject chat, JSONObject jsonObject) {
+        try {
+            String pushNotificationSenderId = jsonObject.getString("senderId");
+            String pushNotificationReceiverId = jsonObject.getString("receiverId");
+
+            chat.put("senderId", pushNotificationSenderId);
+            if (pushNotificationReceiverId.equals(ParseUser.getCurrentUser())) {
+                chat.put("receiverId", pushNotificationReceiverId);
+            } else {
+                chat.put("receiverId", ParseUser.getCurrentUser());
+            }
+
+            chat.saveInBackground();
+            chatParticipantsWasSaved = true;
+        }
+        catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void saveChatObjFromNewChat(final ParseObject chat, String senderUserId) {
+        chat.put("senderId", senderUserId);
+        chat.put("receiverId", ParseUser.getCurrentUser());
+        chat.saveInBackground();
+        chatParticipantsWasSaved = true;
+    }
+
     private void loadChatHistory() {
-        final String senderId = "rVxRWVEQmv";
+//        final String senderId = "rVxRWVEQmv";
+        final String senderId = null;
+
+
         if(getIntent().hasExtra("com.parse.Data") || senderId != null) {
-//            try {
-//                JSONObject jsonObject = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
-//                if(jsonObject.has("senderId")) {
-            if(senderId != null) {
-//                    String pushNotificationSenderId = jsonObject.getString("senderId");
-                String pushNotificationSenderId = senderId;
+            Log.v(FormalChatApplication.TAG, "it has extra com.parse.Data = ");
+            loadFromPushNotification();
+        }
+        else {
+            Log.v(FormalChatApplication.TAG, "it NOT has extra com.parse.Data = ");
+        }
+    }
+
+    private void loadFromPushNotification() {
+        try {
+            JSONObject jsonObject = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
+            if(jsonObject.has("senderId")) {
+                String pushNotificationSenderId = jsonObject.getString("senderId");
+
+                Log.v(FormalChatApplication.TAG, "Push senderId = " + pushNotificationSenderId);
+//                String pushNotificationSenderId = senderId;
                 String currentUserId = ParseUser.getCurrentUser().getObjectId();
                 executeGetMessagesQuery(getMessagesQuery(currentUserId, pushNotificationSenderId), pushNotificationSenderId);
             }
-//            }
-//            catch (JSONException ex) {
-//                ex.printStackTrace();
-//            }
+        }
+        catch (JSONException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -325,10 +430,14 @@ public class ChatActivity extends DrawerActivity {
         query.addDescendingOrder("timeSent");
 
         if(lastMessageDate != null) {
+            Log.v(FormalChatApplication.TAG, "lastMessageDate is != null");
+
             query.whereLessThan("timeSent", lastMessageDate);
             findMessagesInBackground(query, pushNotificationSenderId);
         }
         else {
+            Log.v(FormalChatApplication.TAG, "lastMessageDate is NULL");
+
             findMessagesInBackground(query, pushNotificationSenderId);
         }
 
@@ -339,6 +448,8 @@ public class ChatActivity extends DrawerActivity {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null && list.size() > 0) {
+                    Log.v(FormalChatApplication.TAG, "Results : " + list);
+
                     updateLastMessageDate(list.get(list.size() - 1).getDate("timeSent"));
 
                     ArrayList<ChatMessage> currentChatHistory = new ArrayList<>();
@@ -376,6 +487,11 @@ public class ChatActivity extends DrawerActivity {
             chatAdapter = new ChatAdapter(ChatActivity.this, chatHistory);
             messageContainer.setAdapter(chatAdapter);
         }
+    }
+
+    private void initAdapter() {
+        chatAdapter = new ChatAdapter(ChatActivity.this, new ArrayList<ChatMessage>());
+        messageContainer.setAdapter(chatAdapter);
     }
 
     private void setTopPosition() {
