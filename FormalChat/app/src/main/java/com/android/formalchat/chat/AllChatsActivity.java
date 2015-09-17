@@ -16,15 +16,12 @@ import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.android.formalchat.ScrollableListView;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -52,6 +49,8 @@ public class AllChatsActivity extends DrawerActivity {
         senderIds = new ArrayList<>();
         allChatsAdapter = new AllChatsAdapter(AllChatsActivity.this, new ArrayList<ParseObject>());
         messagesLayout.setAdapter(allChatsAdapter);
+
+        getUserChatFriendsList();
     }
 
     private BroadcastReceiver onIncomingMessage = new BroadcastReceiver() {
@@ -102,8 +101,6 @@ public class AllChatsActivity extends DrawerActivity {
         super.onResume();
         IntentFilter iff= new IntentFilter(FormalChatApplication.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onIncomingMessage, iff);
-
-        getUserChatFriendsList();
     }
 
     @Override
