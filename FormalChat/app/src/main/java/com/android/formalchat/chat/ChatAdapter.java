@@ -26,10 +26,6 @@ public class ChatAdapter extends BaseAdapter {
     private List<ChatMessage> chatMessages;
     private Context context;
 
-    public ChatAdapter(Context context) {
-        this.context = context;
-    }
-
     public ChatAdapter(Context context, List<ChatMessage> chatMessages) {
         this.context = context;
         this.chatMessages = chatMessages;

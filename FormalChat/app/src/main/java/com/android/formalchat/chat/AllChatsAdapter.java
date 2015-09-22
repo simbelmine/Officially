@@ -88,7 +88,7 @@ public class AllChatsAdapter extends BaseAdapter {
         holder.position = position;
 
         holder.messageContent.setText(ids.get(position).getString("messageText"));
-        
+
         if(ParseUser.getCurrentUser().getObjectId().equals(ids.get(position).getString("senderId"))) {
             id = ids.get(position).getString("receiverId");
             holder.messageName.setText(ids.get(position).getString("receiverName"));
