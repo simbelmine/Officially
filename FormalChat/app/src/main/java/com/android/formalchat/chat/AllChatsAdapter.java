@@ -95,7 +95,7 @@ public class AllChatsAdapter extends BaseAdapter {
         }
         else {
             id = ids.get(position).getString("senderId");
-            holder.messageName.setText(ids.get(position).getString("senderId"));
+            holder.messageName.setText(ids.get(position).getString("senderName"));
         }
 
         new DownloadConversationImage(context, holder, position, id).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
