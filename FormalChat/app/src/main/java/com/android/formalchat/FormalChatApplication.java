@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.android.formalchat.chat.Conversation;
 import com.android.formalchat.chat.Message;
 import com.android.formalchat.chat.MessagingUser;
 import com.parse.GetCallback;
@@ -37,9 +38,12 @@ public class FormalChatApplication extends Application {
         ParseObject.registerSubclass(UserImages.class);
         ParseObject.registerSubclass(UserInfo.class);
         ParseObject.registerSubclass(UserQuestionary.class);
+
         // PubNub
         ParseObject.registerSubclass(MessagingUser.class);
         ParseObject.registerSubclass(Message.class);
+
+        ParseObject.registerSubclass(Conversation.class);
 
         Parse.initialize(this, getString(R.string.app_id), getString(R.string.client_key));
     }

@@ -23,14 +23,18 @@ public class Message extends ParseObject {
     public static final String JSON_MESSAGE_TAG = "message";
     public static final String JSON_SENDER_ID_TAG = "senderId";
     public static final String JSON_RECEIVER_ID_TAG = "receiverId";
+    public static final String JSON_SENDER_NAME_TAG = "senderName";
+    public static final String JSON_RECEIVER_NAME_TAG = "receiverName";
     public static final String JSON_TIME_SENT_MILLIS_TAG = "timeSentMillis";
 
     public Message() {}
 
-    public static Message newInstance(String senderId, String receiverId, String messageBody) {
+    public static Message newInstance(String senderId, String receiverId, String senderName, String receiverName, String messageBody) {
         Message message = new Message();
         message.setSenderId(senderId);
         message.setReceiverId(receiverId);
+        message.setSenderName(senderName);
+        message.setReceiverName(receiverName);
         message.setMessageBody(messageBody);
         return message;
     }
@@ -50,6 +54,12 @@ public class Message extends ParseObject {
             String receiverId = messageObject.getString(JSON_RECEIVER_ID_TAG);
             Log.v(FormalChatApplication.TAG, "receiverId = " + receiverId);
             message.setReceiverId(receiverId);
+
+            String senderName = messageObject.getString(JSON_SENDER_NAME_TAG);
+            message.setSenderName(senderName);
+
+            String receiverName = messageObject.getString(JSON_RECEIVER_NAME_TAG);
+            message.setReceiverName(receiverName);
 
             long timeSentMillis = messageObject.getLong(JSON_TIME_SENT_MILLIS_TAG);
             Log.v(FormalChatApplication.TAG, "timeSentMillis = " + timeSentMillis);
@@ -83,6 +93,8 @@ public class Message extends ParseObject {
         try {
             messageObject.put(JSON_SENDER_ID_TAG, getSenderId());
             messageObject.put(JSON_RECEIVER_ID_TAG, getReceiverId());
+            messageObject.put(JSON_SENDER_NAME_TAG, getSenderName());
+            messageObject.put(JSON_RECEIVER_NAME_TAG, getReceiverName());
             messageObject.put(JSON_MESSAGE_TAG, getMessageBody());
             messageObject.put(JSON_TIME_SENT_MILLIS_TAG, getTimeSent().getTime());
             return messageObject;
@@ -90,10 +102,6 @@ public class Message extends ParseObject {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private void setSenderId(String senderId) {
-        put("senderId", senderId);
     }
 
     private void setMessageBody(String messageBody) {
@@ -104,8 +112,20 @@ public class Message extends ParseObject {
         put("timeSent", timeSent);
     }
 
+    private void setSenderId(String senderId) {
+        put("senderId", senderId);
+    }
+
     public String getSenderId() {
         return getString("senderId");
+    }
+
+    private void setSenderName(String senderName) {
+        put("senderName", senderName);
+    }
+
+    public String getSenderName() {
+        return getString("senderName");
     }
 
     public String getMessageBody() {
@@ -122,6 +142,14 @@ public class Message extends ParseObject {
 
     public String getReceiverId() {
         return getString("receiverId");
+    }
+
+    public void setReceiverName(String receiverName) {
+        put("receiverName", receiverName);
+    }
+
+    public String getReceiverName() {
+        return getString("receiverName");
     }
 
     public String getFormattedTimeSent() {

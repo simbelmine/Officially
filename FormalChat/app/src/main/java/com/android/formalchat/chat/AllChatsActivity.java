@@ -16,12 +16,14 @@ import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.android.formalchat.ScrollableListView;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,7 +32,7 @@ import java.util.List;
 public class AllChatsActivity extends DrawerActivity {
     private DrawerLayout drawerLayout;
     private AllChatsAdapter allChatsAdapter;
-    private ScrollableListView messagesLayout;
+    private ScrollableListView conversationsListLayout;
     private ArrayList<String> senderIds;
 
     @Override
@@ -44,11 +46,11 @@ public class AllChatsActivity extends DrawerActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
 
-        messagesLayout = (ScrollableListView) findViewById(R.id.chats_listview);
+        conversationsListLayout = (ScrollableListView) findViewById(R.id.chats_listview);
 
         senderIds = new ArrayList<>();
-        allChatsAdapter = new AllChatsAdapter(AllChatsActivity.this, new ArrayList<ParseObject>());
-        messagesLayout.setAdapter(allChatsAdapter);
+//        allChatsAdapter = new AllChatsAdapter(AllChatsActivity.this, new ArrayList<ParseObject>());
+//        conversationsListLayout.setAdapter(allChatsAdapter);
 
         getUserChatFriendsList();
     }
@@ -110,36 +112,63 @@ public class AllChatsActivity extends DrawerActivity {
     }
 
     private void getUserChatFriendsList() {
-        ParseQuery<ParseObject> query1 = ParseQuery.getQuery("Chat");
-        query1.whereEqualTo("receiverId", ParseUser.getCurrentUser());
+        final HashMap<String, Object> params = new HashMap<>();
 
-        ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Chat");
-        query2.whereEqualTo("senderId", ParseUser.getCurrentUser().getObjectId().toString());
-
-        List<ParseQuery<ParseObject>> queries = new ArrayList<>();
-        queries.add(query1);
-        queries.add(query2);
-
-        ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
-        mainQuery.addDescendingOrder("createdAt");
-        mainQuery.setLimit(10);
-        mainQuery.include("receiverId");
-        mainQuery.findInBackground(new FindCallback<ParseObject>() {
+        ParseCloud.callFunctionInBackground("getAllUserConversations", params, new FunctionCallback<ArrayList<ArrayList>>() {
             @Override
-            public void done(List<ParseObject> listFriends, ParseException e) {
-                if (e == null && listFriends.size() > 0) {
-                    ArrayList<ChatObject> friendsChatsList = new ArrayList<>();
-                    for (ParseObject parseObj : listFriends) {
-                        String sender_id = parseObj.getString("senderId");
-                        String receiver_id = parseObj.getParseObject("receiverId").getObjectId(); // get the exact Pointer Data
-                        ChatObject chat = new ChatObject(sender_id, receiver_id);
-                        friendsChatsList.add(chat);
+            public void done(ArrayList<ArrayList> listResults, ParseException e) {
+                if (e == null && listResults != null) {
+                    ArrayList<ParseObject> resultList = listResults.get(0);
+
+                    ArrayList<ParseObject> conversations = new ArrayList<>();
+                    for (ParseObject po : resultList) {
+                        conversations.add(po);
                     }
 
-                    executeGetLastUserMessageQuery(friendsChatsList);
+                    initAdapter(conversations);
+
                 }
             }
         });
+
+
+
+
+//        ParseQuery<ParseObject> query1 = ParseQuery.getQuery("Chat");
+//        query1.whereEqualTo("receiverId", ParseUser.getCurrentUser());
+//
+//        ParseQuery<ParseObject> query2 = ParseQuery.getQuery("Chat");
+//        query2.whereEqualTo("senderId", ParseUser.getCurrentUser().getObjectId().toString());
+//
+//        List<ParseQuery<ParseObject>> queries = new ArrayList<>();
+//        queries.add(query1);
+//        queries.add(query2);
+//
+//        ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+//        mainQuery.addDescendingOrder("createdAt");
+//        mainQuery.setLimit(10);
+//        mainQuery.include("receiverId");
+//        mainQuery.findInBackground(new FindCallback<ParseObject>() {
+//            @Override
+//            public void done(List<ParseObject> listFriends, ParseException e) {
+//                if (e == null && listFriends.size() > 0) {
+//                    ArrayList<ChatObject> friendsChatsList = new ArrayList<>();
+//                    for (ParseObject parseObj : listFriends) {
+//                        String sender_id = parseObj.getString("senderId");
+//                        String receiver_id = parseObj.getParseObject("receiverId").getObjectId(); // get the exact Pointer Data
+//                        ChatObject chat = new ChatObject(sender_id, receiver_id);
+//                        friendsChatsList.add(chat);
+//                    }
+//
+//                    executeGetLastUserMessageQuery(friendsChatsList);
+//                }
+//            }
+//        });
+    }
+
+    private void initAdapter(ArrayList<ParseObject> conversations) {
+        allChatsAdapter = new AllChatsAdapter(this, conversations);
+        conversationsListLayout.setAdapter(allChatsAdapter);
     }
 
     private void executeGetLastUserMessageQuery(ArrayList<ChatObject> friendsChatsList) {

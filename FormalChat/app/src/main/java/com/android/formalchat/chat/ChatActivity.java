@@ -23,7 +23,9 @@ import com.android.formalchat.DrawerActivity;
 import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
@@ -39,6 +41,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -216,17 +219,17 @@ public class ChatActivity extends DrawerActivity {
                     Log.e(FormalChatApplication.TAG, "sender name = " + sender.getUsername() + " id = " + senderId);
                     Log.e(FormalChatApplication.TAG, "friend receiverId = " + receiverId);
 
-                    Message message = createMessageObject(senderId, receiverId);
+                    Message message = createMessageObject(sender, friend);
                     Pubnub pubnub = createPubNubObject();
-                    sendChatMessage(pubnub, sender, message);
+                    sendChatMessage(pubnub, sender, message); // Save message and if successful subscribe to PubNub channel
                     showCurrentMessageToChat();
 
                     saveReceiverIdToParseInstallation(receiverId);
                     sendPushNotificationToUser(senderId, receiverId, message);
-
-                    if (getIntent().hasExtra("username_remote")) {
-                        makeQueryFromNewChat(chatObject, query);
-                    }
+//
+//                    if (getIntent().hasExtra("username_remote")) {
+//                        makeQueryFromNewChat(chatObject, query);
+//                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Please enter message in field", Toast.LENGTH_LONG).show();
                 }
@@ -235,9 +238,14 @@ public class ChatActivity extends DrawerActivity {
         });
     }
 
-    private Message createMessageObject(String senderId, String receiverId) {
+    private Message createMessageObject(MessagingUser sender, ParseUser receiver) {
         Log.v(FormalChatApplication.TAG, "txt = " + messageEdit.getText());
-        return Message.newInstance(senderId, receiverId, messageEdit.getText().toString());
+        return Message.newInstance(
+                sender.getObjectId(),
+                receiver.getObjectId(),
+                sender.getString("username"),
+                receiver.getString("username"),
+                messageEdit.getText().toString());
     }
 
     private Pubnub createPubNubObject() {

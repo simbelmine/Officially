@@ -240,6 +240,7 @@ public class MainActivity extends DrawerActivity {
 
 
     private void initAdapter(View view, List<ParseUser> list){
+        // *** Grig View *** //
         if(view == people_GridView)  {
 //            if(peopleGridViewAdapter != null) {
 //                peopleGridViewAdapter.updateUsers(list);
@@ -258,6 +259,8 @@ public class MainActivity extends DrawerActivity {
             ((ScrollableGridView)view).setAdapter(peopleGridViewAdapterMatches);
 //            }
         }
+
+        // *** List View *** //
         else if(view == people_ListView) {
 //            if(peopleListViewAdapter != null) {
 //                peopleListViewAdapter.updateUsers(list);
