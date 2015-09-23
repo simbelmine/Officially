@@ -327,6 +327,11 @@ public class ChatActivity extends DrawerActivity {
             Log.v(FormalChatApplication.TAG, "it has extra com.parse.Data = ");
             loadFromPushNotification();
         }
+        else if(getIntent().hasExtra("senderId")) {
+            String currentUserId = ParseUser.getCurrentUser().getObjectId();
+            String senderIdFromConversation = getIntent().getStringExtra("senderId");
+            executeGetMessagesQuery(getMessagesQuery(currentUserId, senderIdFromConversation), senderIdFromConversation);
+        }
         else {
             Log.v(FormalChatApplication.TAG, "it NOT has extra com.parse.Data = ");
         }
@@ -369,7 +374,7 @@ public class ChatActivity extends DrawerActivity {
 
     }
 
-    private void findMessagesInBackground(ParseQuery<ParseObject> query, final String pushNotificationSenderId) {
+    private void findMessagesInBackground(ParseQuery<ParseObject> query, final String senderId) {
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
@@ -384,7 +389,7 @@ public class ChatActivity extends DrawerActivity {
 
                         ChatMessage msg = new ChatMessage();
                         msg.setId(list.indexOf(po));
-                        setWhoSentMsg(msg, po.get("senderId"), pushNotificationSenderId);
+                        setWhoSentMsg(msg, po.get("senderId"), senderId);
                         String message = (String) po.get("messageBody");
                         msg.setMessage(message);
                         msg.setDate(DateFormat.getDateTimeInstance().format(po.getDate("timeSent")));

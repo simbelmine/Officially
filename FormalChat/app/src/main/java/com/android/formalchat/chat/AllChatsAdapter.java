@@ -1,6 +1,7 @@
 package com.android.formalchat.chat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.android.formalchat.RoundedImageView;
+import com.android.formalchat.profile.ProfileActivityRemote;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -71,6 +73,7 @@ public class AllChatsAdapter extends BaseAdapter {
 
         if(convertView == null) {
             convertView = inflater.inflate(R.layout.chats_all_item, null);
+            setViewOnClickListener(convertView, position);
             holder = createViewHolder(convertView);
             convertView.setTag(holder);
         }
@@ -81,6 +84,28 @@ public class AllChatsAdapter extends BaseAdapter {
         setMessageInfoToChatObj(holder, position);
 
         return convertView;
+    }
+
+    private void setViewOnClickListener(View convertView, final int position) {
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String senderId;
+                String senderIdFromConversation = ids.get(position).getString("senderId");
+                String receiverIdFromConversation = ids.get(position).getString("receiverId");
+
+                if(ParseUser.getCurrentUser().getObjectId().equals(ids.get(position).getString("senderId"))) {
+                    senderId = receiverIdFromConversation;
+                }
+                else {
+                    senderId = senderIdFromConversation;
+                }
+
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("senderId", senderId);
+                context.startActivity(intent);
+            }
+        });
     }
 
     private void setMessageInfoToChatObj(final ViewHolder holder, int position) {
