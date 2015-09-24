@@ -185,13 +185,13 @@ public class ChatActivity extends DrawerActivity {
 
                 if (senderId != null && remoteUserName == null) {
                     friendQuery.whereEqualTo("objectId", senderId);
-                    findInBackground(friendQuery);
+                    findHistoryInBackground(friendQuery);
                 } else if (senderId == null && remoteUserName != null) {
                     friendQuery.whereEqualTo("username", remoteUserName);
-                    findInBackground(friendQuery);
+                    findHistoryInBackground(friendQuery);
                 } else if (senderId != null && remoteUserName != null) {
                     friendQuery.whereEqualTo("username", remoteUserName);
-                    findInBackground(friendQuery);
+                    findHistoryInBackground(friendQuery);
                 }
             }
         });
@@ -205,7 +205,7 @@ public class ChatActivity extends DrawerActivity {
                 InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    private void findInBackground(ParseQuery<ParseUser> friendQuery) {
+    private void findHistoryInBackground(ParseQuery<ParseUser> friendQuery) {
         friendQuery.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> parseUsers, ParseException e) {
@@ -297,13 +297,12 @@ public class ChatActivity extends DrawerActivity {
         JSONObject data;
         try {
             data = new JSONObject();
-            data.put("alert", message.getMessageBody());
+            //data.put("alert", message.getMessageBody()); // Uncomment if you need original parse notifications
             data.put("senderId", senderId);
-
+            data.put("message", message.getMessageBody()); // Comment if you don't need custom notifications
 
             ParsePush push = new ParsePush();
             push.setChannel(receiverId);
-//        push.setMessage(message.getMessageBody());
             push.setData(data);
             push.sendInBackground();
 

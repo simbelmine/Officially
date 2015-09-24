@@ -92,7 +92,7 @@
         <service    android:name=".RetrieveBlurredImageService"
             />
 
-        <!-- **** Parse Push Notification **** -->
+<!-- **** Parse Push Notification **** -->
         <service android:name="com.parse.PushService"/>
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>
@@ -125,7 +125,7 @@
                 <category android:name="com.android.formalchat" />
             </intent-filter>
         </receiver>
-        <!-- ***************** -->
+<!-- ***************** -->
 
     </application>
 
