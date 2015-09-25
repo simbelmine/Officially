@@ -79,6 +79,13 @@ public class ChatActivity extends DrawerActivity {
         initView();
         init();
 
+
+        Log.e(FormalChatApplication.TAG, "Intent extras from Push: ");
+        Log.e(FormalChatApplication.TAG, "*** " + getIntent().getExtras());
+
+
+
+
         remoteUserName = getIntent().getStringExtra("username_remote");
         chatHistory = new ArrayList<>();
         chatParticipantsWasSaved = false;
@@ -334,9 +341,8 @@ public class ChatActivity extends DrawerActivity {
 //        final String senderId = "rVxRWVEQmv";
         final String senderIdDummy = null;
 
-
         if(getIntent().hasExtra("com.parse.Data") || senderIdDummy != null) {
-            Log.v(FormalChatApplication.TAG, "it has extra com.parse.Data = ");
+            Log.v(FormalChatApplication.TAG, "it has extra com.parse.Data ");
             loadFromPushNotification();
         }
         else if(getIntent().hasExtra("senderId")) {
@@ -353,6 +359,7 @@ public class ChatActivity extends DrawerActivity {
     private void loadFromPushNotification() {
         try {
             JSONObject jsonObject = new JSONObject(getIntent().getExtras().getString("com.parse.Data"));
+
             if(jsonObject.has("senderId")) {
                 String pushNotificationSenderId = jsonObject.getString("senderId");
                 senderId = pushNotificationSenderId;

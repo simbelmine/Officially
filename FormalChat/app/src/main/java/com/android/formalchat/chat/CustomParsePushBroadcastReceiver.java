@@ -17,6 +17,8 @@ import com.parse.ParseUser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Map;
+
 /**
  * Created by Sve on 9/4/15.
  */
@@ -27,7 +29,7 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
 
     @Override
     protected void onPushOpen(Context context, Intent intent) {
-//
+
 //        Intent i = new Intent(context, ChatActivity.class);
 //        i.putExtras(intent.getExtras());
 //        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -42,15 +44,13 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
             JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
             sharedPreferences = context.getSharedPreferences(ChatActivity.PREFS_NAME, 0);
 
-//
+
 //            Map<String,?> keys = sharedPreferences.getAll();
 //
 //            for(Map.Entry<String,?> entry : keys.entrySet()){
-//                Log.v(FormalChatApplication.TAG, " # " + entry.getKey() + ": " +
+//                Log.v(FormalChatApplication.TAG, " ### " + entry.getKey() + " : " +
 //                        entry.getValue().toString());
 //            }
-
-
 
                 Bundle bundle = intent.getExtras();
                 Log.e(FormalChatApplication.TAG, " Intent Extras ");
@@ -89,7 +89,8 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
     private void generateNotification(Context context, Intent intentFromPush, JSONObject json) {
         Intent intent = new Intent(context, ChatActivity.class);
         intent.putExtras(intentFromPush.getExtras());
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENTcv);
 
         numMessages = 0;
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
