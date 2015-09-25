@@ -9,6 +9,7 @@ import android.widget.GridView;
  * Created by Sve on 7/6/15.
  */
 public class ScrollableGridView extends GridView {
+    private static final int GRID_VIEW_COLUMNS = 2;
     boolean expanded = true;
 
     public ScrollableGridView(Context context)
@@ -58,7 +59,6 @@ public class ScrollableGridView extends GridView {
 
     @Override
     public void setNumColumns(int numColumns) {
-        numColumns = 3;
-        super.setNumColumns(numColumns);
+        super.setNumColumns(GRID_VIEW_COLUMNS);
     }
 }

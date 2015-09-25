@@ -82,6 +82,8 @@ public class MainActivity extends DrawerActivity {
         setOnSpinnerItemSelected();
         setOnRefreshListener();
 
+        setSpinnerPosition();
+
 //        getGridListResults(); // not Needed ,it's called because Spinner position 1 is selected with this
     }
 
@@ -99,7 +101,7 @@ public class MainActivity extends DrawerActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setSpinnerPosition();
+
     }
 
     private void init() {
@@ -353,6 +355,7 @@ public class MainActivity extends DrawerActivity {
     private void performFilterByPosition(int position) {
         switch (position) {
             case 0:
+                // Show me All
                 matchesLayout.setVisibility(View.GONE);
                 if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
                     getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0);
@@ -362,34 +365,41 @@ public class MainActivity extends DrawerActivity {
                 saveSpinnerPosition(position);
                 break;
             case 1:
+                // Perfect Match
                 getGridListResults();
                 saveSpinnerPosition(position);
                 break;
             case 2:
+                // Match is Drinking
                 startSearch("drinkingCriteria", 2, ">=", false);
                 startSearch("drinkingCriteria", 2, ">=", true);
                 saveSpinnerPosition(position);
                 break;
             case 3:
+                // Match is Not Drinking
                 startSearch("drinkingCriteria", 1, "<=", false);
                 startSearch("drinkingCriteria", 1, "<=", true);
                 saveSpinnerPosition(position);
                 break;
             case 4:
+                // Match is Smoking
                 startSearch("smokingCriteria", 2, ">=", false);
                 startSearch("smokingCriteria", 2, ">=", true);
                 saveSpinnerPosition(position);
                 break;
             case 5:
+                // Match is Not Smoking
                 startSearch("smokingCriteria", 1, "<=", false);
                 startSearch("smokingCriteria", 1, "<=", true);
                 saveSpinnerPosition(position);
                 break;
             case 6:
+                // Match with my Religion
                 startComplexSearch("religionCriteria");
                 saveSpinnerPosition(position);
                 break;
             case 7:
+                // Match with my Ethnicity
                 startComplexSearch("ethnicityCriteria");
                 saveSpinnerPosition(position);
                 break;
@@ -492,7 +502,7 @@ public class MainActivity extends DrawerActivity {
         people_ListView.setVisibility(View.VISIBLE);
         people_ListView_Matches.setVisibility(View.VISIBLE);
         //getGridListResults();
-        setSpinnerPosition();
+//        setSpinnerPosition();
     }
 
     private void setPplGridView() {
@@ -502,7 +512,7 @@ public class MainActivity extends DrawerActivity {
         people_GridView.setVisibility(View.VISIBLE );
         people_GridView_Matches.setVisibility(View.VISIBLE);
         // getGridListResults();
-        setSpinnerPosition();
+//        setSpinnerPosition();
     }
 
     private void setGridListStatus() {

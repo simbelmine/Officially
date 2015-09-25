@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="135dp"
+    android:layout_height="155dp"
     android:background="@drawable/background">
     <com.android.formalchat.RoundedImageView
         android:id="@+id/picture"
@@ -10,7 +10,9 @@
         android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="@dimen/grid_img_margin"
         android:layout_marginBottom="@dimen/grid_img_margin"
-        android:src="@drawable/profile_pic"/>
+        android:src="@drawable/profile_img"
+        android:scaleType="centerInside"
+        />
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"

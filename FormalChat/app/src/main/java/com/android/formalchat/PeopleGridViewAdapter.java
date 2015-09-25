@@ -77,11 +77,19 @@ public class PeopleGridViewAdapter extends BaseAdapter {
         }
 
 
-        ParseUser user = usersList.get(position);
-        if(user.containsKey("profileImg") && user.getParseFile("profileImg") != null) {
-            Picasso.with(context).load(user.getParseFile("profileImg").getUrl()).into(viewHolder.profileImg);
-        }
-        viewHolder.userName.setText(user.get("username").toString());
+        viewHolder.position = position;
+
+
+//        ParseUser user = usersList.get(position);
+//
+//
+//        viewHolder.userName.setText(user.get("username").toString());
+//        if(user.containsKey("profileImg") && user.getParseFile("profileImg") != null) {
+//            Picasso.with(context).load(user.getParseFile("profileImg").getUrl()).into(viewHolder.profileImg);
+//        }
+
+        new DownloadProfileGridImage(context, viewHolder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+
 
         return convertView;
     }
@@ -89,6 +97,36 @@ public class PeopleGridViewAdapter extends BaseAdapter {
     public static class ViewHolder {
         RoundedImageView profileImg;
         TextView userName;
+        int position;
+    }
+
+    private static class DownloadProfileGridImage extends AsyncTask<ParseUser, Void, ParseUser> {
+        private Context context;
+        private ViewHolder viewHolder;
+        private List<ParseUser> usersList;
+        private int position;
+
+        public DownloadProfileGridImage(Context context, ViewHolder viewHolder,List<ParseUser> usersList, int position) {
+            this.context = context;
+            this.viewHolder = viewHolder;
+            this.usersList = usersList;
+            this.position = position;
+        }
+
+        @Override
+        protected ParseUser doInBackground(ParseUser... params) {
+            return usersList.get(position);
+        }
+
+        @Override
+        protected void onPostExecute(ParseUser user) {
+            if(viewHolder.position == position) {
+                viewHolder.userName.setText(user.get("username").toString());
+                if(user.containsKey("profileImg") && user.getParseFile("profileImg") != null) {
+                    Picasso.with(context).load(user.getParseFile("profileImg").getUrl()).into(viewHolder.profileImg);
+                }
+            }
+        }
     }
 
     private void setViewOnClickListener(View convertView, final int position) {

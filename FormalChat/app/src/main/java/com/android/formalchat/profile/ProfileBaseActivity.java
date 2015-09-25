@@ -606,7 +606,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
             Picasso.with(this).load(profileImgPath).into(smallProfilePic);
         }
         else {
-            Picasso.with(this).load(R.drawable.profile_pic).into(smallProfilePic);
+            Picasso.with(this).load(R.drawable.profile_img).into(smallProfilePic);
         }
     }
 

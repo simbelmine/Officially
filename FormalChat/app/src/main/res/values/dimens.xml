@@ -80,7 +80,7 @@
     <dimen name="grid_margin">3dp</dimen>
     <dimen name="grid_item_txt_l_r_padding">10dp</dimen>
     <dimen name="grid_item_txt_t_b_padding">3dp</dimen>
-    <dimen name="grid_img_size">100dp</dimen>
+    <dimen name="grid_img_size">120dp</dimen>
     <dimen name="grid_img_margin">7dp</dimen>
 
     <dimen name="list_margin">3dp</dimen>
