@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
@@ -44,6 +45,9 @@ import java.util.List;
  * Created by Sve on 8/18/15.
  */
 public class ChatActivity extends DrawerActivity {
+    public static final String PREFS_NAME = "FormalChatPrefs_Chat";
+    public static final String CHAT_PARTICIPANT_1 = "chat_participant_1";
+    public static final String CHAT_PARTICIPANT_2 = "chat_participant_2";
     private static final int MESSAGES_TO_LOAD_LIMIT = 20;
     private DrawerLayout drawerLayout;
     private ListView messageContainer;
@@ -62,6 +66,9 @@ public class ChatActivity extends DrawerActivity {
     private ParseQuery<ParseObject> query;
     private boolean chatParticipantsWasSaved;
 
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ((FormalChatApplication) getApplication()).subscribeToMessagingChannel();
@@ -76,6 +83,9 @@ public class ChatActivity extends DrawerActivity {
         chatHistory = new ArrayList<>();
         chatParticipantsWasSaved = false;
 
+        sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
+        editor = sharedPreferences.edit();
+
         chatAdapter = new ChatAdapter(this, new ArrayList<ChatMessage>());
         messageContainer.setAdapter(chatAdapter);
 
@@ -88,15 +98,16 @@ public class ChatActivity extends DrawerActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent != null) {
-                senderId = intent.getStringExtra("senderId");
+                if(senderId != null && intent.hasExtra("senderId") && senderId.equals(intent.getStringExtra("senderId"))) {
+                    ChatMessage chatMessage = new ChatMessage();
+                    chatMessage.setId(122); // dummy
+                    chatMessage.setMessage(intent.getStringExtra("message"));
+                    chatMessage.setDate(intent.getStringExtra("timeSentMillis"));
+                    chatMessage.setIsMe(false);
 
-                ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setId(122); // dummy
-                chatMessage.setMessage(intent.getStringExtra("message"));
-                chatMessage.setDate(intent.getStringExtra("timeSentMillis"));
-                chatMessage.setIsMe(false);
-
-                displayMessage(chatMessage);
+                    displayMessage(chatMessage);
+                    setChatParticipants();
+                }
             }
         }
     };
@@ -107,6 +118,7 @@ public class ChatActivity extends DrawerActivity {
         IntentFilter iff= new IntentFilter(FormalChatApplication.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onIncomingMessage, iff);
 
+        setChatParticipants();
         loadChatHistory();
     }
 
@@ -115,6 +127,7 @@ public class ChatActivity extends DrawerActivity {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onIncomingMessage);
         closeSoftKeyboard();
+        dropChatParticipants();
     }
 
     private void setTitle() {
@@ -319,16 +332,17 @@ public class ChatActivity extends DrawerActivity {
 
     private void loadChatHistory() {
 //        final String senderId = "rVxRWVEQmv";
-        final String senderId = null;
+        final String senderIdDummy = null;
 
 
-        if(getIntent().hasExtra("com.parse.Data") || senderId != null) {
+        if(getIntent().hasExtra("com.parse.Data") || senderIdDummy != null) {
             Log.v(FormalChatApplication.TAG, "it has extra com.parse.Data = ");
             loadFromPushNotification();
         }
         else if(getIntent().hasExtra("senderId")) {
             String currentUserId = ParseUser.getCurrentUser().getObjectId();
             String senderIdFromConversation = getIntent().getStringExtra("senderId");
+            senderId = senderIdFromConversation;
             executeGetMessagesQuery(getMessagesQuery(currentUserId, senderIdFromConversation), senderIdFromConversation);
         }
         else {
@@ -414,8 +428,8 @@ public class ChatActivity extends DrawerActivity {
 //            setTopPosition();
 //        }
 //        else {
-            chatAdapter = new ChatAdapter(ChatActivity.this, chatHistory);
-            messageContainer.setAdapter(chatAdapter);
+        chatAdapter = new ChatAdapter(ChatActivity.this, chatHistory);
+        messageContainer.setAdapter(chatAdapter);
 //        }
     }
 
@@ -461,6 +475,26 @@ public class ChatActivity extends DrawerActivity {
             }
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dropChatParticipants();
+    }
+
+    private void setChatParticipants() {
+        Log.e(FormalChatApplication.TAG, "senderId from INTENT -> " + getIntent().getStringExtra("senderId"));
+        if(getIntent().hasExtra("senderId")) {
+            editor.putString(CHAT_PARTICIPANT_1, getIntent().getStringExtra("senderId")).commit();
+        }
+        else if(senderId != null) {
+            editor.putString(CHAT_PARTICIPANT_1, senderId).commit();
+        }
+    }
+
+    private void dropChatParticipants() {
+        editor.remove(CHAT_PARTICIPANT_1).commit();
     }
 
 }
