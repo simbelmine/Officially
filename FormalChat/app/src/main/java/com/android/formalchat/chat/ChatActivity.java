@@ -439,14 +439,14 @@ public class ChatActivity extends DrawerActivity {
     }
 
     private void initAdapter(ArrayList<ChatMessage> chatHistory) {
-//        if(chatAdapter != null) {
-//            chatAdapter.updateChatMessages(chatHistory);
-//            setTopPosition();
-//        }
-//        else {
+        if(chatAdapter != null) {
+            chatAdapter.updateChatMessages(chatHistory);
+            setTopPosition();
+        }
+        else {
         chatAdapter = new ChatAdapter(ChatActivity.this, chatHistory);
         messageContainer.setAdapter(chatAdapter);
-//        }
+        }
     }
 
     private void initAdapter() {
