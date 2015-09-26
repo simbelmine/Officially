@@ -203,18 +203,27 @@ public class ChatActivity extends DrawerActivity {
                 Log.v(FormalChatApplication.TAG, "remote senderId = " + senderId);
                 Log.v(FormalChatApplication.TAG, "remote UserName = " + remoteUserName);
 
-                if (senderId != null && remoteUserName == null) {
-                    friendQuery.whereEqualTo("objectId", senderId);
-                    findHistoryInBackground(friendQuery);
-                } else if (senderId == null && remoteUserName != null) {
-                    friendQuery.whereEqualTo("username", remoteUserName);
-                    findHistoryInBackground(friendQuery);
-                } else if (senderId != null && remoteUserName != null) {
-                    friendQuery.whereEqualTo("username", remoteUserName);
-                    findHistoryInBackground(friendQuery);
+                if(!isMessageEmpty()) {
+                    if (senderId != null && remoteUserName == null) {
+                        friendQuery.whereEqualTo("objectId", senderId);
+                        findHistoryInBackground(friendQuery);
+                    } else if (senderId == null && remoteUserName != null) {
+                        friendQuery.whereEqualTo("username", remoteUserName);
+                        findHistoryInBackground(friendQuery);
+                    } else if (senderId != null && remoteUserName != null) {
+                        friendQuery.whereEqualTo("username", remoteUserName);
+                        findHistoryInBackground(friendQuery);
+                    }
                 }
             }
         });
+    }
+
+    private boolean isMessageEmpty() {
+        if(TextUtils.isEmpty(messageEdit.getText())) {
+            return true;
+        }
+        return false;
     }
 
     private void closeSoftKeyboard() {

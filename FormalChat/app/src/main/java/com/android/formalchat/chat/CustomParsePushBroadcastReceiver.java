@@ -90,7 +90,7 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
         Intent intent = new Intent(context, ChatActivity.class);
         intent.putExtras(intentFromPush.getExtras());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENTcv);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         numMessages = 0;
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
