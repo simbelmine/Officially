@@ -17,7 +17,7 @@ public class ProfileActivityCurrent extends ProfileBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        help_video_layout.setVisibility(View.GONE);
+        play_profile_video_btn.setVisibility(View.INVISIBLE);
     }
 
     @Override

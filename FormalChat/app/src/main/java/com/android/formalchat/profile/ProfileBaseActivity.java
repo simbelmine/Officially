@@ -74,7 +74,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private SwipeRefreshLayout swipeContainer;
 
     protected ImageView got_it_img;                     // Remote Profile
-    protected RelativeLayout help_video_layout;         // Remote Profile
+//    protected RelativeLayout help_video_layout;         // Remote Profile
+    protected ImageView play_profile_video_btn;         // Remote Profile
     protected ImageButton edit_feb_btn;                 // User's Profile
     protected ImageButton chat_feb_button;
     protected  String userName;
@@ -238,7 +239,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         sexIcon = (ImageView) findViewById(R.id.sex_icon);
         age = (TextView) findViewById(R.id.age_edit);
         edit_feb_btn = (ImageButton) findViewById(R.id.feb_button);
-        help_video_layout = (RelativeLayout) findViewById(R.id.help_layout);
+//        help_video_layout = (RelativeLayout) findViewById(R.id.help_layout);
+        play_profile_video_btn = (ImageView) findViewById(R.id.play_profile_video_btn);
         got_it_img = (ImageView) findViewById(R.id.got_it_img);
         photos_btn = (TextView) findViewById(R.id.photos_button);
         profileProgressBar = (ProgressBar)findViewById(R.id.progresBar_photos_counter);

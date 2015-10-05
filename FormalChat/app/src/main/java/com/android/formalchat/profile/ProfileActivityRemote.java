@@ -22,16 +22,14 @@ public class ProfileActivityRemote extends ProfileBaseActivity {
     @Override
     protected void setOnClickListeners() {
         super.setOnClickListeners();
-        got_it_img.setOnClickListener(this);
+        play_profile_video_btn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.got_it_img:
-                ((FrameLayout) help_video_layout.getParent()).removeView(help_video_layout);
-                help_video_layout.setVisibility(View.GONE);
+            case R.id.play_profile_video_btn:
                 startVideo();
                 break;
             case R.id.small_prof_pic:
