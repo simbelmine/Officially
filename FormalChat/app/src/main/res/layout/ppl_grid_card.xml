@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="155dp"
-    android:background="@drawable/background">
+    android:layout_height="match_parent"
+    >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/grid_bg"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        />
+
     <com.android.formalchat.RoundedImageView
         android:id="@+id/picture"
         android:layout_width="@dimen/grid_img_size"
@@ -13,18 +22,70 @@
         android:src="@drawable/profile_img"
         android:scaleType="centerInside"
         />
+
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="25dp"
-        android:paddingLeft="@dimen/grid_item_txt_l_r_padding"
-        android:paddingRight="@dimen/grid_item_txt_l_r_padding"
-        android:paddingTop="@dimen/grid_item_txt_t_b_padding"
-        android:paddingBottom="@dimen/grid_item_txt_t_b_padding"
-        android:layout_gravity="bottom"
-        android:gravity="center_vertical"
+        android:layout_marginTop="185dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:textColor="@color/white"
         android:background="@color/items_new"
         android:text="User's Name"
         />
+
+    <ImageView
+        android:id="@+id/zodiac_sign"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="220dp"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="235dp"
+        />
+
+    <TextView
+        android:id="@+id/age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="255dp"
+        />
+
+    <ImageView
+        android:id="@+id/online_dot"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="285dp"
+        android:src="@drawable/oval_btn"
+        />
+
+    <!--<TextView-->
+        <!--android:id="@+id/text"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="25dp"-->
+        <!--android:paddingLeft="@dimen/grid_item_txt_l_r_padding"-->
+        <!--android:paddingRight="@dimen/grid_item_txt_l_r_padding"-->
+        <!--android:paddingTop="@dimen/grid_item_txt_t_b_padding"-->
+        <!--android:paddingBottom="@dimen/grid_item_txt_t_b_padding"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:background="@color/items_new"-->
+        <!--android:text="User's Name"-->
+        <!--android:visibility="gone"-->
+        <!--/>-->
 </FrameLayout>

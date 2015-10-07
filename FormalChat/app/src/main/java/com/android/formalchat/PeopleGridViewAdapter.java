@@ -2,29 +2,22 @@ package com.android.formalchat;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.formalchat.profile.ProfileActivityRemote;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,6 +63,11 @@ public class PeopleGridViewAdapter extends BaseAdapter {
 
             viewHolder.profileImg = (RoundedImageView) convertView.findViewById(R.id.picture);
             viewHolder.userName = (TextView) convertView.findViewById(R.id.text);
+            viewHolder.userLocation = (TextView) convertView.findViewById(R.id.location);
+            viewHolder.userAge = (TextView) convertView.findViewById(R.id.age);
+            viewHolder.zodiacSign = (ImageView) convertView.findViewById(R.id.zodiac_sign);
+            viewHolder.onlineDot = (ImageView) convertView.findViewById(R.id.online_dot);
+
             convertView.setTag(viewHolder);
         }
         else {
@@ -89,7 +87,7 @@ public class PeopleGridViewAdapter extends BaseAdapter {
 //        }
 
         new DownloadProfileGridImage(context, viewHolder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
-
+        new DownloadProfileInfo(context, viewHolder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
 
         return convertView;
     }
@@ -97,6 +95,10 @@ public class PeopleGridViewAdapter extends BaseAdapter {
     public static class ViewHolder {
         RoundedImageView profileImg;
         TextView userName;
+        TextView userLocation;
+        TextView userAge;
+        ImageView zodiacSign;
+        ImageView onlineDot;
         int position;
     }
 
@@ -121,10 +123,72 @@ public class PeopleGridViewAdapter extends BaseAdapter {
         @Override
         protected void onPostExecute(ParseUser user) {
             if(viewHolder.position == position) {
-                viewHolder.userName.setText(user.get("username").toString());
+//                viewHolder.userName.setText(user.get("username").toString());
                 if(user.containsKey("profileImg") && user.getParseFile("profileImg") != null) {
                     Picasso.with(context).load(user.getParseFile("profileImg").getUrl()).into(viewHolder.profileImg);
                 }
+            }
+        }
+    }
+
+    private static class DownloadProfileInfo extends AsyncTask<ParseUser, Void, String> {
+        private Context context;
+        private ViewHolder viewHolder;
+        private List<ParseUser> usersList;
+        private int position;
+
+        public DownloadProfileInfo(Context context, ViewHolder viewHolder,List<ParseUser> usersList, int position) {
+            this.context = context;
+            this.viewHolder = viewHolder;
+            this.usersList = usersList;
+            this.position = position;
+        }
+
+        @Override
+        protected String doInBackground(ParseUser... params) {
+            ParseUser user = usersList.get(position);
+
+            ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
+            parseQuery.whereEqualTo("loginName", user.getUsername());
+            parseQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> list, ParseException e) {
+                    if (e == null && list.size() > 0) {
+                        ParseObject userInfo = list.get(0);
+                        String userName = userInfo.get("loginName").toString();
+                        String userLocation = userInfo.get("location").toString();
+                        String userAge = userInfo.get("age").toString();
+
+                        viewHolder.userName.setText(userName);
+                        viewHolder.userLocation.setText(getShortLocationTxt(userLocation));
+                        viewHolder.userAge.setText(getFullAgeTxt(userAge));
+                        setZodiacalSign(userInfo.get("birthday").toString());
+                    }
+                    else {
+                        viewHolder.onlineDot.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+
+            return "Success";
+        }
+
+        private String getShortLocationTxt(String userLocation) {
+            return "@"+userLocation.substring(userLocation.lastIndexOf(",") + 2, userLocation.length());
+        }
+
+        private String getFullAgeTxt(String userAge) {
+            return userAge + " years";
+        }
+
+        private void setZodiacalSign(String birthdayValue) {
+            ZodiacCalculator zodiacCalculator = new ZodiacCalculator(context);
+            ZodiacSign zodiacSignEnum = zodiacCalculator.calculateZodiacSign(birthdayValue);
+
+            if(zodiacSignEnum != null) {
+                viewHolder.zodiacSign.setVisibility(View.VISIBLE);
+                viewHolder.zodiacSign.setBackgroundResource(zodiacSignEnum.getImageId());
             }
         }
     }
