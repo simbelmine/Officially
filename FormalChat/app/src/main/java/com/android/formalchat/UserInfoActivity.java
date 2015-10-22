@@ -3,6 +3,7 @@ package com.android.formalchat;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -90,6 +91,7 @@ public class UserInfoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initActionBar();
         setContentView(R.layout.user_info_new);
 
         infoPrefs_local = getSharedPreferences(PREFS_INFO_LOCAL, 0);
@@ -108,6 +110,10 @@ public class UserInfoActivity extends Activity {
                 goToProfileActivity();
             }
         });
+    }
+
+    private void initActionBar() {
+        getActionBar().hide();
     }
 
     private void setOnClickListeners() {

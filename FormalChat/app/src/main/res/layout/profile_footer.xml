@@ -3,17 +3,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
-    <!-- Divider -->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_info_height"
-        android:layout_marginBottom="@dimen/divider_info_margin"
-        android:layout_marginLeft="@dimen/divider_info_margin"
-        android:layout_marginRight="@dimen/divider_info_margin"
-        android:layout_marginTop="5dp"
-        android:src="@drawable/divider"/>
-    <!-- /Divider -->
+    android:background="#414a53">
+
+    <!--&lt;!&ndash; Divider &ndash;&gt;-->
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/divider_info_height"-->
+        <!--android:layout_marginBottom="@dimen/divider_info_margin"-->
+        <!--android:layout_marginLeft="@dimen/divider_info_margin"-->
+        <!--android:layout_marginRight="@dimen/divider_info_margin"-->
+        <!--android:layout_marginTop="5dp"-->
+<!--/>-->
+    <!--&lt;!&ndash; /Divider &ndash;&gt;-->
 
     <!-- ##########   Motto    ########### -->
     <TextView
@@ -21,18 +22,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/action_bar"
+        android:textColor="@color/border_green"
         android:textStyle="italic"
-        android:layout_margin="@dimen/motto_margin"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="@dimen/motto_margin"
         android:text="@string/motto"/>
 
-    <!-- Divider -->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_info_height"
-        android:layout_margin="@dimen/divider_info_margin"
-        android:src="@drawable/divider"/>
-    <!-- /Divider -->
+    <!--&lt;!&ndash; Divider &ndash;&gt;-->
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/divider_info_height"-->
+        <!--android:layout_margin="@dimen/divider_info_margin"-->
+<!--/>-->
+    <!--&lt;!&ndash; /Divider &ndash;&gt;-->
 
 
     <!-- ##########   Location    ########### -->
@@ -54,7 +57,7 @@
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="center"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="location..."/>
     </LinearLayout>
 
@@ -63,7 +66,6 @@
     <LinearLayout
         android:layout_height="@dimen/icons_size"
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:gravity="left"
         android:layout_marginLeft="@dimen/icons_margin_left"
         android:layout_marginBottom="@dimen/icons_margin_bottom"
@@ -80,13 +82,12 @@
             android:layout_toRightOf="@+id/interested_in_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </LinearLayout>
     <LinearLayout
         android:layout_height="@dimen/icons_size"
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:gravity="left"
         android:layout_marginLeft="@dimen/icons_margin_left"
         android:layout_marginBottom="@dimen/icons_margin_bottom">
@@ -103,13 +104,12 @@
             android:layout_toRightOf="@+id/interested_in_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </LinearLayout>
     <LinearLayout
         android:layout_height="@dimen/icons_size"
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:gravity="left"
         android:layout_marginLeft="@dimen/icons_margin_left"
         android:layout_marginBottom="@dimen/icons_margin_bottom">
@@ -126,13 +126,12 @@
             android:layout_toRightOf="@+id/interested_in_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </LinearLayout>
     <LinearLayout
         android:layout_height="@dimen/icons_size"
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:gravity="left"
         android:layout_marginLeft="@dimen/icons_margin_left"
         android:layout_marginBottom="@dimen/icons_margin_bottom">
@@ -149,13 +148,12 @@
             android:layout_toRightOf="@+id/height_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </LinearLayout>
     <LinearLayout
         android:layout_height="@dimen/icons_size"
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:gravity="left"
         android:layout_marginLeft="@dimen/icons_margin_left"
         android:layout_marginBottom="@dimen/icons_margin_bottom">
@@ -172,7 +170,7 @@
             android:layout_toRightOf="@+id/interested_in_lbl"
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </LinearLayout>
 
@@ -181,7 +179,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_info_height"
         android:layout_margin="@dimen/divider_info_margin"
-        android:src="@drawable/divider"/>
+        />
     <!-- /Divider -->
 
     <!-- ##########   Relationship    ########### -->
@@ -204,7 +202,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
@@ -228,7 +226,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
@@ -252,7 +250,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
@@ -277,7 +275,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 
@@ -299,7 +297,7 @@
             android:layout_height="@dimen/label_height_multi"
             android:gravity="left"
             android:layout_below="@+id/about_me_lbl"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/multi_txt"/>
     </RelativeLayout>
 
@@ -321,7 +319,7 @@
             android:layout_height="@dimen/label_height_multi"
             android:gravity="left"
             android:layout_below="@+id/perfect_smn_lbl"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/multi_txt"/>
     </RelativeLayout>
 
@@ -343,7 +341,7 @@
             android:layout_height="@dimen/label_height_multi"
             android:gravity="left"
             android:layout_below="@+id/perfect_date_lbl"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/multi_txt"/>
     </RelativeLayout>
 
@@ -368,7 +366,7 @@
             android:layout_marginBottom="@dimen/label_margin_bottom"
             android:paddingRight="@dimen/label_padding"
             android:gravity="left"
-            android:textColor="@color/action_bar"
+            android:textColor="@color/white"
             android:text="@string/choice_txt"/>
     </RelativeLayout>
 

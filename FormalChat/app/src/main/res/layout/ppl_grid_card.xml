@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/material_transp60_black"
     >
 
     <ImageView
@@ -10,6 +11,7 @@
         android:src="@drawable/grid_bg"
         android:scaleType="centerInside"
         android:adjustViewBounds="true"
+        android:visibility="invisible"
         />
 
     <com.android.formalchat.RoundedImageView

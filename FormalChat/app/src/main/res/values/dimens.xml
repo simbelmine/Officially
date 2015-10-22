@@ -37,7 +37,7 @@
     <!--Drawer-->
     <dimen name="l_drawer_width">240dp</dimen>
     <dimen name="l_img_height">160dp</dimen>
-    <dimen name="l_drawer_divider_height">0dp</dimen>
+    <dimen name="l_drawer_divider_height">1dp</dimen>
     <dimen name="l_padding_top">10dp</dimen>
     <dimen name="l_txt_padding_l_r">20dp</dimen>
     <dimen name="l_switch_margin_r">5dp</dimen>

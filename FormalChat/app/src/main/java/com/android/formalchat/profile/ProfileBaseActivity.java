@@ -597,7 +597,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
             profilePic.setImageBitmap(myBitmap);
         }
         else {
-            profilePic.setImageDrawable(getResources().getDrawable(R.drawable.background));
+            profilePic.setImageDrawable(getResources().getDrawable(R.drawable.background_dark));
         }
         swipeContainer.setRefreshing(false);
         profileProgressBar.setVisibility(View.GONE);

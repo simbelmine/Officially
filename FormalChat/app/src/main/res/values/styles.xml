@@ -23,11 +23,11 @@
     <!-- ActionBar styles -->
     <style name="MyActionBar"
         parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/action_bar_purple</item>
+        <item name="android:background">#414a53</item>
     </style>
     <style name="MyActionBarQuestionary"
         parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/action_bar_purple</item>
+        <item name="android:background">#414a53</item>
     </style>
 
     <!-- Pop Up Menu styles -->

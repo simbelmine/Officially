@@ -14,6 +14,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/material_gray"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -30,16 +31,16 @@
                     android:entries="@array/search_by_criteria"
                     android:layout_weight="6"
                     android:layout_gravity="bottom"
-
                     />
                 <ImageButton
                     android:id="@+id/grid_list_btn"
                     android:layout_width="@dimen/header_element_width"
                     android:layout_height="match_parent"
-                    android:background="@drawable/grid_list_rounded"
+                    android:background="@color/transp_white"
                     android:src="@drawable/grid"
-                    android:scaleType="fitCenter"
+                    android:scaleType="centerCrop"
                     android:layout_gravity="bottom"
+                    android:padding="8dp"
                     android:layout_weight="1"
                     />
             </LinearLayout>
@@ -57,7 +58,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:text="Matches"/>
+                        android:textColor="@color/items"
+                        android:text="MATCHES"/>
                     <com.android.formalchat.ScrollableGridView
                         android:id="@+id/people_gridview_matches"
                         android:layout_width="match_parent"
@@ -93,7 +95,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:text="All results"/>
+                        android:textColor="@color/items"
+                        android:text="ALL RESULTS"/>
 
                     <com.android.formalchat.ScrollableGridView
                         android:id="@+id/people_gridview"

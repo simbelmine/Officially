@@ -6,13 +6,12 @@
     android:gravity="center_vertical|left"
     android:minWidth="250dp"
     android:minHeight="150dp"
-    android:background="@color/items_new"
     >
     <RelativeLayout
         android:id="@+id/add_photo_layout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/background_purple"
+        android:background="@color/gray_green"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
@@ -34,7 +33,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/background_purple"
+        android:background="@color/gray_green"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         >

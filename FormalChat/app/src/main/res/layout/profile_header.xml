@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="300dp"
     android:orientation="vertical"
+    android:background="#414a53"
     >
 
     <FrameLayout
@@ -16,14 +17,13 @@
             android:id="@+id/profile_pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/background"
+            android:src="@drawable/background_dark"
             android:scaleType="centerCrop"
-            android:layout_marginBottom="50dp"
             />
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/blure"/>
+            />
         <com.android.formalchat.RoundedImageView
             android:id="@+id/small_prof_pic"
             android:layout_width="100dp"
@@ -159,7 +159,7 @@
             android:layout_gravity="bottom|left"
             android:gravity="center_vertical|center_horizontal"
             android:layout_marginLeft="@dimen/FEB_margin"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:scaleType="centerInside"
@@ -175,11 +175,12 @@
             android:layout_height="@dimen/FEB_size"
             android:layout_gravity="bottom|right"
             android:layout_marginRight="@dimen/FEB_margin"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="5dp"
             android:scaleType="centerInside"
             android:elevation="@dimen/FEB_elevation"
             android:background="@drawable/oval_btn_selector_purple"
-            android:src="@drawable/plus"
+            android:src="@drawable/pencil"
+            android:padding="10dp"
             />
         <ImageButton
             android:id="@+id/feb_chat_button"
@@ -187,21 +188,22 @@
             android:layout_height="@dimen/FEB_size"
             android:layout_gravity="bottom|right"
             android:layout_marginRight="@dimen/FEB_margin"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="5dp"
             android:scaleType="centerInside"
             android:elevation="@dimen/FEB_elevation"
             android:background="@drawable/oval_btn_selector_purple"
             android:src="@drawable/chats_white"
-            android:padding="7dp"
+            android:padding="10dp"
             android:visibility="gone"
             />
 
         <RelativeLayout
             android:layout_height="50dp"
             android:layout_width="match_parent"
-            android:background="@color/white"
+            android:background="@color/material_transp60_black"
             android:layout_gravity="bottom"
             android:gravity="center"
+            android:elevation="@dimen/FEB_elevation"
             >
         </RelativeLayout>
     </FrameLayout>
@@ -211,6 +213,5 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="250dp"-->
         <!--></include>-->
-
 
 </FrameLayout>

@@ -1,11 +1,15 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,6 +29,7 @@ public class VideoShowActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initActionBar();
         setContentView(R.layout.video_show_layout);
 
         init();
@@ -40,6 +45,12 @@ public class VideoShowActivity extends Activity {
         else {
             showTextViewMessage();
         }
+    }
+
+    private void initActionBar() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        getActionBar().hide();
     }
 
     private boolean isURL(Uri uri) {
@@ -61,13 +72,22 @@ public class VideoShowActivity extends Activity {
 
     private void loadVideo(Uri uri) {
         try {
-            MediaController mediaController = new MediaController(VideoShowActivity.this);
+            final MediaController mediaController = new MediaController(VideoShowActivity.this);
             mediaController.setAnchorView(videoView);
             videoView.setVideoURI(uri);
             videoView.requestFocus();
             videoView.setMediaController(mediaController);
             videoProgressBar.setVisibility(View.INVISIBLE);
             videoView.setVisibility(View.VISIBLE);
+
+            mediaController.requestFocus();
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mediaController.show(0);
+                }
+            });
+
             videoView.start();
         }
         catch (Exception ex) {

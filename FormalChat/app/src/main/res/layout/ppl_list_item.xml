@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
-    android:background="@drawable/background"
+    android:background="@color/material_transp60_black"
     android:gravity="bottom"
     >
     <com.android.formalchat.RoundedImageView

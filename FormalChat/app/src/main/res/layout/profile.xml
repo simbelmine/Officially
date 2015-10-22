@@ -3,6 +3,7 @@
     android:id="@+id/swipeContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#414a53"
     >
     <ScrollView
         android:layout_width="match_parent"
@@ -18,11 +19,20 @@
                 android:layout_height="match_parent"
                 layout="@layout/profile_header">
             </include>
+
+            <View
+                android:id="@+id/shadow"
+                android:layout_width="fill_parent"
+                android:layout_height="6dp"
+                android:layout_below="@id/profile_header"
+                android:background="@drawable/bg_with_shadow">
+            </View>
             <include
                 android:id="@+id/info_user"
                 layout="@layout/profile_footer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
                 android:layout_below="@+id/profile_header">
             </include>
         </RelativeLayout>

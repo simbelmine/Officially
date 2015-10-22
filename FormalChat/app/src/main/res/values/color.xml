@@ -33,6 +33,11 @@
     <color name="background_99">#CC002833</color>
     <color name="gray_green">#5e6573</color>
     <color name="turquoise">#33b5e5</color>
+    <color name="material_gray">#414a53</color>
+    <color name="material_green">#00a4a5</color>
+    <color name="material_transp60_black">#60000000</color>
+    <color name="material_darker_gray">#2a3036</color>
+    <color name="material_transp_gray">#902a3036</color>
 
     <color name="action_bar_purple">#3e313c</color>
     <color name="background_purple">#4d394b</color>

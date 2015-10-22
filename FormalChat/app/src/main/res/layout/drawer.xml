@@ -17,10 +17,13 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@color/material_darker_gray"
+        >
        <include
            android:id="@+id/header"
-           layout="@layout/drawer_header">
+           layout="@layout/drawer_header"
+           >
        </include>
 
         <ListView
@@ -30,9 +33,18 @@
             android:layout_below="@+id/header"
             android:layout_gravity="start"
             android:paddingTop="@dimen/l_padding_top"
+            android:layout_marginTop="@dimen/l_padding_top"
             android:choiceMode="singleChoice"
-            android:divider="@color/transp"
+            android:divider="@drawable/bg_with_shadow"
             android:dividerHeight="@dimen/l_drawer_divider_height"
-            android:background="@color/white" />
+            />
+        <View
+            android:id="@+id/shadow"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/header"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_with_shadow">
+        </View>
     </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

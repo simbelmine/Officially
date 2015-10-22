@@ -145,7 +145,7 @@ public class DrawerActivity extends FragmentActivity {
         getActionBar().setHomeButtonEnabled(true);
         // Hide Action Bar icon and text
         getActionBar().setDisplayShowHomeEnabled(false);
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_purple)));
+        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
     }
 
     @Override
