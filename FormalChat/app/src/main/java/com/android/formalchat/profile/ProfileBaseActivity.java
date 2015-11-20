@@ -112,6 +112,9 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         initView();
         init();
 
+        if(!isAppDirExists()) {
+            createAppDir();
+        }
         loadDataAccordingUser();
 
 //        setZodiacalSign();
@@ -119,6 +122,19 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
 //        setOnClickListeners();
 //        //  applyLayoutTransition();  - Only if it's Remote ProfileBaseActivity
 //        setProfileImages();
+    }
+
+
+    private boolean isAppDirExists() {
+       if(new File(dir + FILE_DIR).exists()) {
+           return true;
+       }
+        return false;
+    }
+
+    private void createAppDir() {
+        File appDir = new File(dir + FILE_DIR);
+        appDir.mkdir();
     }
 
     @Override
@@ -175,7 +191,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         @Override
         public void onReceive(Context context, Intent intent) {
             if(!getIntent().hasExtra("retrieveImage")) {
-                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
+                String path = dir.getAbsolutePath() + FILE_DIR;
                 retrieveBlurredImageFromLocal(path);
             }
             profilePic.setBackgroundResource(R.drawable.background);
@@ -538,7 +554,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void loadBigProfilePic() {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + FILE_DIR;
+        String path = dir.getAbsolutePath() + FILE_DIR;
 
         if(!getIntent().hasExtra("userNameMain") && isProfPicExists(path)) {
             retrieveBlurredImageFromLocal(path);
@@ -571,10 +587,12 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         File dir = new File(path);
         File[] files_list = dir.listFiles();
 
-        for(int f = 0; f < files_list.length; f++) {
-            if(files_list[f].exists()) {
-                if (PROFILE_PIC_BLURRED.equals(files_list[f].getName())) {
-                    return true;
+        if(files_list.length > 0) {
+            for (int f = 0; f < files_list.length; f++) {
+                if (files_list[f].exists()) {
+                    if (PROFILE_PIC_BLURRED.equals(files_list[f].getName())) {
+                        return true;
+                    }
                 }
             }
         }
