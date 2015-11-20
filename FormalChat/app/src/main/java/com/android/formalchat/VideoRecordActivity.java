@@ -80,16 +80,16 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
         initialVideoPath = initialVideoFolder + "in" + VIDEO_EXTENSION;
         initialVideoPathOut = initialVideoFolder + "out" + VIDEO_EXTENSION;
 
-        Log.i(Prefs.TAG, getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
+        Log.i(Prefs.TAG, "VideoRecordActivity: " + getString(R.string.app_name) + " version: " + GeneralUtils.getVersionName(getApplicationContext()));
         workFolder = getApplicationContext().getFilesDir().getAbsolutePath() + "/";
-        Log.i(Prefs.TAG, "workFolder (license and logs location) path: " + workFolder);
+        Log.i(Prefs.TAG, "VideoRecordActivity: workFolder (license and logs location) path: " + workFolder);
         vkLogPath = workFolder + "vk.log";
-        Log.i(Prefs.TAG, "vk log (native log) path: " + vkLogPath);
+        Log.i(Prefs.TAG, "VideoRecordActivity: vk log (native log) path: " + vkLogPath);
 
         GeneralUtils.copyLicenseFromAssetsToSDIfNeeded(this, workFolder);
         GeneralUtils.copyDemoVideoFromAssetsToSDIfNeeded(this, initialVideoFolder);
-        int rc = GeneralUtils.isLicenseValid(getApplicationContext(), workFolder);
-        Log.i(Prefs.TAG, "License check RC: " + rc);
+        int rc = GeneralUtils.isLicenseValid(getApplicationContext(), initialVideoFolder);
+        Log.i(Prefs.TAG, "VideoRecordActivity: License check RC: " + rc);
     }
 
     private void setOnclickListeners() {
@@ -137,7 +137,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
 //
 //        startService(intent);
 
-        Log.i(Prefs.TAG, "run clicked.");
+        Log.i(Prefs.TAG, "VideoRecordActivity: run clicked.");
         if (GeneralUtils.checkIfFileExistAndNotEmpty(initialVideoPath)) {
             new TranscdingBackground(this).execute();
         }
@@ -185,14 +185,14 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
         }
 
         protected Integer doInBackground(String... paths) {
-            Log.i(Prefs.TAG, "doInBackground started...");
+            Log.i(Prefs.TAG, "VideoRecordActivity: doInBackground started...");
 
             // delete previous log
-            GeneralUtils.deleteFileUtil(workFolder + "/vk.log");
+            GeneralUtils.deleteFileUtil(workFolder + "vk.log");
 
             PowerManager powerManager = (PowerManager)_act.getSystemService(Activity.POWER_SERVICE);
             PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VK_LOCK");
-            Log.d(Prefs.TAG, "Acquire wake lock");
+            Log.d(Prefs.TAG, "VideoRecordActivity: Acquire wake lock");
             wakeLock.acquire();
 
             //String commandStr = "ffmpeg -y -i /sdcard/videokit/in.mp4 -strict experimental -vf transpose=1 -s 160x120 -r 30 -aspect 4:3 -ab 48000 -ac 2 -ar 22050 -b 2097k /sdcard/videokit/out.mp4";
@@ -218,20 +218,20 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
                 GeneralUtils.copyFileToFolder(vkLogPath, initialVideoFolder);
 
             } catch (CommandValidationException e) {
-                Log.e(Prefs.TAG, "vk run exeption.", e);
+                Log.e(Prefs.TAG, "VideoRecordActivity: vk run exeption.", e);
                 commandValidationFailedFlag = true;
 
             } catch (Throwable e) {
-                Log.e(Prefs.TAG, "vk run exeption.", e);
+                Log.e(Prefs.TAG, "VideoRecordActivity: vk run exeption.", e);
             }
             finally {
                 if (wakeLock.isHeld())
                     wakeLock.release();
                 else{
-                    Log.i(Prefs.TAG, "Wake lock is already released, doing nothing");
+                    Log.i(Prefs.TAG, "VideoRecordActivity: Wake lock is already released, doing nothing");
                 }
             }
-            Log.i(Prefs.TAG, "doInBackground finished");
+            Log.i(Prefs.TAG, "VideoRecordActivity: doInBackground finished");
             return Integer.valueOf(0);
         }
 
@@ -240,7 +240,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
 
         @Override
         protected void onCancelled() {
-            Log.i(Prefs.TAG, "onCancelled");
+            Log.i(Prefs.TAG, "VideoRecordActivity: onCancelled");
             //progressDialog.dismiss();
             super.onCancelled();
         }
@@ -248,7 +248,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
 
         @Override
         protected void onPostExecute(Integer result) {
-            Log.i(Prefs.TAG, "onPostExecute");
+            Log.i(Prefs.TAG, "VideoRecordActivity: onPostExecute");
             super.onPostExecute(result);
 
             // finished Toast
@@ -262,7 +262,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
             final String status = rc;
 
 
-            Log.v("formalchat", "STATUS = " + status);
+            Log.v("formalchat", "VideoRecordActivity: STATUS = " + status);
             if(status.equals("Transcoding Status: Finished OK")) {
                 moveOutVideoToProjectDir();
                 deleteOldFile();
@@ -307,7 +307,7 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
 
     private Bitmap overlayThumbnailWithPlayIcon(Bitmap thumb, Bitmap playImage) {
         Bitmap overlayBmp = Bitmap.createBitmap(thumb.getWidth(), thumb.getHeight(), thumb.getConfig());
-        float columnWidth = getResources().getDimension(R.dimen.grid_column_width);
+        float columnWidth = getResources().getDimension(R.dimen.grid_column_width_gallery);
         Bitmap play = Bitmap.createScaledBitmap(playImage, (int)columnWidth/2, (int)columnWidth/2, true);
 
         Canvas canvas = new Canvas(overlayBmp);

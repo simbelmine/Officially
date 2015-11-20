@@ -51,6 +51,13 @@ public final class LoadJNI {
 	
 	private static String getVideokitLibPath(Context ctx) {
 		String videokitLibPath = ctx.getFilesDir().getParent()  + "/lib/libvideokit.so";
+		
+		//String videokitLibPath = ctx.getFilesDir().getParent()  + "/lib/arm64/libvideokit.so";
+		
+		// only this works on Android M, and the number changes (demo-2, demo-1)
+		//String videokitLibPath = "/data/app/com.examples.ffmpeg4android_demo-1/lib/arm64/libvideokit.so";
+		
+		
 		Log.i(Prefs.TAG, "videokitLibPath: " + videokitLibPath);
 		return videokitLibPath;
 		

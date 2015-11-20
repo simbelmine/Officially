@@ -38,10 +38,14 @@ public class ProgressCalculator {
 		_durationOfCurrent = null;
 
 	}
+	
+	public int calcProgress() {
+		return calcProgress(1);
+	}
 
 			
-	public int calcProgress() {
-		//Log.i(Prefs.TAG, "========calc progress=======");
+	public int calcProgress(int durationMultiplyer) {
+		//Log.i(Prefs.TAG, "========calc progress======= " + durationMultiplyer);
 		int progress  = 0;
 		if (_durationOfCurrent == null) {
 			String dur = GeneralUtils.getDutationFromVCLogRandomAccess(vkLogPath);
@@ -108,6 +112,12 @@ public class ProgressCalculator {
 				//Log.d(Prefs.TAG, " durationDate: " + durationDate + " currentTimeDate: " + currentTimeDate);
 				
 				long durationLong = durationDate.getTime() - _timeRef;
+				if (durationMultiplyer != 1) {
+					//Log.i(Prefs.TAG, "====durationMultiplyer is not 1, handling===");
+					//Log.i(Prefs.TAG, "durationLong before: " + durationLong);
+					durationLong = durationLong * durationMultiplyer;
+					//Log.i(Prefs.TAG, "durationLong after: " + durationLong);
+				}
 				long currentTimeLong = currentTimeDate.getTime() - _timeRef;
 				//Log.d(Prefs.TAG, " durationLong: " + durationLong + " currentTimeLong: " + currentTimeLong + " diff: " + (durationLong - currentTimeLong));
 				progress  = Math.round(((float)currentTimeLong / durationLong) * 100);

@@ -22,11 +22,33 @@ import android.widget.Toast;
 
 public class GeneralUtils {
 	
+	public static String[] fixComplexCommand(String[] complexCommand) {
+		for (int i = 0; i < complexCommand.length; i++) {
+			if (complexCommand[i].startsWith("\"") || complexCommand[i].startsWith(" ")) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(complexCommand[i]);
+				
+				while (sb.charAt(0) == ' ' || sb.charAt(0) == '"' ) {
+					sb.deleteCharAt(0);
+				}
+				while (sb.charAt(sb.length() - 1) == ' ' || sb.charAt(sb.length() - 1) == '"') {
+					sb.deleteCharAt(sb.length() - 1);
+				}
+				
+				complexCommand[i] =  sb.toString();
+				Log.d(Prefs.TAG, "command " + i + ": " + sb.toString());
+			}
+		}
+		return complexCommand;
+	}
+	
 	public static void printCommand(String[] command) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
 		for (int i = 0; i < command.length; i++ ) {
+			sb.append("\"");
 			sb.append(command[i]);
+			sb.append("\"");
 			if (i < command.length -1)
 			  sb.append(",");
 		}
@@ -66,6 +88,11 @@ public class GeneralUtils {
 		
 		// verify output folder exists
 		int indexOfLastSlash = outputPath.lastIndexOf("/");
+		if (indexOfLastSlash == -1) {
+			Log.e(Prefs.TAG, "Command validation failed.");
+			Log.e(Prefs.TAG, "No slashes in output path looks like the : " + outputPath + " is not valid.");
+			return false;
+		}
 		String outputFolder = outputPath.substring(0, indexOfLastSlash);
 		if (!(okFlag = checkIfFolderExists(outputFolder))) {
 			Log.e(Prefs.TAG, "Command validation failed.");
@@ -138,6 +165,12 @@ public class GeneralUtils {
 			return false;
 		}
 
+	}
+	
+	public static boolean deleteFile(String fullFileName) {
+		File f = new File(fullFileName);
+		boolean isdeleted = f.delete();
+		return isdeleted;
 	}
 
 	public static void deleteFileUtil(String fullFileName) {
@@ -410,6 +443,7 @@ public class GeneralUtils {
 	}
 	
 	public static String getVersionName(Context ctx) {
+		/*
 		String versionName = "";
 		try {
 			versionName = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName;
@@ -418,6 +452,8 @@ public class GeneralUtils {
 		}
 		
 		return versionName;
+		*/
+		return Prefs.version;
 	}
 	
 	

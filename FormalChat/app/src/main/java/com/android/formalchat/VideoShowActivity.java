@@ -1,19 +1,31 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 import java.io.File;
 
@@ -21,30 +33,68 @@ import java.io.File;
  * Created by Sve on 4/3/15.
  */
 public class VideoShowActivity extends Activity {
+    private static final String FILE_DIR = "/.formal_chat/";
+    private File dir = Environment.getExternalStorageDirectory();
     private VideoView videoView;
     private File tmpFile;
     private TextView textViewMessage;
     private ProgressBar videoProgressBar;
+    private ParseUser user;
+    private String fullVideoFileName;
+    private String shortVideoFileName;
+    private MediaController mediaController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initActionBar();
         setContentView(R.layout.video_show_layout);
+        user = ParseUser.getCurrentUser();
+
 
         init();
         hideTextViewMessage();
-        if(getIntent().hasExtra("videoUri")) {
-            Uri uri = Uri.parse(getIntent().getStringExtra("videoUri"));
 
-            tmpFile = new File(uri.toString());
-            if (tmpFile.exists() || isURL(uri)) {
+
+        fullVideoFileName = getFullVideoFileName();
+        shortVideoFileName = fullVideoFileName != null ? getShortFileNameFromUri(fullVideoFileName) : null;
+
+        loadVideoController();
+
+        if(isVideoExistsOnServer()) {
+            if(!isVideoFileExists()) {
+                downloadVideo();
+            }
+            else {
+//                Uri uri = Uri.parse(getIntent().getStringExtra("videoUri"));
+//                if (isURL(uri)) {
+//                    loadVideo(uri);
+//                }
+
+                String videoPath = dir + FILE_DIR + shortVideoFileName;
+                Uri uri = Uri.fromFile(new File(videoPath));
                 loadVideo(uri);
             }
         }
         else {
             showTextViewMessage();
         }
+
+
+
+
+//        if (getIntent().hasExtra("videoUri")) {
+//            Uri uri = Uri.parse(getIntent().getStringExtra("videoUri"));
+//
+//
+//            tmpFile = new File(uri.toString());
+//            if (tmpFile.exists() || isURL(uri)) {
+//                loadVideo(uri);
+//            }
+//        }
+//        else {
+//            showTextViewMessage();
+//        }
     }
 
     private void initActionBar() {
@@ -70,30 +120,81 @@ public class VideoShowActivity extends Activity {
         videoProgressBar.setVisibility(View.VISIBLE);
     }
 
+    private void loadVideoController() {
+
+
+    }
+
     private void loadVideo(Uri uri) {
         try {
-            final MediaController mediaController = new MediaController(VideoShowActivity.this);
+            mediaController = new MediaController(this);
             mediaController.setAnchorView(videoView);
             videoView.setVideoURI(uri);
             videoView.requestFocus();
             videoView.setMediaController(mediaController);
             videoProgressBar.setVisibility(View.INVISIBLE);
             videoView.setVisibility(View.VISIBLE);
-
-            mediaController.requestFocus();
-            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mediaController.show(0);
-                }
-            });
-
             videoView.start();
         }
         catch (Exception ex) {
             videoProgressBar.setVisibility(View.INVISIBLE);
             ex.printStackTrace();
+            Log.e(FormalChatApplication.TAG, "*** Error : " + ex.getMessage());
         }
+    }
+
+    private void downloadVideo() {
+        File targetFolder = new File(dir + FILE_DIR);
+        if (!targetFolder.exists()) {
+            targetFolder.mkdir();
+        }
+
+        File tmpFile = new File(dir, FILE_DIR + shortVideoFileName);
+        if (!tmpFile.exists()) {
+            startVideoDownloadService();
+        }
+    }
+
+    private void startVideoDownloadService() {
+        Intent intent = new Intent(this, VideoDownloadService.class);
+        intent.putExtra(VideoDownloadService.DIRPATH, dir.getAbsolutePath());
+        intent.putExtra(VideoDownloadService.FILEPATH, FILE_DIR);
+
+        startService(intent);
+    }
+
+    private String getFullVideoFileName() {
+        if(user != null) {
+            ParseFile videoFile = user.getParseFile("video");
+            return videoFile.getName();
+        }
+        return null;
+    }
+
+    public String getShortFileNameFromUri(String url) {
+        return url.substring(url.lastIndexOf("-")+1);
+    }
+
+    private boolean isVideoExistsOnServer() {
+        if(user != null) {
+            if (user.containsKey("video")) {
+                Log.v(FormalChatApplication.TAG, " Yes: video Exists on Server !");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isVideoFileExists() {
+        if(shortVideoFileName != null) {
+            String videoPath = dir + FILE_DIR + shortVideoFileName;
+            Log.e(FormalChatApplication.TAG, " videoPath = " + videoPath);
+            if (new File(videoPath).exists()) {
+                Log.v(FormalChatApplication.TAG, " Yes: video File Exists !");
+                return true;
+            }
+        }
+        return false;
     }
 
     private void hideTextViewMessage() {

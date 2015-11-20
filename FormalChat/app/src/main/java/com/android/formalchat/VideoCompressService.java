@@ -29,8 +29,12 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Created by Sve on 4/13/15.
+ *                                      // -------------------------- //
+ * Created by Sve on 4/13/15.           // *** !!! Depricated !!! *** //
+ *                                      // -------------------------- //
  */
+
+@Deprecated
 public class VideoCompressService extends IntentService {
     private String ffmpeg_workFolder = null;
     private String vkLogPath = null;
