@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -217,6 +218,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
         i.putExtra("url", images.get(position));
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
+        activity.overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
 
@@ -354,6 +356,7 @@ public class ProfileGalleryAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 openVideoShowActivity(position);
+                activity.overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
         });
     }

@@ -1,24 +1,13 @@
 package com.android.formalchat;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,11 +32,12 @@ public class VideoShowActivity extends Activity {
     private String fullVideoFileName;
     private String shortVideoFileName;
     private MediaController mediaController;
+    private boolean isFullScreen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        initWindowView();
         super.onCreate(savedInstanceState);
-        initActionBar();
         setContentView(R.layout.video_show_layout);
         user = ParseUser.getCurrentUser();
 
@@ -55,11 +45,9 @@ public class VideoShowActivity extends Activity {
         init();
         hideTextViewMessage();
 
-
         fullVideoFileName = getFullVideoFileName();
         shortVideoFileName = fullVideoFileName != null ? getShortFileNameFromUri(fullVideoFileName) : null;
 
-        loadVideoController();
 
         if(isVideoExistsOnServer()) {
             if(!isVideoFileExists()) {
@@ -97,10 +85,9 @@ public class VideoShowActivity extends Activity {
 //        }
     }
 
-    private void initActionBar() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    private void initWindowView() {
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-        getActionBar().hide();
     }
 
     private boolean isURL(Uri uri) {
@@ -118,11 +105,6 @@ public class VideoShowActivity extends Activity {
         textViewMessage = (TextView) findViewById(R.id.vide_warning);
         videoProgressBar = (ProgressBar) findViewById(R.id.show_video_progress);
         videoProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void loadVideoController() {
-
-
     }
 
     private void loadVideo(Uri uri) {
@@ -203,6 +185,12 @@ public class VideoShowActivity extends Activity {
 
     private void showTextViewMessage() {
         textViewMessage.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 }
 

@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 
 import com.android.formalchat.BlurredImage;
 import com.android.formalchat.CropActivity;
+import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -51,13 +52,13 @@ public class FullImageActivity extends Activity {
     private ImageView menuBtn;
     private boolean isVisible = true;
     private String url;
-    ParseUser user;
+    private ParseUser user;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         initActionBar();
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_full_screen_img);
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
@@ -67,6 +68,7 @@ public class FullImageActivity extends Activity {
         user = ParseUser.getCurrentUser();
 
         fullScreenView = (ImageView) findViewById(R.id.full_screen_img);
+
         Picasso.with(this)
                 .load(url)
                 .into(fullScreenView);
@@ -82,14 +84,18 @@ public class FullImageActivity extends Activity {
 //                    topBtnsLayout.setVisibility(View.VISIBLE);
 //                    backBtn.setVisibility(View.VISIBLE);
 //                    menuBtn.setVisibility(View.VISIBLE);
-                    getActionBar().hide();
+
+                    exitFullScreenMode();
+                    getActionBar().show();
                     isVisible = true;
                 }
                 else {
 //                    topBtnsLayout.setVisibility(View.GONE);
 //                    backBtn.setVisibility(View.GONE);
 //                    menuBtn.setVisibility(View.GONE);
-                    getActionBar().show();
+
+                    goToFullScreenMode();
+                    getActionBar().hide();
                     isVisible = false;
                 }
             }
@@ -128,7 +134,7 @@ public class FullImageActivity extends Activity {
     }
 
     private void initActionBar() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.transp_black_20)));
         getActionBar().setDisplayShowHomeEnabled(true);
@@ -153,6 +159,7 @@ public class FullImageActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.full_img_menu, menu);
         return true;
@@ -223,12 +230,12 @@ public class FullImageActivity extends Activity {
         parseQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> imagesList, ParseException e) {
-                if(e == null) {
-                    if(imagesList.size() > 0) {
+                if (e == null) {
+                    if (imagesList.size() > 0) {
                         ParseObject currentParseObject = imagesList.get(0);
                         ProfileGalleryUtils profileGalleryUtils = new ProfileGalleryUtils(getApplicationContext(), user, currentParseObject);
 
-                        if(profileGalleryUtils.isProfilePic()) {
+                        if (profileGalleryUtils.isProfilePic()) {
                             profileGalleryUtils.deleteProfileImgFromParse();
                             profileGalleryUtils.deleteBlurrredImageFromLocal();
                         }
@@ -236,8 +243,7 @@ public class FullImageActivity extends Activity {
 
                         finish();
                     }
-                }
-                else {
+                } else {
                     Log.e("formalchat", "Delete command: " + e.getMessage());
                 }
             }
@@ -257,5 +263,31 @@ public class FullImageActivity extends Activity {
 
     public String getShortImageNameFromUri() {
         return url.substring(url.lastIndexOf("-")+1);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+    }
+
+    public void goToFullScreenMode() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            fullScreenView
+                    .setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
+    public void exitFullScreenMode() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            fullScreenView
+                    .setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 }

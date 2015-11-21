@@ -74,16 +74,20 @@
                     android:theme="@style/QuestionsDialogTheme"/>
         <activity   android:name=".CropImageActivity"
                     android:theme="@style/QuestionsDialogTheme"/>
-        <activity   android:name=".VideoRecordActivity" />
-        <activity   android:name=".VideoShowActivity"/>
+
         <activity   android:name=".profile.ProfileViewGallery"/>
         <activity   android:name=".profile.ProfileGallery"/>
         <activity   android:name=".profile.ProfileActivityRemote"/>
         <activity   android:name=".profile.ProfileBaseActivity"/>
+
+
         <activity   android:name=".chat.ChatActivity"
-                    android:windowSoftInputMode="adjustResize|stateHidden"
-            />
+                    android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity   android:name=".chat.AllChatsActivity"/>
+
+        <activity   android:name=".VideoRecordActivity" />
+        <activity   android:name=".VideoShowActivity"
+                    android:theme="@style/ShowVideoDialogTheme"/>
 
 
         <service    android:name=".VideoUploadService"/>
