@@ -124,7 +124,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private void startCorrectActivity() {
         ParseUser pUser = ParseUser.getCurrentUser();
 
-        Log.v(FormalChatApplication.TAG, "Login Activity: startCorrectActivity: user = " + pUser);
+        Log.v(ApplicationOfficially.TAG, "Login Activity: startCorrectActivity: user = " + pUser);
 
 ////////////
 //            // *** If e-Mail autorisation is needed => Uncomment!
@@ -257,7 +257,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void checkUserExistence(final String userName, final String email, final String password) {
-        Log.v(FormalChatApplication.TAG, "Login Activity: SignUp - checkUserExistence: user name = " + userName);
+        Log.v(ApplicationOfficially.TAG, "Login Activity: SignUp - checkUserExistence: user name = " + userName);
 
         ParseQuery query = ParseUser.getQuery();
         query.whereContains("username", userName);
@@ -292,7 +292,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     private void saveDataToParse(String userName, String email, String password) {
         MessagingUser parseUser = new MessagingUser();
-        Log.v(FormalChatApplication.TAG, "Login Activity: saveDataToParse: user = " + parseUser);
+        Log.v(ApplicationOfficially.TAG, "Login Activity: saveDataToParse: user = " + parseUser);
         parseUser.setUsername(userName);
         parseUser.setPassword(password);
         parseUser.setEmail(email);
@@ -375,7 +375,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void loginInBackground(final String userName, String password) {
-        Log.v(FormalChatApplication.TAG, "Login Activity: loginInBackground: user = " + parseUser + "  name = " + userName);
+        Log.v(ApplicationOfficially.TAG, "Login Activity: loginInBackground: user = " + parseUser + "  name = " + userName);
 
         parseUser.logInInBackground(userName, password, new LogInCallback() {
             @Override

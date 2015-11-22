@@ -11,8 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.android.formalchat.ApplicationOfficially;
 import com.android.formalchat.DrawerActivity;
-import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.android.formalchat.ScrollableListView;
 import com.parse.FindCallback;
@@ -37,7 +37,7 @@ public class AllChatsActivity extends DrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((FormalChatApplication) getApplication()).subscribeToMessagingChannel();
+        ((ApplicationOfficially) getApplication()).subscribeToMessagingChannel();
 
         super.onCreate(savedInstanceState);
 
@@ -65,14 +65,14 @@ public class AllChatsActivity extends DrawerActivity {
                     if(!isSenderMessageExists(intent.getStringExtra("senderId"))) {
 
 
-                        Log.v(FormalChatApplication.TAG, "I Received my message in  All Chats - the same sender ID!");
+                        Log.v(ApplicationOfficially.TAG, "I Received my message in  All Chats - the same sender ID!");
 
                         senderIds.add(intent.getStringExtra("senderId"));
 //                        allChatsAdapter.add(chatMessage);
 //                        allChatsAdapter.notifyDataSetChanged();
                     }
                     else {
-                        Log.v(FormalChatApplication.TAG, "I Received my message in  All Chats - just UPDATE the ID!");
+                        Log.v(ApplicationOfficially.TAG, "I Received my message in  All Chats - just UPDATE the ID!");
 //                        allChatsAdapter.updateChatMessage(chatMessage);
                     }
                 }
@@ -101,7 +101,7 @@ public class AllChatsActivity extends DrawerActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter iff= new IntentFilter(FormalChatApplication.ACTION);
+        IntentFilter iff= new IntentFilter(ApplicationOfficially.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onIncomingMessage, iff);
     }
 
@@ -188,12 +188,12 @@ public class AllChatsActivity extends DrawerActivity {
         chats = nonRepeatedChats;
 
 
-        Log.v(FormalChatApplication.TAG, "senderIds " + senderIds);
-        Log.v(FormalChatApplication.TAG, "receiverIds " + receiverIds);
+        Log.v(ApplicationOfficially.TAG, "senderIds " + senderIds);
+        Log.v(ApplicationOfficially.TAG, "receiverIds " + receiverIds);
 
         if(senderIds.size() == receiverIds.size()) {
             for(int i = 0; i < chats.size(); i++) {
-                Log.v(FormalChatApplication.TAG, "i = " + i);
+                Log.v(ApplicationOfficially.TAG, "i = " + i);
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
                 query.whereEqualTo("senderId", chats.get(i).getReceiverId());
                 query.whereEqualTo("receiverId", chats.get(i).getSenderId());
@@ -202,9 +202,9 @@ public class AllChatsActivity extends DrawerActivity {
                 query.findInBackground(new FindCallback<ParseObject>() {
                     @Override
                     public void done(List<ParseObject> listWithMessages, ParseException e) {
-                        Log.e(FormalChatApplication.TAG, "IN   " + listWithMessages);
+                        Log.e(ApplicationOfficially.TAG, "IN   " + listWithMessages);
                         if(e == null && listWithMessages.size() > 0) {
-                            Log.v(FormalChatApplication.TAG, " " + listWithMessages + " --- " + listWithMessages.get(0).getString("messageBody"));
+                            Log.v(ApplicationOfficially.TAG, " " + listWithMessages + " --- " + listWithMessages.get(0).getString("messageBody"));
 
                             allChatsAdapter.add(listWithMessages.get(0));
                             allChatsAdapter.notifyDataSetChanged();

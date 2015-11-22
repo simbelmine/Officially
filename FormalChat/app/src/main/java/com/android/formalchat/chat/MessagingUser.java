@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.formalchat.FormalChatApplication;
+import com.android.formalchat.ApplicationOfficially;
 import com.parse.FunctionCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseCloud;
@@ -41,7 +41,7 @@ public class MessagingUser extends ParseUser {
             public void done(ParseException e) {
                 if (e == null) {
                     JSONObject messageObject = message.toJSON();
-                    Log.v(FormalChatApplication.TAG, "my message = " + messageObject);
+                    Log.v(ApplicationOfficially.TAG, "my message = " + messageObject);
 
                     subscribeChannelToPubNub(pubnub, receiverId);
 
@@ -52,7 +52,7 @@ public class MessagingUser extends ParseUser {
                     setConversationToParse(message, senderId, receiverId);
                 }
                 else {
-                    Log.e(FormalChatApplication.TAG, "Error saving message:" + e.toString());
+                    Log.e(ApplicationOfficially.TAG, "Error saving message:" + e.toString());
 
                     activity.runOnUiThread(new Runnable() {
                         @Override
@@ -88,7 +88,7 @@ public class MessagingUser extends ParseUser {
         return new Callback() {
             @Override
             public void successCallback(String channel, Object response) {
-                Log.v(FormalChatApplication.TAG, "Message callback response = " + response.toString());
+                Log.v(ApplicationOfficially.TAG, "Message callback response = " + response.toString());
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -104,7 +104,7 @@ public class MessagingUser extends ParseUser {
 
             @Override
             public void errorCallback(String channel, PubnubError error) {
-                Log.e(FormalChatApplication.TAG, "Message callback error = " + error.toString());
+                Log.e(ApplicationOfficially.TAG, "Message callback error = " + error.toString());
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -125,13 +125,13 @@ public class MessagingUser extends ParseUser {
             pubnub.subscribe(receiverId, new Callback() {
                 @Override
                 public void successCallback(String channel, Object message) {
-                    Log.v(FormalChatApplication.TAG, "Subscribe was successful");
+                    Log.v(ApplicationOfficially.TAG, "Subscribe was successful");
                     super.successCallback(channel, message);
                 }
 
                 @Override
                 public void errorCallback(String channel, PubnubError error) {
-                    Log.e(FormalChatApplication.TAG, "Subscribe was NOT successful");
+                    Log.e(ApplicationOfficially.TAG, "Subscribe was NOT successful");
                     super.errorCallback(channel, error);
                 }
             });

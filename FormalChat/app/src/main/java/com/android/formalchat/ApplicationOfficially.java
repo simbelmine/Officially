@@ -24,7 +24,7 @@ import org.json.JSONObject;
 /**
  * Created by Sve on 1/28/15.
  */
-public class FormalChatApplication extends Application {
+public class ApplicationOfficially extends Application {
     public final static String TAG = "formalchat";
     public final static String ACTION = "message_received";
     private Pubnub pubnub;

@@ -2,7 +2,7 @@ package com.android.formalchat.chat;
 
 import android.util.Log;
 
-import com.android.formalchat.FormalChatApplication;
+import com.android.formalchat.ApplicationOfficially;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
@@ -44,15 +44,15 @@ public class Message extends ParseObject {
 
         try {
             String messageBody = messageObject.getString(JSON_MESSAGE_TAG);
-            Log.v(FormalChatApplication.TAG, "messageBody = " + messageBody);
+            Log.v(ApplicationOfficially.TAG, "messageBody = " + messageBody);
             message.setMessageBody(messageBody);
 
             String senderId = messageObject.getString(JSON_SENDER_ID_TAG);
-            Log.v(FormalChatApplication.TAG, "messageBody = " + messageBody);
+            Log.v(ApplicationOfficially.TAG, "messageBody = " + messageBody);
             message.setSenderId(senderId);
 
             String receiverId = messageObject.getString(JSON_RECEIVER_ID_TAG);
-            Log.v(FormalChatApplication.TAG, "receiverId = " + receiverId);
+            Log.v(ApplicationOfficially.TAG, "receiverId = " + receiverId);
             message.setReceiverId(receiverId);
 
             String senderName = messageObject.getString(JSON_SENDER_NAME_TAG);
@@ -62,7 +62,7 @@ public class Message extends ParseObject {
             message.setReceiverName(receiverName);
 
             long timeSentMillis = messageObject.getLong(JSON_TIME_SENT_MILLIS_TAG);
-            Log.v(FormalChatApplication.TAG, "timeSentMillis = " + timeSentMillis);
+            Log.v(ApplicationOfficially.TAG, "timeSentMillis = " + timeSentMillis);
 //            Date timeSent = new Date(timeSentMillis);
 
             Calendar cal = Calendar.getInstance();
@@ -74,7 +74,7 @@ public class Message extends ParseObject {
             cal.set(Calendar.SECOND, 11);
             cal.set(Calendar.MILLISECOND, 12);
             Date timeSent = cal.getTime();
-            Log.v(FormalChatApplication.TAG, "timeSent = " + timeSent.toString());
+            Log.v(ApplicationOfficially.TAG, "timeSent = " + timeSent.toString());
 
             message.setTimeSent(timeSent);
 

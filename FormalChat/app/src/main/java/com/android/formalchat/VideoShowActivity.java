@@ -121,7 +121,7 @@ public class VideoShowActivity extends Activity {
         catch (Exception ex) {
             videoProgressBar.setVisibility(View.INVISIBLE);
             ex.printStackTrace();
-            Log.e(FormalChatApplication.TAG, "*** Error : " + ex.getMessage());
+            Log.e(ApplicationOfficially.TAG, "*** Error : " + ex.getMessage());
         }
     }
 
@@ -160,7 +160,7 @@ public class VideoShowActivity extends Activity {
     private boolean isVideoExistsOnServer() {
         if(user != null) {
             if (user.containsKey("video")) {
-                Log.v(FormalChatApplication.TAG, " Yes: video Exists on Server !");
+                Log.v(ApplicationOfficially.TAG, " Yes: video Exists on Server !");
                 return true;
             }
         }
@@ -170,9 +170,9 @@ public class VideoShowActivity extends Activity {
     private boolean isVideoFileExists() {
         if(shortVideoFileName != null) {
             String videoPath = dir + FILE_DIR + shortVideoFileName;
-            Log.e(FormalChatApplication.TAG, " videoPath = " + videoPath);
+            Log.e(ApplicationOfficially.TAG, " videoPath = " + videoPath);
             if (new File(videoPath).exists()) {
-                Log.v(FormalChatApplication.TAG, " Yes: video File Exists !");
+                Log.v(ApplicationOfficially.TAG, " Yes: video File Exists !");
                 return true;
             }
         }

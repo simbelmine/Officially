@@ -9,15 +9,13 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.android.formalchat.FormalChatApplication;
+import com.android.formalchat.ApplicationOfficially;
 import com.android.formalchat.R;
 import com.parse.ParsePushBroadcastReceiver;
 import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Map;
 
 /**
  * Created by Sve on 9/4/15.
@@ -48,20 +46,20 @@ public class CustomParsePushBroadcastReceiver extends ParsePushBroadcastReceiver
 //            Map<String,?> keys = sharedPreferences.getAll();
 //
 //            for(Map.Entry<String,?> entry : keys.entrySet()){
-//                Log.v(FormalChatApplication.TAG, " ### " + entry.getKey() + " : " +
+//                Log.v(ApplicationOfficially.TAG, " ### " + entry.getKey() + " : " +
 //                        entry.getValue().toString());
 //            }
 
                 Bundle bundle = intent.getExtras();
-                Log.e(FormalChatApplication.TAG, " Intent Extras ");
+                Log.e(ApplicationOfficially.TAG, " Intent Extras ");
                 for (String key : bundle.keySet()) {
                     Object value = bundle.get(key);
-                    Log.e(FormalChatApplication.TAG, String.format("###### %s %s (%s)", key,
+                    Log.e(ApplicationOfficially.TAG, String.format("###### %s %s (%s)", key,
                             value.toString(), value.getClass().getName()));
                 }
 
-            Log.v(FormalChatApplication.TAG, "# sharedPrefs = " + sharedPreferences.getString(ChatActivity.CHAT_PARTICIPANT_1, " "));
-            Log.v(FormalChatApplication.TAG, "# intent = " + intent.getStringExtra("senderId"));
+            Log.v(ApplicationOfficially.TAG, "# sharedPrefs = " + sharedPreferences.getString(ChatActivity.CHAT_PARTICIPANT_1, " "));
+            Log.v(ApplicationOfficially.TAG, "# intent = " + intent.getStringExtra("senderId"));
 
 
             String sd = null;

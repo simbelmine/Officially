@@ -20,8 +20,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.formalchat.ApplicationOfficially;
 import com.android.formalchat.DrawerActivity;
-import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -71,7 +71,7 @@ public class ChatActivity extends DrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((FormalChatApplication) getApplication()).subscribeToMessagingChannel();
+        ((ApplicationOfficially) getApplication()).subscribeToMessagingChannel();
 
         super.onCreate(savedInstanceState);
 
@@ -80,8 +80,8 @@ public class ChatActivity extends DrawerActivity {
         init();
 
 
-        Log.e(FormalChatApplication.TAG, "Intent extras from Push: ");
-        Log.e(FormalChatApplication.TAG, "*** " + getIntent().getExtras());
+        Log.e(ApplicationOfficially.TAG, "Intent extras from Push: ");
+        Log.e(ApplicationOfficially.TAG, "*** " + getIntent().getExtras());
 
 
 
@@ -122,7 +122,7 @@ public class ChatActivity extends DrawerActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter iff= new IntentFilter(FormalChatApplication.ACTION);
+        IntentFilter iff= new IntentFilter(ApplicationOfficially.ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(onIncomingMessage, iff);
 
         setChatParticipants();
@@ -200,8 +200,8 @@ public class ChatActivity extends DrawerActivity {
             public void onClick(View v) {
                 ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
 
-                Log.v(FormalChatApplication.TAG, "remote senderId = " + senderId);
-                Log.v(FormalChatApplication.TAG, "remote UserName = " + remoteUserName);
+                Log.v(ApplicationOfficially.TAG, "remote senderId = " + senderId);
+                Log.v(ApplicationOfficially.TAG, "remote UserName = " + remoteUserName);
 
                 if(!isMessageEmpty()) {
                     if (senderId != null && remoteUserName == null) {
@@ -244,8 +244,8 @@ public class ChatActivity extends DrawerActivity {
                     String senderId = sender.getObjectId();
                     String receiverId = friend.getObjectId();
 
-                    Log.e(FormalChatApplication.TAG, "sender name = " + sender.getUsername() + " id = " + senderId);
-                    Log.e(FormalChatApplication.TAG, "friend receiverId = " + receiverId);
+                    Log.e(ApplicationOfficially.TAG, "sender name = " + sender.getUsername() + " id = " + senderId);
+                    Log.e(ApplicationOfficially.TAG, "friend receiverId = " + receiverId);
 
                     Message message = createMessageObject(sender, friend);
                     Pubnub pubnub = createPubNubObject();
@@ -267,7 +267,7 @@ public class ChatActivity extends DrawerActivity {
     }
 
     private Message createMessageObject(MessagingUser sender, ParseUser receiver) {
-        Log.v(FormalChatApplication.TAG, "txt = " + messageEdit.getText());
+        Log.v(ApplicationOfficially.TAG, "txt = " + messageEdit.getText());
         return Message.newInstance(
                 sender.getObjectId(),
                 receiver.getObjectId(),
@@ -313,10 +313,10 @@ public class ChatActivity extends DrawerActivity {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Log.v(FormalChatApplication.TAG, "Parse Installation was SUCCESSFUL");
+                    Log.v(ApplicationOfficially.TAG, "Parse Installation was SUCCESSFUL");
                 } else {
-                    Log.e(FormalChatApplication.TAG, "Parse Installation was was NOT SUCCESSFUL");
-                    Log.e(FormalChatApplication.TAG, "Parse Installation Error : " + e.getMessage());
+                    Log.e(ApplicationOfficially.TAG, "Parse Installation was was NOT SUCCESSFUL");
+                    Log.e(ApplicationOfficially.TAG, "Parse Installation Error : " + e.getMessage());
                 }
             }
         });
@@ -351,7 +351,7 @@ public class ChatActivity extends DrawerActivity {
         final String senderIdDummy = null;
 
         if(getIntent().hasExtra("com.parse.Data") || senderIdDummy != null) {
-            Log.v(FormalChatApplication.TAG, "it has extra com.parse.Data ");
+            Log.v(ApplicationOfficially.TAG, "it has extra com.parse.Data ");
             loadFromPushNotification();
         }
         else if(getIntent().hasExtra("senderId")) {
@@ -361,7 +361,7 @@ public class ChatActivity extends DrawerActivity {
             executeGetMessagesQuery(getMessagesQuery(currentUserId, senderIdFromConversation), senderIdFromConversation);
         }
         else {
-            Log.v(FormalChatApplication.TAG, "it NOT has extra com.parse.Data = ");
+            Log.v(ApplicationOfficially.TAG, "it NOT has extra com.parse.Data = ");
         }
     }
 
@@ -374,7 +374,7 @@ public class ChatActivity extends DrawerActivity {
                 senderId = pushNotificationSenderId;
 
 
-                Log.v(FormalChatApplication.TAG, "Push senderId = " + pushNotificationSenderId);
+                Log.v(ApplicationOfficially.TAG, "Push senderId = " + pushNotificationSenderId);
 //                String pushNotificationSenderId = senderId;
                 String currentUserId = ParseUser.getCurrentUser().getObjectId();
                 executeGetMessagesQuery(getMessagesQuery(currentUserId, pushNotificationSenderId), pushNotificationSenderId);
@@ -390,13 +390,13 @@ public class ChatActivity extends DrawerActivity {
         query.addDescendingOrder("timeSent");
 
         if(lastMessageDate != null) {
-            Log.v(FormalChatApplication.TAG, "lastMessageDate is != null");
+            Log.v(ApplicationOfficially.TAG, "lastMessageDate is != null");
 
             query.whereLessThan("timeSent", lastMessageDate);
             findMessagesInBackground(query, pushNotificationSenderId);
         }
         else {
-            Log.v(FormalChatApplication.TAG, "lastMessageDate is NULL");
+            Log.v(ApplicationOfficially.TAG, "lastMessageDate is NULL");
 
             findMessagesInBackground(query, pushNotificationSenderId);
         }
@@ -408,7 +408,7 @@ public class ChatActivity extends DrawerActivity {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null && list.size() > 0) {
-                    Log.v(FormalChatApplication.TAG, "Results : " + list);
+                    Log.v(ApplicationOfficially.TAG, "Results : " + list);
 
                     updateLastMessageDate(list.get(list.size() - 1).getDate("timeSent"));
 
@@ -431,7 +431,7 @@ public class ChatActivity extends DrawerActivity {
 
                     initAdapter(chatHistory);
                 } else {
-                    Log.e(FormalChatApplication.TAG, "ChatActivity parse ex: " + e + "  or list with msgs is < 0");
+                    Log.e(ApplicationOfficially.TAG, "ChatActivity parse ex: " + e + "  or list with msgs is < 0");
                     chatProgressBar.setVisibility(View.GONE);
                 }
             }
@@ -500,7 +500,7 @@ public class ChatActivity extends DrawerActivity {
     }
 
     private void setChatParticipants() {
-        Log.e(FormalChatApplication.TAG, "senderId from INTENT -> " + getIntent().getStringExtra("senderId"));
+        Log.e(ApplicationOfficially.TAG, "senderId from INTENT -> " + getIntent().getStringExtra("senderId"));
         if(getIntent().hasExtra("senderId")) {
             editor.putString(CHAT_PARTICIPANT_1, getIntent().getStringExtra("senderId")).commit();
         }

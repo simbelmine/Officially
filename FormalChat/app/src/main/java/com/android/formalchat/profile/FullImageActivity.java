@@ -15,13 +15,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.android.formalchat.BlurredImage;
 import com.android.formalchat.CropActivity;
-import com.android.formalchat.FormalChatApplication;
 import com.android.formalchat.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
