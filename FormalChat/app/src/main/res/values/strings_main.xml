@@ -15,4 +15,6 @@
         <item>Men</item>
         <item>Women</item>
     </string-array>
+
+    <string name="no_search_result">No results</string>
 </resources>

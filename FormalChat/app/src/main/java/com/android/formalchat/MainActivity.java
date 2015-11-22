@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FunctionCallback;
@@ -26,7 +27,6 @@ import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.PushService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +59,7 @@ public class MainActivity extends DrawerActivity {
     private Spinner searchSpinner;
     private LinearLayout matchesLayout;
     private SwipeRefreshLayout swipeContainer;
+    private TextView noSearchResultText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,45 +243,49 @@ public class MainActivity extends DrawerActivity {
 
 
     private void initAdapter(View view, List<ParseUser> list){
+        Log.v(ApplicationOfficially.TAG, "list: " + list.size());
         // *** Grig View *** //
         if(view == people_GridView)  {
-//            if(peopleGridViewAdapter != null) {
-//                peopleGridViewAdapter.updateUsers(list);
-//            }
-//            else {
+            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_all);
             peopleGridViewAdapter = new PeopleGridViewAdapter(getApplicationContext(), list);
-            ((ScrollableGridView)view).setAdapter(peopleGridViewAdapter);
-//            }
+            ((ScrollableGridView) view).setAdapter(peopleGridViewAdapter);
         }
         else if(view == people_GridView_Matches) {
-//            if(peopleGridViewAdapterMatches != null) {
-//                peopleGridViewAdapterMatches.updateUsers(list);
-//            }
-//            else {
+            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_matches);
             peopleGridViewAdapterMatches = new PeopleGridViewAdapter(getApplicationContext(), list);
             ((ScrollableGridView)view).setAdapter(peopleGridViewAdapterMatches);
-//            }
         }
 
         // *** List View *** //
         else if(view == people_ListView) {
-//            if(peopleListViewAdapter != null) {
-//                peopleListViewAdapter.updateUsers(list);
-//            }
-//            else {
+            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_all);
             peopleListViewAdapter = new PeopleListViewAdapter(getApplicationContext(), list);
             ((ScrollableListView)view).setAdapter(peopleListViewAdapter);
-//            }
         }
         else if(view == people_ListView_Matches) {
-//            if(peopleListViewAdapterMatches != null) {
-//                peopleListViewAdapterMatches.updateUsers(list);
-//            }
-//            else {
+            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_matches);
             peopleListViewAdapterMatches = new PeopleListViewAdapter(getApplicationContext(), list);
             ((ScrollableListView)view).setAdapter(peopleListViewAdapterMatches);
-//            }
         }
+    }
+
+    private void setNoSearchResultTxtVisibility(int listSize, int textViewId) {
+        if(listSize > 0) {
+            hideNoSearchResultText(textViewId);
+        }
+        else {
+            showNoSearchResultText(textViewId);
+        }
+    }
+
+    private void showNoSearchResultText(int textViewId) {
+        noSearchResultText = (TextView)findViewById(textViewId);
+        noSearchResultText.setVisibility(View.VISIBLE);
+    }
+
+    private void hideNoSearchResultText(int textViewId) {
+        noSearchResultText = (TextView)findViewById(textViewId);
+        noSearchResultText.setVisibility(View.GONE);
     }
 
     @Override

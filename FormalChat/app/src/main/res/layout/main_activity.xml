@@ -60,6 +60,14 @@
                         android:padding="10dp"
                         android:textColor="@color/items"
                         android:text="MATCHES"/>
+                    <TextView
+                        android:id="@+id/no_result_matches"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/no_search_result"
+                        android:visibility="gone"
+                        />
                     <com.android.formalchat.ScrollableGridView
                         android:id="@+id/people_gridview_matches"
                         android:layout_width="match_parent"
@@ -97,7 +105,14 @@
                         android:padding="10dp"
                         android:textColor="@color/items"
                         android:text="ALL RESULTS"/>
-
+                    <TextView
+                        android:id="@+id/no_result_all"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/no_search_result"
+                        android:visibility="gone"
+                        />
                     <com.android.formalchat.ScrollableGridView
                         android:id="@+id/people_gridview"
                         android:layout_width="match_parent"
