@@ -148,7 +148,9 @@ public class AllChatsAdapter extends BaseAdapter {
         @Override
         protected void onPostExecute(ParseFile parseFile) {
             if(viewHolder.position == position) {
-                Picasso.with(context).load(parseFile.getUrl()).into(viewHolder.messageImage);
+                if(parseFile != null) {
+                    Picasso.with(context).load(parseFile.getUrl()).into(viewHolder.messageImage);
+                }
             }
         }
     }
