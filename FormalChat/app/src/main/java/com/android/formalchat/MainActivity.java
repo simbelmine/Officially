@@ -243,7 +243,6 @@ public class MainActivity extends DrawerActivity {
 
 
     private void initAdapter(View view, List<ParseUser> list){
-        Log.v(ApplicationOfficially.TAG, "list: " + list.size());
         // *** Grig View *** //
         if(view == people_GridView)  {
             setNoSearchResultTxtVisibility(list.size(), R.id.no_result_all);

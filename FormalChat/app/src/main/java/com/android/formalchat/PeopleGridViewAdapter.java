@@ -165,7 +165,7 @@ public class PeopleGridViewAdapter extends BaseAdapter {
                         setZodiacalSign(userInfo.get("birthday").toString());
                     }
                     else {
-                        viewHolder.onlineDot.setVisibility(View.GONE);
+                        viewHolder.onlineDot.setVisibility(View.INVISIBLE);
                     }
                 }
             });
