@@ -114,11 +114,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     private void initActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        getActionBar().setHomeButtonEnabled(false);
         // Hide Action Bar icon and text
-        getActionBar().setDisplayShowHomeEnabled(false);
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_purple)));
+        getActionBar().setDisplayShowHomeEnabled(true);
+        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
     }
 
     private void startCorrectActivity() {
