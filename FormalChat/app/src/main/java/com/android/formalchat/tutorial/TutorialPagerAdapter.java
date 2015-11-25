@@ -35,20 +35,20 @@ public class TutorialPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 fragmentToStart = new TutorialFragment();
-                args.putInt("backgroundId", R.drawable.love1);
-                args.putInt("textId", R.string.done);
+                args.putInt("backgroundId", R.drawable.bg1);
+                args.putInt("textId", R.string.introduction_txt);
                 fragmentToStart.setArguments(args);
                 return fragmentToStart;
             case 1:
                 fragmentToStart = new TutorialFragment();
-                args.putInt("backgroundId", R.drawable.love2);
-                args.putInt("textId", R.string.done);
+                args.putInt("backgroundId", R.drawable.bg2);
+                args.putInt("textId", R.string.introduction_txt);
                 fragmentToStart.setArguments(args);
                 return fragmentToStart;
             case 2:
                 fragmentToStart = new TutorialFragment();
-                args.putInt("backgroundId", R.drawable.love3);
-                args.putInt("textId", R.string.done);
+                args.putInt("backgroundId", R.drawable.bg3);
+                args.putInt("textId", R.string.introduction_txt);
                 fragmentToStart.setArguments(args);
                 return fragmentToStart;
         }

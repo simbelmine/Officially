@@ -8,6 +8,8 @@
     <string name="pubnub_subscribe_key">sub-c-78f1fa4e-4782-11e5-afb6-02ee2ddab7fe</string>
     <string name="pubnub_secret_key">sec-c-YTRkYWNmMTMtNGMzYi00MzIxLTgxMDktOWJkZjNmZTQ0ZDg1</string>
 
+    <string name="introduction_txt">Some introduction \ntext here</string>
+
     <string name="take_photo">Take Photo</string>
     <string name="attach_photo">Attach Photo</string>
     <string name="please_complete_the_sign_up">Please complete the sign up form</string>
