@@ -106,18 +106,44 @@ public class ChatActivity extends DrawerActivity {
         public void onReceive(Context context, Intent intent) {
             if(intent != null) {
                 if(senderId != null && intent.hasExtra("senderId") && senderId.equals(intent.getStringExtra("senderId"))) {
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.setId(122); // dummy
-                    chatMessage.setMessage(intent.getStringExtra("message"));
-                    chatMessage.setDate(intent.getStringExtra("timeSentMillis"));
-                    chatMessage.setIsMe(false);
+                    if(isMessageIdDifferent(intent)) {
 
-                    displayMessage(chatMessage);
-                    setChatParticipants();
+                        ChatMessage chatMessage = new ChatMessage();
+                        chatMessage.setId(122); // dummy
+                        chatMessage.setMessage(intent.getStringExtra("message"));
+                        chatMessage.setDate(intent.getStringExtra("timeSentMillis"));
+                        chatMessage.setIsMe(false);
+
+                        displayMessage(chatMessage);
+                        setChatParticipants();
+
+                        saveMessageId(intent);
+                    }
                 }
             }
         }
     };
+
+    private boolean isMessageIdDifferent(Intent intent) {
+        String msgIntent = intent.getStringExtra("messageId");
+        String msgPrefs = sharedPreferences.getString("messageId", null);
+        Log.v(ApplicationOfficially.TAG, "messageId intent =  " + msgIntent);
+        Log.v(ApplicationOfficially.TAG, "messageId prefs =  " + msgPrefs);
+
+        if(!intent.hasExtra("messageId") ||
+                (sharedPreferences.contains("messageId") &&
+                intent.getStringExtra("messageId") == sharedPreferences.getString("messageId", null))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void saveMessageId(Intent intent) {
+        if(intent.hasExtra("messageId")) {
+            editor.putString("messageId", intent.getStringExtra("messageId")).commit();
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -200,10 +226,7 @@ public class ChatActivity extends DrawerActivity {
             public void onClick(View v) {
                 ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
 
-                Log.v(ApplicationOfficially.TAG, "remote senderId = " + senderId);
-                Log.v(ApplicationOfficially.TAG, "remote UserName = " + remoteUserName);
-
-                if(!isMessageEmpty()) {
+                if (!isMessageEmpty()) {
                     if (senderId != null && remoteUserName == null) {
                         friendQuery.whereEqualTo("objectId", senderId);
                         findHistoryInBackground(friendQuery);
@@ -266,9 +289,11 @@ public class ChatActivity extends DrawerActivity {
         });
     }
 
+
     private Message createMessageObject(MessagingUser sender, ParseUser receiver) {
         Log.v(ApplicationOfficially.TAG, "txt = " + messageEdit.getText());
         return Message.newInstance(
+                "",
                 sender.getObjectId(),
                 receiver.getObjectId(),
                 sender.getString("username"),
@@ -444,8 +469,8 @@ public class ChatActivity extends DrawerActivity {
             setTopPosition();
         }
         else {
-        chatAdapter = new ChatAdapter(ChatActivity.this, chatHistory);
-        messageContainer.setAdapter(chatAdapter);
+            chatAdapter = new ChatAdapter(ChatActivity.this, chatHistory);
+            messageContainer.setAdapter(chatAdapter);
         }
     }
 

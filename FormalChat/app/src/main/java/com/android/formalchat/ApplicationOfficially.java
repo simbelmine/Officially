@@ -18,6 +18,7 @@ import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -101,8 +102,9 @@ public class ApplicationOfficially extends Application {
         @Override
         public void onMessageReceived(ParseUser sender, Message message) {
             Log.v(TAG, "message \" " + message + " \", was received ");
-
+;
             Intent intent = new Intent(ACTION);
+            intent.putExtra("messageId", message.getMessageId());
             intent.putExtra("message", message.getMessageBody());
             intent.putExtra("senderId", message.getSenderId());
             intent.putExtra("receiverId", message.getReceiverId());

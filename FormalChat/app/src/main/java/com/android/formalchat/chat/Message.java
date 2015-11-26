@@ -20,6 +20,7 @@ import java.util.Date;
 @ParseClassName("Message")
 public class Message extends ParseObject {
     // JSON tags
+    public static final String JSON_MESSAGE_ID_TAG = "messageId";
     public static final String JSON_MESSAGE_TAG = "message";
     public static final String JSON_SENDER_ID_TAG = "senderId";
     public static final String JSON_RECEIVER_ID_TAG = "receiverId";
@@ -29,8 +30,9 @@ public class Message extends ParseObject {
 
     public Message() {}
 
-    public static Message newInstance(String senderId, String receiverId, String senderName, String receiverName, String messageBody) {
+    public static Message newInstance(String messageId, String senderId, String receiverId, String senderName, String receiverName, String messageBody) {
         Message message = new Message();
+        message.setMessageId(messageId);
         message.setSenderId(senderId);
         message.setReceiverId(receiverId);
         message.setSenderName(senderName);
@@ -43,6 +45,10 @@ public class Message extends ParseObject {
         Message message = new Message();
 
         try {
+            String messageId = messageObject.getString(JSON_MESSAGE_ID_TAG);
+            Log.v(ApplicationOfficially.TAG, "messageID = " + messageId);
+            message.setMessageId(messageId);
+
             String messageBody = messageObject.getString(JSON_MESSAGE_TAG);
             Log.v(ApplicationOfficially.TAG, "messageBody = " + messageBody);
             message.setMessageBody(messageBody);
@@ -91,6 +97,8 @@ public class Message extends ParseObject {
     public JSONObject toJSON() {
         JSONObject messageObject = new JSONObject();
         try {
+            Log.e(ApplicationOfficially.TAG, "toJSON msg ID = " + getMessageId());
+            messageObject.put(JSON_MESSAGE_ID_TAG, getMessageId());
             messageObject.put(JSON_SENDER_ID_TAG, getSenderId());
             messageObject.put(JSON_RECEIVER_ID_TAG, getReceiverId());
             messageObject.put(JSON_SENDER_NAME_TAG, getSenderName());
@@ -100,8 +108,17 @@ public class Message extends ParseObject {
             return messageObject;
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e(ApplicationOfficially.TAG, "toJSON Exception: " + e.getMessage());
             return null;
         }
+    }
+
+    public void setMessageId(String messageId) {
+        put("messageId", messageId);
+    }
+
+    public String getMessageId() {
+        return getString("messageId");
     }
 
     private void setMessageBody(String messageBody) {

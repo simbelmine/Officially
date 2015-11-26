@@ -1,6 +1,7 @@
 package com.android.formalchat.chat;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import java.util.HashMap;
 
 @ParseClassName("_User")
 public class MessagingUser extends ParseUser {
+    public static final String PREFS_NAME = "FormalChatPrefs_Chat";
     public MessagingUser() {}
 
     public void sendMessage(final Activity activity, final Pubnub pubnub, final Message message) {
@@ -40,6 +42,10 @@ public class MessagingUser extends ParseUser {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
+                    Log.e(ApplicationOfficially.TAG, "Message Object ID = " + message.getObjectId());
+                    message.setMessageId(message.getObjectId());
+
+
                     JSONObject messageObject = message.toJSON();
                     Log.v(ApplicationOfficially.TAG, "my message = " + messageObject);
 
@@ -50,8 +56,7 @@ public class MessagingUser extends ParseUser {
 
 
                     setConversationToParse(message, senderId, receiverId);
-                }
-                else {
+                } else {
                     Log.e(ApplicationOfficially.TAG, "Error saving message:" + e.toString());
 
                     activity.runOnUiThread(new Runnable() {
