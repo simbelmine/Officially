@@ -1,9 +1,13 @@
 package com.android.formalchat.chat;
 
+import java.util.Random;
+
 /**
  * Created by Sve on 8/18/15.
  */
 public class ChatMessage {
+    private static int MIN = 100;
+    private static int MAX = 999;
     private long id;
     private boolean isMe;
     private String message;
@@ -50,5 +54,9 @@ public class ChatMessage {
 
     public void setDate(String dateTime) {
         this.dateTime = dateTime;
+    }
+
+    protected int getRandomIdNumber() {
+        return (new Random().nextInt((MAX - MIN) + 1)) + MIN;
     }
 }

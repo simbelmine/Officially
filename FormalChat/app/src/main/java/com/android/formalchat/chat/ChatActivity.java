@@ -109,7 +109,7 @@ public class ChatActivity extends DrawerActivity {
                     if(isMessageIdDifferent(intent)) {
 
                         ChatMessage chatMessage = new ChatMessage();
-                        chatMessage.setId(122); // dummy
+                        chatMessage.setId(chatMessage.getRandomIdNumber()); // dummy
                         chatMessage.setMessage(intent.getStringExtra("message"));
                         chatMessage.setDate(intent.getStringExtra("timeSentMillis"));
                         chatMessage.setIsMe(false);
@@ -316,7 +316,7 @@ public class ChatActivity extends DrawerActivity {
             return;
         }
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setId(122); // dummy
+        chatMessage.setId(chatMessage.getRandomIdNumber()); // dummy
         chatMessage.setMessage(messageText);
         chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
         chatMessage.setIsMe(true);

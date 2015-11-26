@@ -89,7 +89,7 @@ public class AllChatsActivity extends DrawerActivity {
 
     private ChatMessage getChatMessageFromIntent(Intent intent) {
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setId(133); // dummy
+        chatMessage.setId(chatMessage.getRandomIdNumber()); // dummy
         chatMessage.setUserIdAsString(intent.getStringExtra("senderId"));
         chatMessage.setMessage(intent.getStringExtra("message"));
         chatMessage.setDate(intent.getStringExtra("timeSentMillis"));
