@@ -147,7 +147,9 @@ public class CropActivity extends Activity {
 
                         Intent intent = new Intent(CropActivity.this, FullImageActivity.class);
                         byte[] profileImg = bitmapToByteArray(newBitmap);
+                        byte[] profileImgOriginal = bitmapToByteArray(((BitmapDrawable)drawable).getBitmap());
                         intent.putExtra("profileImg", profileImg);
+                        intent.putExtra("profileImgOriginal", profileImgOriginal);
                         setResult(RESULT_OK, intent);
 
                         deleteSavedImg(url);

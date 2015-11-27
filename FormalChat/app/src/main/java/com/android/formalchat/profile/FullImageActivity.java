@@ -8,6 +8,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
@@ -18,7 +22,6 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.android.formalchat.BlurredImage;
 import com.android.formalchat.CropActivity;
 import com.android.formalchat.R;
 import com.parse.FindCallback;
@@ -29,6 +32,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -146,8 +150,9 @@ public class FullImageActivity extends Activity {
         if(data != null) {
             if(resultCode == RESULT_OK) {
                 byte[] profileImg = data.getByteArrayExtra("profileImg");
-                saveProfileImgToLocal(profileImg);
-                setImageAsProfile(profileImg);
+                byte[] profileImgOriginal = data.getByteArrayExtra("profileImgOriginal");
+                saveBlurProfileImgToParse(profileImgOriginal);
+                saveProfileImgToParse(profileImg);
                 sendBroadcastMessage(ACTION_UPLOADED_PROFILE_PIC);
                 setProfPicNameToSharPrefs();
                 finish();
@@ -183,8 +188,7 @@ public class FullImageActivity extends Activity {
     private void saveProfileImgToLocal(byte[] profileImg) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(profileImg, 0, profileImg.length);
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
-        BlurredImage bm = new BlurredImage();
-        Bitmap blurredBitmap = bm.getBlurredImage(bitmap, 50);
+        Bitmap blurredBitmap = getBlurredBitmap(bitmap);
 
         File dir = new File(path);
         File profilePic = new File(dir, "blurred_profile.jpg");
@@ -197,6 +201,44 @@ public class FullImageActivity extends Activity {
         catch (IOException ex) {
             Log.e("formalchat", ex.getMessage());
         }
+    }
+
+    private Bitmap getBlurredBitmap(Bitmap bitmap) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+
+            //Let's create an empty bitmap with the same size of the bitmap we want to blur
+            Bitmap outBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
+            //Instantiate a new Renderscript
+            RenderScript rs = RenderScript.create(getApplicationContext());
+
+            //Create an Intrinsic Blur Script using the Renderscript
+            ScriptIntrinsicBlur blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+
+            //Create the in/out Allocations with the Renderscript and the in/out bitmaps
+            Allocation allIn = Allocation.createFromBitmap(rs, bitmap);
+            Allocation allOut = Allocation.createFromBitmap(rs, outBitmap);
+
+            //Set the radius of the blur
+            blurScript.setRadius(25.f);
+
+            //Perform the Renderscript
+            blurScript.setInput(allIn);
+            blurScript.forEach(allOut);
+
+            //Copy the final bitmap created by the out Allocation to the outBitmap
+            allOut.copyTo(outBitmap);
+
+            //recycle the original bitmap
+            bitmap.recycle();
+
+            //After finishing everything, we destroy the Renderscript.
+            rs.destroy();
+
+            return outBitmap;
+        }
+
+        return null;
     }
 
     private void setProfPicNameToSharPrefs() {
@@ -214,12 +256,28 @@ public class FullImageActivity extends Activity {
         startActivityForResult(intent, CROP_FROM_IMG);
     }
 
-    private void setImageAsProfile(byte[] profileImg) {
+    private void saveProfileImgToParse(byte[] profileImg) {
         ParseFile parseProfImg = new ParseFile(profileImg);
         user.put("profileImg", parseProfImg);
         user.put("profileImgName", getShortImageNameFromUri());
         user.saveInBackground();
     }
+
+    private void saveBlurProfileImgToParse(byte[] profileImg) {
+        Bitmap bitmap = BitmapFactory.decodeByteArray(profileImg, 0, profileImg.length);
+        Bitmap blurredBitmap = getBlurredBitmap(bitmap);
+
+        ParseFile parseProfImg = new ParseFile(bitmapToByteArray(blurredBitmap));
+        user.put("profileBlurImg", parseProfImg);
+        user.saveInBackground();
+    }
+
+    private byte[] bitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
+    }
+
 
     private void deleteImage() {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserImages");

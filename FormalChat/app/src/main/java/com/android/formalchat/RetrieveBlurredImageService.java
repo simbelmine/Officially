@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.android.formalchat.profile.BlurredImage;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -26,6 +27,8 @@ import java.util.List;
 /**
  * Created by Sve on 7/2/15.
  */
+
+@Deprecated
 public class RetrieveBlurredImageService extends IntentService {
     private static final String FILE_DIR = "/.formal_chat/";
     private static final String PROFILE_PIC_BLURRED = "blurred_profile.jpg";

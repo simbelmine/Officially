@@ -74,7 +74,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private SwipeRefreshLayout swipeContainer;
 
     protected ImageView got_it_img;                     // Remote Profile
-//    protected RelativeLayout help_video_layout;         // Remote Profile
+    //    protected RelativeLayout help_video_layout;         // Remote Profile
     protected ImageView play_profile_video_btn;         // Remote Profile
     protected ImageButton edit_feb_btn;                 // User's Profile
     protected ImageButton chat_feb_button;
@@ -126,9 +126,9 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
 
 
     private boolean isAppDirExists() {
-       if(new File(dir + FILE_DIR).exists()) {
-           return true;
-       }
+        if(new File(dir + FILE_DIR).exists()) {
+            return true;
+        }
         return false;
     }
 
@@ -554,15 +554,8 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void loadBigProfilePic() {
-        String path = dir.getAbsolutePath() + FILE_DIR;
+        retrieveBlurredImageFromParse();
 
-        if(!getIntent().hasExtra("userNameMain") && isProfPicExists(path)) {
-            retrieveBlurredImageFromLocal(path);
-        }
-        else
-        {
-            retrieveBlurredImageFromParse();
-        }
     }
 
     private void retrieveBlurredImageFromParse() {
@@ -575,12 +568,31 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
             progressLayout.setVisibility(View.VISIBLE);
         }
 
-        Intent intent = new Intent(this, RetrieveBlurredImageService.class);
+        getParseUserByName();
+    }
+
+
+
+    private void getParseUserByName() {
         if(getIntent().hasExtra("userNameMain")) {
-            intent.putExtra("remoteProfile", true);
-            intent.putExtra("remoteUserName", getIntent().getStringExtra("userNameMain"));
+            userName = getIntent().getStringExtra("userNameMain");
         }
-        startService(intent);
+        else {
+            userName = user.getUsername();
+        }
+
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("username", userName);
+        query.getFirstInBackground(new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser parseUser, ParseException e) {
+                if (e == null && parseUser.has("profileBlurImg")) {
+                    Picasso.with(getApplicationContext()).load(parseUser.getParseFile("profileBlurImg").getUrl()).into(profilePic);
+                    profileProgressBar.setVisibility(View.INVISIBLE);
+                    progressLayout.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     private boolean isProfPicExists(String path) {
@@ -721,6 +733,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                         }
 
                         setSexIcon(gender_p);
+                        swipeContainer.setRefreshing(false);
                     }
                 } else {
                     Log.e("formalchat", "Error: " + e.getMessage());

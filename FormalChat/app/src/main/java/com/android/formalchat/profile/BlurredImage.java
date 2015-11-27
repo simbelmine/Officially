@@ -1,4 +1,4 @@
-package com.android.formalchat;
+package com.android.formalchat.profile;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
