@@ -132,7 +132,7 @@ public class ChatActivity extends DrawerActivity {
 
         if(!intent.hasExtra("messageId") ||
                 (sharedPreferences.contains("messageId") &&
-                intent.getStringExtra("messageId") == sharedPreferences.getString("messageId", null))) {
+                intent.getStringExtra("messageId").equals(sharedPreferences.getString("messageId", null)))) {
             return false;
         }
 
