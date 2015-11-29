@@ -3,6 +3,7 @@ package com.android.formalchat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -39,8 +40,9 @@ public class DialogActivtyMultiText extends Activity {
         extrasHashMap = (HashMap<String, Object>)getIntent().getSerializableExtra("extras");
 //        hasMotto = isExtraExists(EXTRA_MOTTO);
 //        hasAboutMe = isExtraExists(EXTRA_ABOUT_ME);
+
+        getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.night_transp_black_80)));
         getTitleFromExtras();
-        //setTitle(title);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.multy_text_dialog);
         setTitle();

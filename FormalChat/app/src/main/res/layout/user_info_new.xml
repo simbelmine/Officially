@@ -401,7 +401,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/label_padding"
-            android:layout_marginBottom="@dimen/label_margin_bottom">
+            android:layout_marginBottom="@dimen/label_margin_bottom"
+            android:layout_marginTop="@dimen/label_margin_bottom"
+            >
             <TextView
                 android:id="@+id/perfect_smn_lbl"
                 android:layout_width="wrap_content"
@@ -424,7 +426,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/label_padding"
-            android:layout_marginBottom="@dimen/label_margin_bottom">
+            android:layout_marginBottom="@dimen/label_margin_bottom"
+            android:layout_marginTop="@dimen/label_margin_bottom"
+            >
             <TextView
                 android:id="@+id/perfect_date_lbl"
                 android:layout_width="wrap_content"
@@ -447,6 +451,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/label_height"
             android:layout_marginBottom="@dimen/label_margin_bottom"
+            android:layout_marginTop="@dimen/label_margin_bottom"
             >
             <TextView
                 android:id="@+id/interests_lbl"

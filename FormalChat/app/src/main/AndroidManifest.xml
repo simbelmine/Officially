@@ -65,7 +65,7 @@
 
         <activity   android:name=".DialogActivtyMultiText"
                     android:theme="@style/QuestionsDialogTheme"
-                    android:windowSoftInputMode="adjustPan|stateVisible"/>
+                    android:windowSoftInputMode="adjustPan|adjustResize|stateVisible"/>
         <activity   android:name=".DialogActivity"
                     android:theme="@style/QuestionsDialogThemeList"/>
 

@@ -13,7 +13,7 @@
             android:bottom="5dp"
             android:top="5dp"/>
         <stroke
-            android:color="@color/material_transp_gray"
+            android:color="@color/material_transp_darker_gray"
             android:width="0.5dp" />
     </shape>
 </inset>

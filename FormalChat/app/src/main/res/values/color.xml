@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#000000</color>
+    <color name="night_transp_black_80">#CC0C090A</color>
     <color name="transp_black">#60000000</color>
-    <color name="transp_black_99">#A6000000</color>
-    <color name="transp_black_55">#55000000</color>
-    <color name="transp_black_20">#20000000</color>
+    <color name="transp_black_95">#B3000000</color>
+    <color name="transp_black_65">#A6000000</color>
+    <color name="transp_black_32">#55000000</color>
+    <color name="transp_black_16">#20000000</color>
     <color name="transp_white">#00FFFFFF</color>
     <color name="transp_white_60">#60FFFFFF</color>
     <color name="transp_white_20">#30707070</color>
@@ -37,7 +39,7 @@
     <color name="material_green">#00a4a5</color>
     <color name="material_transp60_black">#60000000</color>
     <color name="material_darker_gray">#2a3036</color>
-    <color name="material_transp_gray">#902a3036</color>
+    <color name="material_transp_darker_gray">#902a3036</color>
 
     <color name="action_bar_purple">#3e313c</color>
     <color name="background_purple">#4d394b</color>

@@ -138,7 +138,7 @@ public class FullImageActivity extends Activity {
     private void initActionBar() {
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.transp_black_20)));
+        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.transp_black_16)));
         getActionBar().setDisplayShowHomeEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
