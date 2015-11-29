@@ -288,6 +288,8 @@ public class UserInfoActivity extends Activity {
                 extras.put("dialog_title", title);
                 extras.put("dialog_result_code", resultCode_interests);
                 extras.put("dialog_list_items", getResources().getStringArray(R.array.interests_values));
+                extras.put("dialog_multi_choice", true);
+                extras.put("dialog_multi_choice_field", "interests");
 
                 startDialogActivity(resultCode_interests, extras);
             }
@@ -412,7 +414,7 @@ public class UserInfoActivity extends Activity {
                 interests_position = data.getIntExtra("dialog_list_position", 0);
                 String value_i = data.getStringExtra("dialog_list_value");
                 interests.setText(value_i);
-                infoEditor.putInt("interests", interests_position);
+                infoEditor.putString("interests", value_i);
                 infoEditor.commit();
                 break;
             default:

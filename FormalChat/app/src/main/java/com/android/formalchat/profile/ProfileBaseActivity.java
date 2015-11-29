@@ -674,7 +674,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                         String aboutMe_p = parseObject.getString("aboutMe");
                         String perfect_smn_p = parseObject.getString("perfectSmn");
                         String perfect_date_p = parseObject.getString("perfectDate");
-                        int interests_p = parseObject.getInt("interests");
+                        String interests_p = parseObject.getString("interests");
 
                         name.setText(name_p);
                         age.setText(String.valueOf(age_p));
@@ -726,10 +726,10 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                         } else {
                             perfectDate.setText(perfect_date_p);
                         }
-                        if (interests_p == 0) {
+                        if (interests_p == null) {
                             interests.setText(getResources().getString(R.string.none_txt));
                         } else {
-                            interests.setText(getNameByPosition(getResources().getStringArray(R.array.interests_values), interests_p));
+                            interests.setText(interests_p);
                         }
 
                         setSexIcon(gender_p);
