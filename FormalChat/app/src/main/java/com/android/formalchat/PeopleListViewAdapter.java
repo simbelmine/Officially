@@ -70,7 +70,7 @@ public class PeopleListViewAdapter extends BaseAdapter {
 //        }
 //        viewHolder.userName.setText(user.get("username").toString());
 
-        new DownloadProfileGridImage(context, viewHolder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+        new DownloadProfileGridImage(context, viewHolder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return convertView;
     }

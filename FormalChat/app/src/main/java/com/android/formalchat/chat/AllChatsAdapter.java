@@ -114,7 +114,7 @@ public class AllChatsAdapter extends BaseAdapter {
             holder.messageName.setText(ids.get(position).getString("senderName"));
         }
 
-        new DownloadConversationImage(context, holder, position, id).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+        new DownloadConversationImage(context, holder, position, id).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private static class DownloadConversationImage extends AsyncTask<ParseFile, Void, ParseFile> {
