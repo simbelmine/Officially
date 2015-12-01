@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +38,7 @@ import java.util.Date;
 /**
  * Created by Sve on 4/2/15.
  */
-public class VideoRecordActivity extends Activity implements View.OnClickListener{
+public class VideoRecordActivity extends AppCompatActivity implements View.OnClickListener{
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     private static final String VIDEO_EXTENSION = ".mp4";
     private static final String VIDEO_OUT_FOLDER = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/";
@@ -55,20 +57,26 @@ public class VideoRecordActivity extends Activity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initActionBar();
         setContentView(R.layout.video_record_layout);
 
+        initToolbar();
+        initActionBar();
         init();
         initVideoUtils();
         setOnclickListeners();
     }
 
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+    }
+
     private void initActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(false);
-        getActionBar().setHomeButtonEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setHomeButtonEnabled(false);
         // Hide Action Bar icon and text
-        getActionBar().setDisplayShowHomeEnabled(true);
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
     }
 
     private void init() {

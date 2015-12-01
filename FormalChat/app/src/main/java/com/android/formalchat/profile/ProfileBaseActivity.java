@@ -225,11 +225,11 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private void setTitle() {
         int title_position = getIntent().getIntExtra("title_position", NONE);
         if(title_position == DrawerActivity.PROFILE_ID) {
-            getActionBar().setTitle(getResources().getString(R.string.profile));
+            getSupportActionBar().setTitle(getResources().getString(R.string.profile));
         }
         else
         if(title_position != NONE) {
-            getActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+            getSupportActionBar().setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
         }
     }
 

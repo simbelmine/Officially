@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -26,7 +28,7 @@ import java.util.Map;
 /**
  * Created by Sve on 2/18/15.
  */
-public class UserInfoActivity extends Activity {
+public class UserInfoActivity extends AppCompatActivity {
     private static final int resultCode_motto = 100;
     private static final int resultCode_drinking = 101;
     private static final int resultCode_smoking = 102;
@@ -91,8 +93,10 @@ public class UserInfoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initActionBar();
         setContentView(R.layout.user_info_new);
+
+        initToolbar();
+        initActionBar();
 
         infoPrefs_local = getSharedPreferences(PREFS_INFO_LOCAL, 0);
         infoEditor = infoPrefs_local.edit();
@@ -112,8 +116,13 @@ public class UserInfoActivity extends Activity {
         });
     }
 
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+    }
+
     private void initActionBar() {
-        getActionBar().hide();
+        getSupportActionBar().hide();
     }
 
     private void setOnClickListeners() {

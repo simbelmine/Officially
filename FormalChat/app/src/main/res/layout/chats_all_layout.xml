@@ -28,7 +28,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/list_margin"
                 android:layout_marginRight="@dimen/list_margin"
-                android:dividerHeight="@dimen/list_margin"
+                android:dividerHeight="0.2dp"
                 android:divider="@color/transp"
                 />
         </LinearLayout>

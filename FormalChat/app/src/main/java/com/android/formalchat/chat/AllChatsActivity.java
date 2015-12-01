@@ -38,8 +38,9 @@ public class AllChatsActivity extends DrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ((ApplicationOfficially) getApplication()).subscribeToMessagingChannel();
-
         super.onCreate(savedInstanceState);
+
+        setTitle();
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View contentView = inflater.inflate(R.layout.chats_all_layout, null, false);
@@ -53,6 +54,16 @@ public class AllChatsActivity extends DrawerActivity {
 //        conversationsListLayout.setAdapter(allChatsAdapter);
 
         getUserChatFriendsList();
+    }
+
+    private void setTitle() {
+        int title_position = getIntent().getIntExtra("title_position", NONE);
+        if(title_position != NONE) {
+            setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
+        }
+        else {
+            setTitle(getResources().getStringArray(R.array.menu_list)[0]);
+        }
     }
 
     private BroadcastReceiver onIncomingMessage = new BroadcastReceiver() {

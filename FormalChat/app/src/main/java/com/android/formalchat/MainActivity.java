@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +72,7 @@ public class MainActivity extends DrawerActivity {
         drawerLayout.addView(contentView, 0);
         exit = false;
         isListButtonVisible = true; // Start always with grid view
+
 
         setTitle();
         initSharedPreferences();

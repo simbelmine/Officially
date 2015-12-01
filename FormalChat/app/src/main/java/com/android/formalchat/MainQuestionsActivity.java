@@ -8,12 +8,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,7 +48,7 @@ import java.util.Locale;
 /**
  * Created by Sve on 2/19/15.
  */
-public class MainQuestionsActivity extends Activity {
+public class MainQuestionsActivity extends AppCompatActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     private static final String EXTRA_ABOUT_ME = "aboutMeText";
     private static final int INIT_YEAR = 1980;
@@ -74,6 +77,8 @@ public class MainQuestionsActivity extends Activity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         editor = sharedPreferences.edit();
 
+        initToolbar();
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
         findAllById();
         init();
         initGenderButtons();
@@ -81,6 +86,11 @@ public class MainQuestionsActivity extends Activity {
         Log.v("formalchat", "Location: " + getCurrentLocation());
         setOnClickListeners();
         onDoneBtnPressed();
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void setOnClickListeners() {
@@ -283,16 +293,22 @@ public class MainQuestionsActivity extends Activity {
         if(Geocoder.isPresent()) {
             try {
                 Location lastLoc = getLastLocation();
-                Log.v("formalchat", "Last location: " + lastLoc.getLatitude() + "  " + lastLoc.getLongitude());
-                Geocoder gcd = new Geocoder(this);
-                List<Address> addresses = gcd.getFromLocation(lastLoc.getLatitude(), lastLoc.getLongitude(), 1);
 
-                if (addresses.size() > 0) {
-                    Address address = addresses.get(0);
-                    String message = String.format("%s, %s",
-                            address.getCountryCode(), address.getLocality());
-                    Log.v("formalchat", "***********************  " + message );
-                    return message;
+                if(lastLoc != null) {
+                    Log.v("formalchat", "Last location: " + lastLoc.getLatitude() + "  " + lastLoc.getLongitude());
+                    Geocoder gcd = new Geocoder(this);
+                    List<Address> addresses = gcd.getFromLocation(lastLoc.getLatitude(), lastLoc.getLongitude(), 1);
+
+                    if (addresses.size() > 0) {
+                        Address address = addresses.get(0);
+                        String message = String.format("%s, %s",
+                                address.getCountryCode(), address.getLocality());
+                        Log.v("formalchat", "***********************  " + message);
+                        return message;
+                    }
+                    else {
+                        return "Waiting for location...";
+                    }
                 }
                 else {
                     return "Waiting for location...";

@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,7 +28,7 @@ import java.lang.reflect.Field;
 /**
  * Created by Sve on 3/12/15.
  */
-public class QuestionaryActivity extends ActionBarActivity {
+public class QuestionaryActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final String PREFS_NAME_ANSWERS = "FormalChatQuestionAnswers";
     private QuestionaryPagerAdapter questionaryPagerAdapter;
@@ -39,6 +42,9 @@ public class QuestionaryActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.questionary_pager_layout);
+        initToolbar();
+        initActionBar();
+
         isDoneBtnVisible = false;
 
         questionaryPagerAdapter = new QuestionaryPagerAdapter(getSupportFragmentManager(), this, this);
@@ -47,6 +53,15 @@ public class QuestionaryActivity extends ActionBarActivity {
 
         initBroadcastReceiver();
         viewPager.setAdapter(questionaryPagerAdapter);
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void initActionBar() {
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
     }
 
     private void initBroadcastReceiver() {

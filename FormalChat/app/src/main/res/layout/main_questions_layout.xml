@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ToolbarWidgetTheme"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <TextView
         android:id="@+id/user_email"
         android:layout_width="match_parent"
@@ -47,6 +58,7 @@
             android:paddingLeft="2dp"
             android:singleLine="true"
             android:background="@drawable/dotted_line"
+            android:textColor="@color/material_green"
             android:text="Svetla"/>
         <ImageView
             android:id="@+id/name_check"
@@ -147,6 +159,8 @@
             android:paddingLeft="7dp"
             android:paddingBottom="7dp"
             android:gravity="bottom"
+            android:textColor="@color/material_green"
+            android:text="@string/choice_txt"
             android:background="@drawable/dotted_line"
             />
         <ImageView
@@ -190,7 +204,7 @@
             android:layout_marginLeft="@dimen/divider_info_margin"
             android:layout_marginRight="@dimen/divider_info_margin"
             android:editable="false"
-            android:textColor="@color/dark_gray"/>
+            android:textColor="@color/material_green"/>
     </RelativeLayout>
 
     <Button

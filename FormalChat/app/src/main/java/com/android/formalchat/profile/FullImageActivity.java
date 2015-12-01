@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.renderscript.Allocation;
@@ -13,12 +15,15 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -41,7 +46,7 @@ import java.util.List;
 /**
  * Created by Sve on 3/10/15.
  */
-public class FullImageActivity extends Activity {
+public class FullImageActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final int CROP_FROM_IMG = 123;
     public static final String ACTION_DELETED = "PICTURE_DELETE_COMPLETE";
@@ -56,12 +61,17 @@ public class FullImageActivity extends Activity {
     private String url;
     private ParseUser user;
     private Menu menu;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        initActionBar();
+        initWindow();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_full_screen_img);
+
+        initToolbar();
+        initActionBar();
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         editor = sharedPreferences.edit();
@@ -88,7 +98,7 @@ public class FullImageActivity extends Activity {
 //                    menuBtn.setVisibility(View.VISIBLE);
 
                     exitFullScreenMode();
-                    getActionBar().show();
+                    getSupportActionBar().show();
                     isVisible = true;
                 }
                 else {
@@ -97,7 +107,7 @@ public class FullImageActivity extends Activity {
 //                    menuBtn.setVisibility(View.GONE);
 
                     goToFullScreenMode();
-                    getActionBar().hide();
+                    getSupportActionBar().hide();
                     isVisible = false;
                 }
             }
@@ -135,14 +145,30 @@ public class FullImageActivity extends Activity {
 //        });
     }
 
+    private void initWindow() {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(R.color.status_bar_purple));
+        }
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+    }
+
     private void initActionBar() {
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.transp_black_16)));
-        getActionBar().setDisplayShowHomeEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        getActionBar().setDisplayShowTitleEnabled(false);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.transp_black_16)));
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override

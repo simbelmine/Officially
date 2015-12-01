@@ -1,5 +1,6 @@
 package com.android.formalchat;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -9,7 +10,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,7 +40,7 @@ import java.util.List;
 /**
  * Created by Sve on 3/26/15.
  */
-public class DrawerActivity extends FragmentActivity {
+public class DrawerActivity extends AppCompatActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
     public static final int PROFILE_ID = 202;
@@ -47,16 +51,19 @@ public class DrawerActivity extends FragmentActivity {
     private RelativeLayout leftDrawerLayout;
     private ListView leftDrawerList;
     private String[] listElements;
-    private ActionBarDrawerToggle drawerToggle;
+    private CustomActionBarToggle drawerToggle;
     private CharSequence title;
     private CharSequence drawerTitle;
     private ParseUser user;
+    private Toolbar toolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer);
+
+        initToolbar();
 
         user = ParseUser.getCurrentUser();
         title = drawerTitle = getTitle();
@@ -75,10 +82,16 @@ public class DrawerActivity extends FragmentActivity {
         setProfileName(user);
         setProfileEmail(user);
 
-        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         drawerLayout.setDrawerListener(drawerToggle);
         leftDrawerList.setAdapter(new DrawerListAdapter(this));
         setListOnClickItemListener();
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_drawer_g);
+        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -141,11 +154,11 @@ public class DrawerActivity extends FragmentActivity {
     }
 
     private void initActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         // Hide Action Bar icon and text
-        getActionBar().setDisplayShowHomeEnabled(false);
-        getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
     }
 
     @Override
@@ -179,35 +192,17 @@ public class DrawerActivity extends FragmentActivity {
     }
 
     private void initDrawableToggle() {
-        drawerToggle = new ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                R.drawable.ic_drawer_g,
-                R.string.drawer_open,
-                R.string.drawer_close) {
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                updateTitle(title);
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                updateTitle(drawerTitle);
-                setPic();
-            }
-        };
+        drawerToggle = new CustomActionBarToggle(this, drawerLayout);
     }
 
     @Override
     public void setTitle(CharSequence title_) {
         title = title_;
-        getActionBar().setTitle(title);
+        getSupportActionBar().setTitle(title);
     }
 
     private void updateTitle(CharSequence title) {
-        getActionBar().setTitle(title);
+        getSupportActionBar().setTitle(title);
         invalidateOptionsMenu();
     }
 
@@ -271,6 +266,31 @@ public class DrawerActivity extends FragmentActivity {
 //            }
                 }
             }
+        }
+    }
+
+
+    private class CustomActionBarToggle extends android.support.v7.app.ActionBarDrawerToggle {
+        public CustomActionBarToggle(Activity activity, DrawerLayout drawerLayout) {
+            super(
+                    activity,
+                    drawerLayout,
+                    R.string.drawer_open,
+                    R.string.drawer_close
+            );
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            super.onDrawerOpened(drawerView);
+            updateTitle(drawerTitle);
+            setPic();
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            super.onDrawerClosed(drawerView);
+            updateTitle(title);
         }
     }
 }

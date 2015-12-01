@@ -1,50 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-    <!-- The main content view -->
-    <FrameLayout
-        android:id="@+id/content_frame"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ToolbarWidgetTheme"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <RelativeLayout
-        android:id="@+id/left_drawer"
-        android:layout_width="@dimen/l_drawer_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@color/material_darker_gray"
-        >
-       <include
-           android:id="@+id/header"
-           layout="@layout/drawer_header"
-           >
-       </include>
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/left_list_drawer"
+        <!-- The main content view -->
+        <FrameLayout
+            android:id="@+id/content_frame"
             android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/left_drawer"
+            android:layout_width="@dimen/l_drawer_width"
             android:layout_height="match_parent"
-            android:layout_below="@+id/header"
             android:layout_gravity="start"
-            android:paddingTop="@dimen/l_padding_top"
-            android:layout_marginTop="@dimen/l_padding_top"
-            android:choiceMode="singleChoice"
-            android:divider="@drawable/bg_with_shadow"
-            android:dividerHeight="@dimen/l_drawer_divider_height"
-            />
-        <View
-            android:id="@+id/shadow"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/header"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_with_shadow">
-        </View>
-    </RelativeLayout>
-</android.support.v4.widget.DrawerLayout>
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@color/material_darker_gray"
+            >
+
+            <include
+                android:id="@+id/header"
+                layout="@layout/drawer_header"
+                >
+            </include>
+
+            <ListView
+                android:id="@+id/left_list_drawer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/header"
+                android:layout_gravity="start"
+                android:paddingTop="@dimen/l_padding_top"
+                android:layout_marginTop="@dimen/l_padding_top"
+                android:choiceMode="singleChoice"
+                android:divider="@drawable/bg_with_shadow"
+                android:dividerHeight="@dimen/l_drawer_divider_height"
+                />
+            <View
+                android:id="@+id/shadow"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/header"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_with_shadow">
+            </View>
+        </RelativeLayout>
+    </android.support.v4.widget.DrawerLayout>
+</LinearLayout>
