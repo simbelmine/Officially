@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.android.formalchat.CropActivity;
@@ -35,6 +36,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -62,6 +64,7 @@ public class FullImageActivity extends AppCompatActivity {
     private ParseUser user;
     private Menu menu;
     private Toolbar toolbar;
+    private ProgressBar fullImgProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +83,21 @@ public class FullImageActivity extends AppCompatActivity {
         user = ParseUser.getCurrentUser();
 
         fullScreenView = (ImageView) findViewById(R.id.full_screen_img);
+        fullImgProgressBar = (ProgressBar) findViewById(R.id.full_image_progress_bar);
 
         Picasso.with(this)
                 .load(url)
-                .into(fullScreenView);
+                .into(fullScreenView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        fullImgProgressBar.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
 
         topBtnsLayout = (RelativeLayout) findViewById(R.id.top_btns_layout);
         backBtn = (ImageView) findViewById(R.id.back_btn);
