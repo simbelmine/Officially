@@ -54,8 +54,12 @@
     </style>
 
 
-    <style name="DatePickerTheme" parent="@android:style/Theme.Material.Light.Dialog.NoActionBar">
+    <style name="DatePickerTheme" parent="@android:style/Theme.Material.Light.Dialog.NoActionBar"/>
+
+    <style name="AlertDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:textColor">@color/items</item>
     </style>
+
 
     <!-- ActionBar styles -->
     <style name="MyActionBar"
@@ -86,16 +90,23 @@
         <item name="android:textColor">@color/action_bar</item>
     </style>
 
+
+
     <style name="QuestionsDialogTheme" parent="Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/transp_black</item>
+        <item name="android:windowBackground">@color/transp_black_95</item>
     </style>
     <style name="QuestionsDialogThemeList" parent="Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">false</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/transp_black</item>
     </style>
+
+    <style name="QuestionStyle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:typeface">serif</item>
+    </style>
+
+
 
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
         <item name="android:textColor">@color/action_bar</item>
@@ -114,12 +125,6 @@
     </style>
     <style name="OverFlowQuestionary" parent="@android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:showAsAction">never</item>
-    </style>
-
-    <style name="QuestionStyle">
-        <item name="android:textSize">22sp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:typeface">serif</item>
     </style>
 
 </resources>

@@ -666,7 +666,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                         String motto_p = parseObject.getString("motto");
                         String location_p = parseObject.getString("location");
 
-                        String height_p = parseObject.getString("height");
+                        int height_p = parseObject.getInt("height");
                         int bodyType_p = parseObject.getInt("bodyType");
                         int relationship_p = parseObject.getInt("relationship");
                         int children_p = parseObject.getInt("children");
@@ -685,10 +685,10 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                             motto.setText(motto_p);
                         }
                         location.setText(location_p);
-                        if (height_p == null || height_p.equals("")) {
+                        if (height_p == 0) {
                             height.setText(getResources().getString(R.string.none_txt));
                         } else {
-                            height.setText(height_p);
+                            height.setText(String.valueOf(height_p) + "''");
                         }
 
                         if (bodyType_p == 0) {

@@ -37,6 +37,10 @@
         <item name="colorControlHighlight">#3fff</item>
     </style>
 
+    <style name="AlertDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:textColor">@color/items</item>
+    </style>
+
 
     <!-- ActionBar styles -->
     <style name="MyActionBar"

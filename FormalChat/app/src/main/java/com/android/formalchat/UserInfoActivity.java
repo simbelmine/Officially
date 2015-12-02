@@ -1,17 +1,22 @@
 package com.android.formalchat;
 
-import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.android.formalchat.profile.ProfileActivityCurrent;
@@ -79,6 +84,7 @@ public class UserInfoActivity extends AppCompatActivity {
     private int ethnicity_position;
     private int education_position;
     private int interests_position;
+    private int height_position;
 
     private static Button saveBtn;
     //    private static TextView interested_in;
@@ -89,6 +95,7 @@ public class UserInfoActivity extends AppCompatActivity {
     private SharedPreferences.Editor infoEditor;
     private SharedPreferences questionaryPrefs_local;
     private SharedPreferences.Editor questionaryEditor;
+    private SharedPreferences sharedInfoPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +105,7 @@ public class UserInfoActivity extends AppCompatActivity {
         initToolbar();
         initActionBar();
 
+        sharedInfoPreferences = getSharedPreferences(PREFS_INFO, 0);
         infoPrefs_local = getSharedPreferences(PREFS_INFO_LOCAL, 0);
         infoEditor = infoPrefs_local.edit();
         questionaryPrefs_local = getSharedPreferences(PREFS_QUESTIONARY_LOCAL, 0);
@@ -181,9 +189,10 @@ public class UserInfoActivity extends AppCompatActivity {
         height.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ///**************
-                // TO DO: like spinner with numbers or something like that
-                //****************
+                final NumberPicker picker = getNumberPicker();
+                final FrameLayout parent = new FrameLayout(UserInfoActivity.this);
+                addNumberPickerToLayout(parent, picker);
+                createNumberPickerDialog(parent, picker);
             }
         });
         body_type.setOnClickListener(new View.OnClickListener() {
@@ -231,7 +240,7 @@ public class UserInfoActivity extends AppCompatActivity {
                 HashMap<String, Object> extras = new HashMap<>();
                 SpannableString title = new SpannableString(getResources().getString(R.string.ethnicity_lbl));
                 title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
-                extras.put("dialog_title",title);
+                extras.put("dialog_title", title);
                 extras.put("dialog_result_code", resultCode_ethnicity);
                 extras.put("dialog_layout_id", R.layout.choice_dialog);
                 extras.put("dialog_list_items", getResources().getStringArray(R.array.ethnicity_values));
@@ -245,7 +254,7 @@ public class UserInfoActivity extends AppCompatActivity {
                 HashMap<String, Object> extras = new HashMap<>();
                 SpannableString title = new SpannableString(getResources().getString(R.string.education_lbl));
                 title.setSpan(new UnderlineSpan(), 0, title.length(), 0);
-                extras.put("dialog_title",title);
+                extras.put("dialog_title", title);
                 extras.put("dialog_result_code", resultCode_education);
                 extras.put("dialog_list_items", getResources().getStringArray(R.array.education_values));
 
@@ -303,6 +312,52 @@ public class UserInfoActivity extends AppCompatActivity {
                 startDialogActivity(resultCode_interests, extras);
             }
         });
+    }
+
+    private void createNumberPickerDialog(FrameLayout parent, final NumberPicker picker) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(UserInfoActivity.this, R.style.AlertDialog);
+        builder.setTitle(getResources().getString(R.string.height_lbl));
+        builder.setView(parent);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                height.setText(String.valueOf(picker.getValue()));
+                infoEditor.putInt("height", picker.getValue());
+                infoEditor.commit();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.night_transp_black_80)));
+        dialog.show();
+    }
+
+    private void addNumberPickerToLayout(FrameLayout parent, NumberPicker picker) {
+        parent.addView(picker, new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER));
+    }
+
+    private NumberPicker getNumberPicker() {
+        NumberPicker picker =  new NumberPicker(UserInfoActivity.this);
+        picker.setMinValue(21);
+        picker.setMaxValue(107);
+        if(sharedInfoPreferences.contains("height")) {
+            int heightValue = Integer.parseInt(sharedInfoPreferences.getString("height", "0"));
+            if(heightValue != 0) {
+                picker.setValue(heightValue);
+            }
+        }
+        else {
+            picker.setValue(66);
+        }
+
+        return picker;
     }
 
     private void startDialogActivity(int resultCode, HashMap<String, Object> extras) {
@@ -560,8 +615,6 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void populateInfoFromExtras() {
-        SharedPreferences sharedInfoPreferences = getSharedPreferences(PREFS_INFO, 0);
-
         name.setText(sharedInfoPreferences.getString("name", getResources().getString(R.string.change_txt)));
         age.setText(sharedInfoPreferences.getString("age", getResources().getString(R.string.choice_txt)));
 
@@ -578,6 +631,8 @@ public class UserInfoActivity extends AppCompatActivity {
         perfectSmn.setText(sharedInfoPreferences.getString("perfectSmn", getResources().getString(R.string.perfectSmn_none_txt)));
         perfectDate.setText(sharedInfoPreferences.getString("perfectDate", getResources().getString(R.string.perfectDate_none_txt)));
         interests.setText(sharedInfoPreferences.getString("interests", getResources().getString(R.string.choice_txt)));
+
+        height.setText(sharedInfoPreferences.getString("height", getResources().getString(R.string.choice_txt)));
 
 //        interested_in.setText(sharedInfoPreferences.getString("interestedIn", getResources().getString(R.string.choice_txt)));
 //        looking_for.setText(sharedInfoPreferences.getString("lookingFor", getResources().getString(R.string.choice_txt)));
