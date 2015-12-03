@@ -146,12 +146,10 @@ public class MainQuestionsActivity extends AppCompatActivity {
         done_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(verifyVariables()) {
-                    setDoneQuestions();
+                if (verifyVariables()) {
                     saveVariablesToParse();
                     startQuestionaryActivity();
-                }
-                else {
+                } else {
                     Toast.makeText(getApplicationContext(), "You missed something. Check again.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -166,7 +164,6 @@ public class MainQuestionsActivity extends AppCompatActivity {
 
 
     private boolean verifyVariables() {
-        Log.v("formalchat", age.getText().toString());
         if(!TextUtils.isEmpty(name.getText()) && !TextUtils.isEmpty(age.getText())) {
             return true;
         }
@@ -192,7 +189,6 @@ public class MainQuestionsActivity extends AppCompatActivity {
 
     private void saveVariablesToParse() {
         final String userName = parseUser.getUsername();
-
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
         parseQuery.whereContains("loginName", userName);
         parseQuery.getFirstInBackground(new GetCallback<ParseObject>() {
@@ -224,6 +220,7 @@ public class MainQuestionsActivity extends AppCompatActivity {
             public void done(com.parse.ParseException e) {
                 if (e == null) {
                     Log.e("formalchat", "Questionary was saved Successfully !");
+                    setDoneQuestions();
                 } else {
                     Log.e("formalchat", "Error saving: " + e.getMessage());
                 }
@@ -245,6 +242,7 @@ public class MainQuestionsActivity extends AppCompatActivity {
             public void done(com.parse.ParseException e) {
                 if (e == null) {
                     Log.e("formalchat", "Questionary was saved Successfully !");
+                    setDoneQuestions();
                 } else {
                     Log.e("formalchat", "Error saving: " + e.getMessage());
                 }

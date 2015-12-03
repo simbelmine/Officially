@@ -3,7 +3,6 @@ package com.android.formalchat;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -24,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,7 +32,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,6 +95,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private SharedPreferences.Editor editor;
     private Boolean exit;
     private Toolbar toolbar;
+    private boolean dataVerified = false;
 
     private String TAG = "formalchat";
 
@@ -166,14 +166,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     private boolean isMainQuestionsDone(ParseUser pUser) {
-        if(pUser.containsKey("doneMainQuestions") && pUser.getBoolean("doneMainQuestions") == true) {
+        if(pUser.containsKey("doneMainQuestions") && pUser.getBoolean("doneMainQuestions")) {
             return true;
         }
         return false;
     }
 
     private boolean isQuestionaryDone(ParseUser pUser) {
-        if(pUser.containsKey("doneQuestionary") && pUser.getBoolean("doneQuestionary") == true) {
+        if(pUser.containsKey("doneQuestionary") && pUser.getBoolean("doneQuestionary")) {
             return true;
         }
         return false;
@@ -237,7 +237,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     attemptLogin();
                 }
                 return false;
@@ -259,7 +259,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView.requestFocus();
         } else {
             if(isNetworkAvailable()) {
-                checkUserExistence(userName, email, password);
+                startFirstTimeUser(userName, email, password);
             }
             else {
                 showAlertMsg(R.string.no_network, R.color.alert_red);
@@ -267,23 +267,46 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    private void checkUserExistence(final String userName, final String email, final String password) {
-        Log.v(ApplicationOfficially.TAG, "Login Activity: SignUp - checkUserExistence: user name = " + userName);
+    private void startFirstTimeUser(final String userName, final String email, final String password) {
+        Log.v(ApplicationOfficially.TAG, "Login Activity: SignUp - startFirstTimeUser: user name = " + userName);
 
         ParseQuery query = ParseUser.getQuery();
         query.whereContains("username", userName);
         query.getFirstInBackground(new GetCallback() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
-                if(e == null || parseObject != null) {
+                if (e == null || parseObject != null) {
                     showAlertMsg(R.string.already_exists, R.color.alert_red);
-                }
-                else {
+                } else {
                     Log.e("formalchat", e.getMessage());
-                    saveDataToParse(userName, email, password);
+
+
+                    verifyData(userName, email, password);
+                    if(dataVerified) {
+                        saveDataToParse(userName, email, password);
+                    }
                 }
             }
         });
+    }
+
+    private void verifyData(String userName, String email, String password) {
+        if(userName == null || userName.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Your name is missing.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(email == null || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(getApplicationContext(), "Your email is not correct", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(password == null || password.length() < 7) {
+            Toast.makeText(getApplicationContext(), "Your password is too short.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        dataVerified = true;
     }
 
     private void startActivityByClassName(Class<?> activityToCall) {
@@ -318,8 +341,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             getString(R.string.sign_up_success),
                             Toast.LENGTH_LONG).show();
 
-                    startActivityByClassName(MainQuestionsActivity.class);
                     setLogedInSharedPrefs();
+                    startActivityByClassName(MainQuestionsActivity.class);
                 } else {
                     // Sign up didn't succeed. Look at the ParseException
                     // to figure out what went wrong
@@ -393,10 +416,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void done(ParseUser parseUser, ParseException e) {
                 if (parseUser != null) {
                     Log.v(TAG, "emailVerified" + (parseUser.getBoolean("emailVerified")));
-                    if(isEmailAutorized(parseUser) || BuildConfig.DEBUG) {
+                    if (isEmailAutorized(parseUser) || BuildConfig.DEBUG) {
                         logInWithCorrectActivity();
-                    }
-                    else {
+                    } else {
                         showAlertMsg(R.string.confirm_email, R.color.border_green);
 //                            Toast.makeText(getApplicationContext(), getString(R.string.confirm_email), Toast.LENGTH_SHORT).show();
                     }
