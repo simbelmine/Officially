@@ -28,8 +28,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.w3c.dom.Text;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;

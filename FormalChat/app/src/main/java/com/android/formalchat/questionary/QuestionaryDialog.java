@@ -19,17 +19,20 @@ public class QuestionaryDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getActivity())
+        return new android.support.v7.app.AlertDialog.Builder(getActivity())
+                .setTitle("Important")
                 .setMessage(R.string.alert_dialog)
-                .setPositiveButton(R.string.alert_ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         setDoneQuestionary();
                         startMainActivity();
                     }
                 })
+                .setNegativeButton("Cancel", null)
                 .create();
     }
+
 
 
     private void startMainActivity() {

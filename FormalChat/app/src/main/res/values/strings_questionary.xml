@@ -111,6 +111,6 @@
 
 
     <string name="skip_text">Skip questionary</string>
-    <string name="alert_dialog">Don\'t forget that answering this questions you have better chance to find your best match!</string>
+    <string name="alert_dialog">Don\'t forget, answering this questions, you have better chance to find your best match!</string>
     <string name="alert_ok">Ok</string>
 </resources>
