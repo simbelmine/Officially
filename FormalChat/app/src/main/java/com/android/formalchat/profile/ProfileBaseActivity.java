@@ -817,7 +817,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         editor.putString("yourDrinking", getRightText(drinking.getText().toString()));
         editor.putString("yourSmoking", getRightText(smoking.getText().toString()));
         editor.putString("yourReligion", getRightText(religion.getText().toString()));
-        editor.putString("height", getRightText(height.getText().toString()));
+        editor.putString("height", getRightText(getHeightText(height.getText().toString())));
         editor.putString("bodyType", getRightText(bodyType.getText().toString()));
         editor.putString("relationship", getRightText(relationship.getText().toString()));
         editor.putString("children", getRightText(children.getText().toString()));
@@ -831,6 +831,10 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
 //        editor.putString("interestedIn", getRightText(interestedIn.getText().toString()));
 //        editor.putString("lookingFor", getRightText(lookingFor.getText().toString()));
         editor.commit();
+    }
+
+    private String getHeightText(String height_txt) {
+        return height_txt.replace("'", "");
     }
 
     private String getRightText(String s) {
@@ -850,14 +854,16 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private void deleteNotSharableFiles() {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat";
         File dir = new File(path);
-        File[] files_list = dir.listFiles();
+        if(dir.exists()) {
+            File[] files_list = dir.listFiles();
 
-        for(int f = 0; f < files_list.length; f++) {
-            if("blurred_profile_remote.jpg".equals(files_list[f].getName())) {
-                files_list[f].delete();
+            if(files_list != null && files_list.length > 0) {
+                for (int f = 0; f < files_list.length; f++) {
+                    if ("blurred_profile_remote.jpg".equals(files_list[f].getName())) {
+                        files_list[f].delete();
+                    }
+                }
             }
         }
-
-
     }
 }
