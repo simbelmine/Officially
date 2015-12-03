@@ -357,6 +357,9 @@ public class UserInfoActivity extends AppCompatActivity {
             picker.setValue(66);
         }
 
+        picker.setBackgroundColor(getResources().getColor(R.color.items_40));
+        picker.setScaleY((float)0.75);
+
         return picker;
     }
 
