@@ -69,6 +69,7 @@ public class MainQuestionsActivity extends AppCompatActivity {
     private SimpleDateFormat dateFormatter;
     private TextView userEmail;
     private ParseUser parseUser;
+    private PermissionsHelper permissionsHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class MainQuestionsActivity extends AppCompatActivity {
         setContentView(R.layout.main_questions_layout);
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
         editor = sharedPreferences.edit();
+        permissionsHelper = new PermissionsHelper(MainQuestionsActivity.this);
 
         initToolbar();
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.material_gray)));
@@ -323,26 +325,38 @@ public class MainQuestionsActivity extends AppCompatActivity {
 
 
     private Location getLastLocation() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Location locationNet = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if(permissionsHelper.isAllPermissionsGranted) {
+            try {
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Location locationNet = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-        long GPSLocationTime = 0;
-        if (null != locationGPS) { GPSLocationTime = locationGPS.getTime(); }
+                long GPSLocationTime = 0;
+                if (null != locationGPS) {
+                    GPSLocationTime = locationGPS.getTime();
+                }
 
-        long NetLocationTime = 0;
+                long NetLocationTime = 0;
 
-        if (null != locationNet) {
-            NetLocationTime = locationNet.getTime();
-        }
+                if (null != locationNet) {
+                    NetLocationTime = locationNet.getTime();
+                }
 
-        if ( 0 < GPSLocationTime - NetLocationTime ) {
-            return locationGPS;
+                if (0 < GPSLocationTime - NetLocationTime) {
+                    return locationGPS;
+                } else {
+                    return locationNet;
+                }
+            }
+            catch (SecurityException ex) {
+                Log.e(ApplicationOfficially.TAG, "Security Exeption : " + ex.getMessage());
+            }
         }
         else {
-            return locationNet;
+            permissionsHelper.checkForPermissions();
         }
 
+        return null;
     }
 
     private String getCurrentLocationByZipCode() {
