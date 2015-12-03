@@ -29,7 +29,7 @@
     </style>
 
 
-    <style name="ToolBarTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="ToolBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:popupMenuStyle">@style/MyPopUpMenu</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView</item>
         <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
@@ -37,6 +37,7 @@
         <item name="android:spinnerDropDownItemStyle">@style/mySpinnerItemStyle</item>
         <item name="android:spinnerItemStyle">@style/MySpinnerItem</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="android:datePickerDialogTheme">@style/DatePickerTheme</item>
 
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:statusBarColor">@color/material_status_bar</item>
@@ -45,21 +46,25 @@
         <item name="android:windowAllowReturnTransitionOverlap">true</item>
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+
+        <item name="android:textColorPrimary">@color/white</item>
     </style>
 
-    <style name="ToolbarWidgetTheme" parent ="ThemeOverlay.AppCompat.ActionBar">
+    <style name="ToolbarWidgetTheme" parent ="ThemeOverlay.AppCompat.Light">
         <item name="android:textColorPrimary">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlHighlight">#3fff</item>
     </style>
 
 
-    <style name="DatePickerTheme" parent="@android:style/Theme.Material.Light.Dialog.NoActionBar"/>
+    <style name="DatePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:textColorPrimary">@color/black</item>
+        </style>
 
-    <style name="AlertDialog" parent="Theme.AppCompat.Dialog">
+    <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:textColor">@color/items</item>
+        <item name="android:colorPrimary">@color/white</item>
     </style>
-
 
     <!-- ActionBar styles -->
     <style name="MyActionBar"

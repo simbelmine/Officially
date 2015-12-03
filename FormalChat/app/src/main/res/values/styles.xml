@@ -19,7 +19,7 @@
         <item name="android:scrollbarStyle">insideOverlay</item>
     </style>
 
-    <style name="ToolBarTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="ToolBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:popupMenuStyle">@style/MyPopUpMenu</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView</item>
         <item name="android:textAppearanceLargePopupMenu">@style/myPopupMenuTextAppearanceLarge</item>
@@ -29,16 +29,16 @@
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="android:fitsSystemWindows">true</item>
 
+        <item name="android:textColorPrimary">@color/white</item>
     </style>
 
-    <style name="ToolbarWidgetTheme" parent ="ThemeOverlay.AppCompat.ActionBar">
+    <style name="ToolbarWidgetTheme" parent ="ThemeOverlay.AppCompat.Light">
         <item name="android:textColorPrimary">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlHighlight">#3fff</item>
     </style>
 
-    <style name="AlertDialog" parent="Theme.AppCompat.Dialog">
-        <item name="android:textColor">@color/items</item>
+    <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog">
     </style>
 
 
