@@ -21,6 +21,7 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,6 +121,7 @@ public class AllChatsActivity extends DrawerActivity {
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onIncomingMessage);
+        ((ApplicationOfficially) getApplication()).unsubscribeFromMessageChannel(ParseUser.getCurrentUser().getObjectId());
     }
 
     private void getUserChatFriendsList() {

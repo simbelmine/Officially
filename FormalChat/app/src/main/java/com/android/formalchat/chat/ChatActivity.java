@@ -159,6 +159,7 @@ public class ChatActivity extends DrawerActivity {
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onIncomingMessage);
+        ((ApplicationOfficially) getApplication()).unsubscribeFromMessageChannel(ParseUser.getCurrentUser().getObjectId());
         closeSoftKeyboard();
         dropChatParticipants();
     }
