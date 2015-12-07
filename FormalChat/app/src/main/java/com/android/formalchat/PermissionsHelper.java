@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 import java.net.ContentHandler;
@@ -64,7 +66,7 @@ public class PermissionsHelper {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                activity.requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                                ActivityCompat.requestPermissions(activity, permissionsList.toArray(new String[permissionsList.size()]),
                                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
                             }
                         }
@@ -77,7 +79,7 @@ public class PermissionsHelper {
                         }
                 );
             } else {
-                activity.requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                ActivityCompat.requestPermissions(activity, permissionsList.toArray(new String[permissionsList.size()]),
                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
             }
         }
@@ -94,9 +96,9 @@ public class PermissionsHelper {
     }
 
     public boolean isPermissionAdded(List<String> permissionsList, String permission) {
-        if(activity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+        if(ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
             permissionsList.add(permission);
-            if(!activity.shouldShowRequestPermissionRationale(permission)) {
+            if(!ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
                 return false;
             }
         }

@@ -36,9 +36,6 @@ public class TutorialPagerActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         permissionsHelper = new PermissionsHelper(TutorialPagerActivity.this);
-        if(permissionsHelper.isBiggerOrEqualToAPI23()) {
-            permissionsHelper.checkForPermissions();
-        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tutorial_pager_layout);
@@ -52,14 +49,21 @@ public class TutorialPagerActivity extends FragmentActivity {
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(permissionsHelper.isAllPermissionsGranted) {
-                    saveToSharedPrefs();
-                    launchLoginActivity();
+                if(permissionsHelper.isBiggerOrEqualToAPI23()) {
+                    permissionsHelper.checkForPermissions();
+                    if(permissionsHelper.isAllPermissionsGranted) {
+                        saveToSharedPrefs();
+                        launchLoginActivity();
+                    }
+                    else {
+                        if(permissionsHelper.isBiggerOrEqualToAPI23()) {
+                            permissionsHelper.checkForPermissions();
+                        }
+                    }
                 }
                 else {
-                    if(permissionsHelper.isBiggerOrEqualToAPI23()) {
-                        permissionsHelper.checkForPermissions();
-                    }
+                    saveToSharedPrefs();
+                    launchLoginActivity();
                 }
             }
         });
