@@ -1,9 +1,21 @@
 package com.android.formalchat;
 
+import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.android.formalchat.chat.Conversation;
 import com.android.formalchat.chat.Message;
@@ -102,7 +114,7 @@ public class ApplicationOfficially extends Application {
         @Override
         public void onMessageReceived(ParseUser sender, Message message) {
             Log.v(TAG, "message \" " + message + " \", was received ");
-;
+            ;
             Intent intent = new Intent(ACTION);
             intent.putExtra("messageId", message.getMessageId());
             intent.putExtra("message", message.getMessageBody());
@@ -112,4 +124,27 @@ public class ApplicationOfficially extends Application {
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
         }
     };
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public Snackbar getSnackbar(Activity activity, int messageId, int colorId) {
+//        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) activity.findViewById(R.id.snackbar_location);
+
+        Snackbar snackbar = Snackbar.make(
+                activity.findViewById(android.R.id.content),  //                coordinatorLayout,
+                getResources().getString(messageId),
+                Snackbar.LENGTH_LONG
+        );
+        ViewGroup snackBarView = (ViewGroup) snackbar.getView();
+        snackBarView.setBackgroundColor(ContextCompat.getColor(activity.getApplicationContext(), colorId));
+        TextView tv = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+//        tv.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), colorId));
+        tv.setTextSize(16);
+        return snackbar;
+    }
 }

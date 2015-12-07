@@ -4,15 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -95,7 +92,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private SharedPreferences.Editor editor;
     private Boolean exit;
     private Toolbar toolbar;
-    private boolean dataVerified = false;
 
     private String TAG = "formalchat";
 
@@ -258,11 +254,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (focusView != null) {
             focusView.requestFocus();
         } else {
-            if(isNetworkAvailable()) {
+            if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
                 startFirstTimeUser(userName, email, password);
             }
             else {
-                showAlertMsg(R.string.no_network, R.color.alert_red);
+//                showAlertMsg(R.string.no_network, R.color.alert_red);
+                ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
             }
         }
     }
@@ -276,37 +273,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null || parseObject != null) {
-                    showAlertMsg(R.string.already_exists, R.color.alert_red);
-                } else {
+//                    showAlertMsg(R.string.already_exists, R.color.alert_red);
+                    ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.already_exists, R.color.alert_red).show();
+                }
+                else {
                     Log.e("formalchat", e.getMessage());
 
-
-                    verifyData(userName, email, password);
-                    if(dataVerified) {
+                    if(isEmailValid(email) && isPasswordValid(password)) {
                         saveDataToParse(userName, email, password);
+                    }
+                    else {
+
                     }
                 }
             }
         });
-    }
-
-    private void verifyData(String userName, String email, String password) {
-        if(userName == null || userName.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Your name is missing.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(email == null || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(getApplicationContext(), "Your email is not correct", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(password == null || password.length() < 7) {
-            Toast.makeText(getApplicationContext(), "Your password is too short.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        dataVerified = true;
     }
 
     private void startActivityByClassName(Class<?> activityToCall) {
@@ -337,9 +318,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (e == null) {
                     // Hooray! Let them use the app now.
                     Log.v(TAG, "Hooray! We saved it!!!");
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.sign_up_success),
-                            Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(),
+//                            getString(R.string.sign_up_success),
+//                            Toast.LENGTH_LONG).show();
+                    ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.sign_up_success, R.color.alert_green_80).show();
 
                     setLogedInSharedPrefs();
                     startActivityByClassName(MainQuestionsActivity.class);
@@ -347,10 +329,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     // Sign up didn't succeed. Look at the ParseException
                     // to figure out what went wrong
                     Log.v(TAG, "Nope :(    Error is: " + e);
-                    showAlertMsg(R.string.something_wrong, R.color.alert_red);
-//                    Toast.makeText(getApplicationContext(),
-//                            getString(R.string.something_wrong), Toast.LENGTH_SHORT)
-//                            .show();
+//                    showAlertMsg(R.string.something_wrong, R.color.alert_red);
+                    ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
         });
@@ -396,11 +376,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
 
-            if(isNetworkAvailable()) {
+            if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
                 loginInBackground(userName, password);
             }
             else {
-                showAlertMsg(R.string.no_network, R.color.alert_red);
+//                showAlertMsg(R.string.no_network, R.color.alert_red);
+                ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
             }
 
 //            mAuthTask = new UserLoginTask(email, password);
@@ -419,19 +400,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if (isEmailAutorized(parseUser) || BuildConfig.DEBUG) {
                         logInWithCorrectActivity();
                     } else {
-                        showAlertMsg(R.string.confirm_email, R.color.border_green);
-//                            Toast.makeText(getApplicationContext(), getString(R.string.confirm_email), Toast.LENGTH_SHORT).show();
+//                        showAlertMsg(R.string.confirm_email, R.color.alert_green);
+                        ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.confirm_email, R.color.alert_green_80).show();
                     }
                 } else {
-                    showAlertMsg(R.string.no_such_user, R.color.alert_red);
-//                        Toast.makeText(getApplicationContext(), getString(R.string.no_such_user), Toast.LENGTH_SHORT).show();
+//                    showAlertMsg(R.string.no_such_user, R.color.alert_red);
+                    ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.no_such_user, R.color.alert_red).show();
                 }
             }
         });
     }
 
     private void showAlertMsg(int textId, int colorId) {
-
         alertLayout.setVisibility(View.VISIBLE);
         alertLayout.setBackgroundColor(getResources().getColor(colorId));
         alertMsg.setText(getString(textId));
@@ -669,13 +649,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }, 3 * 1000 );
         }
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 
