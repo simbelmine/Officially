@@ -37,7 +37,7 @@
             android:orientation="vertical"
             android:weightSum="5">
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="vertical"
@@ -70,20 +70,53 @@
                         android:paddingBottom="5dp"
                         />
                 </RelativeLayout>
-                <AutoCompleteTextView android:id="@+id/email"
+
+                <!--<AutoCompleteTextView android:id="@+id/email"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:hint="@string/prompt_email"-->
+                    <!--android:inputType="textEmailAddress"-->
+                    <!--android:maxLines="1"-->
+                    <!--android:singleLine="true"-->
+                    <!--android:layout_marginLeft="@dimen/activity_vertical_margin"-->
+                    <!--android:layout_marginRight="@dimen/activity_vertical_margin"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:text="sve@sve.bg"-->
+                    <!--android:layout_gravity="bottom"-->
+                    <!--android:layout_marginBottom="195dp"/>-->
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/usernameWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:singleLine="true"
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:textColor="@color/white"
-                    android:text="sve@sve.bg"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="195dp"/>
+                    app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
+                    >
 
+                    <EditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress|textAutoComplete"
+                        android:hint="@string/prompt_email"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:text="sve@sve.bg"
+                        />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/passwordWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/usernameWrapper"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout"
+                    >
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
@@ -92,20 +125,18 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_marginBottom="150dp"
                     android:textColor="@color/white"
                     android:text="123456"
                     android:layout_gravity="bottom"
                     />
+                </android.support.design.widget.TextInputLayout>
                 <TextView
                     android:id="@+id/forgot_pass"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_marginBottom="120dp"
+                    android:layout_marginTop="16dp"
                     android:layout_gravity="bottom"
                     android:clickable="true"
                     android:textAllCaps="true"
@@ -117,8 +148,7 @@
                     android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginBottom="50dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:text="@string/action_sign_in"
@@ -126,7 +156,7 @@
                     android:textColor="@color/white"
                     android:background="@drawable/button_selector"
                     android:layout_gravity="bottom"/>
-            </FrameLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

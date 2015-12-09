@@ -47,6 +47,7 @@
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
 
+        <item name="android:colorAccent">@color/material_darker_gray</item>
         <item name="android:textColorPrimary">@color/white</item>
     </style>
 
@@ -64,6 +65,10 @@
     <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:textColor">@color/items</item>
         <item name="android:colorPrimary">@color/white</item>
+    </style>
+
+    <style name="TextAppearence.App.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/material_darker_gray</item>
     </style>
 
     <!-- ActionBar styles -->

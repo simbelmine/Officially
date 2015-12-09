@@ -41,6 +41,10 @@
     <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog">
     </style>
 
+    <style name="TextAppearence.App.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/material_darker_gray</item>
+    </style>
+
 
     <!-- ActionBar styles -->
     <style name="MyActionBar"

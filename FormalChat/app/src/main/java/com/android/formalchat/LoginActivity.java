@@ -16,9 +16,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.KeyEvent;
@@ -78,7 +81,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     // UI references.
     public static final String PREFS_NAME = "FormalChatPrefs";
-    private AutoCompleteTextView mEmailView;
+    //    private AutoCompleteTextView mEmailView;
+    private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private TextView mForgotPassword;
@@ -92,6 +96,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private SharedPreferences.Editor editor;
     private Boolean exit;
     private Toolbar toolbar;
+    private TextInputLayout usernameWrapper;
+    private TextInputLayout passwordWrapper;
 
     private String TAG = "formalchat";
 
@@ -110,6 +116,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         init();
         populateAutoComplete();
         setOnClickListeners();
+        setOnTextChangeListeners();
         setOnEditoInfoListeners();
 
         startCorrectActivity();
@@ -176,7 +183,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void init() {
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+//        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = (EditText) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
 
         mForgotPassword = (TextView) findViewById(R.id.forgot_pass);
@@ -189,20 +197,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         alertLayout = (RelativeLayout) findViewById(R.id.alert_layout);
         alertMsg = (TextView) findViewById(R.id.alert_msg);
+
+        usernameWrapper = (TextInputLayout) findViewById(R.id.usernameWrapper);
+        passwordWrapper = (TextInputLayout) findViewById(R.id.passwordWrapper);
     }
     private void setOnClickListeners() {
-        mEmailView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideAlertMsg();
-            }
-        });
-        mPasswordView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideAlertMsg();
-            }
-        });
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,6 +226,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
     }
 
+    private void setOnTextChangeListeners() {
+        usernameWrapper.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                usernameWrapper.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        passwordWrapper.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                passwordWrapper.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
+
     private void setOnEditoInfoListeners() {
         mEmailView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         mPasswordView.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -243,17 +274,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void signUp() {
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+//        mEmailView.setError(null);
+//        mPasswordView.setError(null);
 
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        usernameWrapper.setErrorEnabled(false);
+        passwordWrapper.setErrorEnabled(false);
+
+//        String email = mEmailView.getText().toString();
+//        String password = mPasswordView.getText().toString();
+
+        String email = usernameWrapper.getEditText().getText().toString();
+        String password = passwordWrapper.getEditText().getText().toString();
         String userName = email;
         View focusView = getFocusView(email, password);
 
         if (focusView != null) {
             focusView.requestFocus();
-        } else {
+        }
+        else {
             if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
                 startFirstTimeUser(userName, email, password);
             }
@@ -274,15 +312,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null || parseObject != null) {
 //                    showAlertMsg(R.string.already_exists, R.color.alert_red);
-                    ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.already_exists, R.color.alert_red).show();
-                }
-                else {
+                    ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.already_exists, R.color.alert_red).show();
+                } else {
                     Log.e("formalchat", e.getMessage());
 
-                    if(isEmailValid(email) && isPasswordValid(password)) {
+                    if (isEmailValid(email) && isPasswordValid(password)) {
                         saveDataToParse(userName, email, password);
-                    }
-                    else {
+                    } else {
 
                     }
                 }
@@ -321,7 +357,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //                    Toast.makeText(getApplicationContext(),
 //                            getString(R.string.sign_up_success),
 //                            Toast.LENGTH_LONG).show();
-                    ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.sign_up_success, R.color.alert_green_80).show();
+                    ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.sign_up_success, R.color.alert_green_80).show();
 
                     setLogedInSharedPrefs();
                     startActivityByClassName(MainQuestionsActivity.class);
@@ -330,7 +366,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     // to figure out what went wrong
                     Log.v(TAG, "Nope :(    Error is: " + e);
 //                    showAlertMsg(R.string.something_wrong, R.color.alert_red);
-                    ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.no_network, R.color.alert_red).show();
+                    ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
         });
@@ -352,12 +388,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+//        mEmailView.setError(null);
+//        mPasswordView.setError(null);
+
+        usernameWrapper.setErrorEnabled(false);
+        passwordWrapper.setErrorEnabled(false);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+//        String email = mEmailView.getText().toString();
+//        String password = mPasswordView.getText().toString();
+        String email = usernameWrapper.getEditText().getText().toString();
+        String password = passwordWrapper.getEditText().getText().toString();
         final String userName = email;
 
         View focusView = null;
@@ -401,11 +442,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         logInWithCorrectActivity();
                     } else {
 //                        showAlertMsg(R.string.confirm_email, R.color.alert_green);
-                        ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.confirm_email, R.color.alert_green_80).show();
+                        ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.confirm_email, R.color.alert_green_80).show();
                     }
                 } else {
 //                    showAlertMsg(R.string.no_such_user, R.color.alert_red);
-                    ((ApplicationOfficially)getApplication()).getSnackbar(LoginActivity.this, R.string.no_such_user, R.color.alert_red).show();
+                    ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.no_such_user, R.color.alert_red).show();
                 }
             }
         });
@@ -433,24 +474,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private View getFocusView(String email, String password) {
         View focusView = null;
-        // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_missing_password));
-            focusView = mPasswordView;
-        }
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+
+        if (!isPasswordValid(password)) {
+            passwordWrapper.setErrorEnabled(true);
+            passwordWrapper.setError(getString(R.string.error_incorrect_password));
             focusView = mPasswordView;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
+        if (!isEmailValid(email)) {
+            usernameWrapper.setErrorEnabled(true);
+            usernameWrapper.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
         }
+
+
         return focusView;
     }
 
@@ -539,14 +576,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<String>();
+        List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             emails.add(cursor.getString(ProfileQuery.ADDRESS));
             cursor.moveToNext();
         }
-
-        addEmailsToAutoComplete(emails);
     }
 
     @Override
@@ -562,16 +597,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
-    }
-
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
     }
 
     /**
@@ -619,7 +644,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                passwordWrapper.setErrorEnabled(true);
+                passwordWrapper.setError(getString(R.string.error_incorrect_password));
+//                mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
         }
