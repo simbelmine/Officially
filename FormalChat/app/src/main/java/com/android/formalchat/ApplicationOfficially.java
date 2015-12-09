@@ -114,7 +114,7 @@ public class ApplicationOfficially extends Application {
         @Override
         public void onMessageReceived(ParseUser sender, Message message) {
             Log.v(TAG, "message \" " + message + " \", was received ");
-            ;
+
             Intent intent = new Intent(ACTION);
             intent.putExtra("messageId", message.getMessageId());
             intent.putExtra("message", message.getMessageBody());

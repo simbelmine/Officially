@@ -78,14 +78,19 @@ public class MainActivity extends DrawerActivity {
         initSharedPreferences();
 
         init();
+        initGridListBtn();
 
         setUpParsePushNotifications();
-        initGridListBtn();
         setOnClickListeners();
-        setOnSpinnerItemSelected();
         setOnRefreshListener();
 
-        setSpinnerPosition();
+        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+            setOnSpinnerItemSelected();
+            setSpinnerPosition();
+        }
+        else {
+            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+        }
 
 //        getGridListResults(); // not Needed ,it's called because Spinner position 1 is selected with this
     }
@@ -353,7 +358,13 @@ public class MainActivity extends DrawerActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setSpinnerPosition();
+                if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+                    setSpinnerPosition();
+                }
+                else {
+                    swipeContainer.setRefreshing(false);
+                    ((ApplicationOfficially)getApplication()).getSnackbar(MainActivity.this, R.string.no_network, R.color.alert_red).show();
+                }
             }
         });
     }
