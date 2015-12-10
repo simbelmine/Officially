@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ public class AllChatsActivity extends DrawerActivity {
     private AllChatsAdapter allChatsAdapter;
     private ScrollableListView conversationsListLayout;
     private ArrayList<String> senderIds;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,19 +44,46 @@ public class AllChatsActivity extends DrawerActivity {
         super.onCreate(savedInstanceState);
 
         setTitle();
-
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.chats_all_layout, null, false);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerLayout.addView(contentView, 0);
-
-        conversationsListLayout = (ScrollableListView) findViewById(R.id.chats_listview);
+        inflateDrawerLayout();
+        init();
+        setOnRefreshListener();
 
         senderIds = new ArrayList<>();
 //        allChatsAdapter = new AllChatsAdapter(AllChatsActivity.this, new ArrayList<ParseObject>());
 //        conversationsListLayout.setAdapter(allChatsAdapter);
 
-        getUserChatFriendsList();
+        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+            getUserChatFriendsList();
+        }
+        else {
+            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+        }
+    }
+
+    private void init() {
+        conversationsListLayout = (ScrollableListView) findViewById(R.id.chats_listview);
+        initSwipeContainer();
+    }
+
+    private void initSwipeContainer() {
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        setSwipeAppearance();
+    }
+
+    private void setSwipeAppearance() {
+        swipeContainer.setColorSchemeResources(
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark
+        );
+    }
+
+    private void inflateDrawerLayout() {
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View contentView = inflater.inflate(R.layout.chats_all_layout, null, false);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.addView(contentView, 0);
     }
 
     private void setTitle() {
@@ -65,6 +94,21 @@ public class AllChatsActivity extends DrawerActivity {
         else {
             setTitle(getResources().getStringArray(R.array.menu_list)[0]);
         }
+    }
+
+    private void setOnRefreshListener() {
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+                    getUserChatFriendsList();
+                }
+                else {
+                    swipeContainer.setRefreshing(false);
+                    ((ApplicationOfficially)getApplication()).getSnackbar(AllChatsActivity.this, R.string.no_network, R.color.alert_red).show();
+                }
+            }
+        });
     }
 
     private BroadcastReceiver onIncomingMessage = new BroadcastReceiver() {
@@ -139,7 +183,11 @@ public class AllChatsActivity extends DrawerActivity {
                     }
 
                     initAdapter(conversations);
-
+                    swipeContainer.setRefreshing(false);
+                }
+                else {
+                    swipeContainer.setRefreshing(false);
+                    ((ApplicationOfficially)getApplication()).getSnackbar(AllChatsActivity.this, R.string.something_wrong, R.color.alert_red).show();
                 }
             }
         });
