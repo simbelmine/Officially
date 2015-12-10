@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.formalchat.ApplicationOfficially;
 import com.android.formalchat.DrawerActivity;
 import com.android.formalchat.R;
 import com.android.formalchat.RetrieveBlurredImageService;
@@ -115,7 +116,13 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         if(!isAppDirExists()) {
             createAppDir();
         }
-        loadDataAccordingUser();
+
+        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+            loadDataAccordingUser();
+        }
+        else {
+            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+        }
 
 //        setZodiacalSign();
 //        startGalleryPhotosCounter();
@@ -302,7 +309,13 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadDataAccordingUser();
+                if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+                    loadDataAccordingUser();
+                }
+                else {
+                    swipeContainer.setRefreshing(false);
+                    ((ApplicationOfficially)getApplication()).getSnackbar(ProfileBaseActivity.this, R.string.no_network, R.color.alert_red).show();
+                }
             }
         });
     }
@@ -456,7 +469,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private String getPhotosBtnTxt() {
         String photosNum = String.valueOf(photos_btn_counter);
         switch (photos_btn_counter) {
-            case 0: return "No photos";
+            case 0: return getResources().getString(R.string.no_photos);
             case 1: return photosNum + " photo";
             default: return photosNum + " photos";
         }

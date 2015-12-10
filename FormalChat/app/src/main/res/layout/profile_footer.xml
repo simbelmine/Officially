@@ -58,7 +58,7 @@
             android:paddingLeft="@dimen/label_padding"
             android:gravity="center"
             android:textColor="@color/white"
-            android:text="location..."/>
+            android:text="@string/none_txt"/>
     </LinearLayout>
 
 
@@ -83,7 +83,7 @@
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </LinearLayout>
     <LinearLayout
         android:layout_height="@dimen/icons_size"
@@ -105,7 +105,7 @@
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </LinearLayout>
     <LinearLayout
         android:layout_height="@dimen/icons_size"
@@ -127,7 +127,7 @@
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </LinearLayout>
     <LinearLayout
         android:layout_height="@dimen/icons_size"
@@ -149,7 +149,7 @@
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </LinearLayout>
     <LinearLayout
         android:layout_height="@dimen/icons_size"
@@ -171,7 +171,7 @@
             android:paddingLeft="@dimen/label_padding"
             android:gravity="left"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </LinearLayout>
 
     <!-- Divider -->
@@ -203,7 +203,7 @@
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </RelativeLayout>
 
     <!-- ##########   Children    ########### -->
@@ -227,7 +227,7 @@
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </RelativeLayout>
 
     <!-- ##########   Ethnicity    ########### -->
@@ -251,7 +251,7 @@
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </RelativeLayout>
 
     <!-- ##########   Education    ########### -->
@@ -276,7 +276,7 @@
             android:paddingRight="@dimen/label_padding"
             android:gravity="right"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </RelativeLayout>
 
     <!-- ##########   Introduction    ########### -->
@@ -298,7 +298,7 @@
             android:gravity="left"
             android:layout_below="@+id/about_me_lbl"
             android:textColor="@color/white"
-            android:text="@string/multi_txt"/>
+            android:text="@string/none_txt"/>
     </RelativeLayout>
 
     <!-- ##########   The Perfect Someone    ########### -->
@@ -320,7 +320,7 @@
             android:gravity="left"
             android:layout_below="@+id/perfect_smn_lbl"
             android:textColor="@color/white"
-            android:text="@string/multi_txt"/>
+            android:text="@string/none_txt"/>
     </RelativeLayout>
 
     <!-- ##########   The Perfect Date    ########### -->
@@ -342,7 +342,7 @@
             android:gravity="left"
             android:layout_below="@+id/perfect_date_lbl"
             android:textColor="@color/white"
-            android:text="@string/multi_txt"/>
+            android:text="@string/none_txt"/>
     </RelativeLayout>
 
     <!-- ##########   Hobbies    ########### -->
@@ -367,7 +367,7 @@
             android:paddingRight="@dimen/label_padding"
             android:gravity="left"
             android:textColor="@color/white"
-            android:text="@string/choice_txt"/>
+            android:text="@string/none_txt"/>
     </RelativeLayout>
 
 </LinearLayout>
