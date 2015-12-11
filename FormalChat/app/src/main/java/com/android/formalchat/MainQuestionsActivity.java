@@ -1,6 +1,5 @@
 package com.android.formalchat;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -149,8 +148,13 @@ public class MainQuestionsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (verifyVariables()) {
-                    saveVariablesToParse();
-                    startQuestionaryActivity();
+                    if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+                        saveVariablesToParse();
+                        startQuestionaryActivity();
+                    }
+                    else {
+                        ((ApplicationOfficially)getApplication()).getSnackbar(MainQuestionsActivity.this, R.string.no_network, R.color.alert_red).show();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "You missed something. Check again.", Toast.LENGTH_SHORT).show();
                 }
@@ -291,6 +295,7 @@ public class MainQuestionsActivity extends AppCompatActivity {
 
     private String getCurrentLocation() {
         if(Geocoder.isPresent()) {
+            Log.v(ApplicationOfficially.TAG, "is Geocodet present ? => " + Geocoder.isPresent());
             try {
                 Location lastLoc = getLastLocation();
 
