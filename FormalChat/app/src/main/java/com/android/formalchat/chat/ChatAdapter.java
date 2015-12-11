@@ -1,6 +1,7 @@
 package com.android.formalchat.chat;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,6 +118,7 @@ public class ChatAdapter extends BaseAdapter {
             layoutParams.gravity = Gravity.LEFT;
             holder.txtMessage.setLayoutParams(layoutParams);
             holder.txtMessage.setTextColor(context.getResources().getColor(R.color.white));
+            holder.txtMessage.setTypeface(null, Typeface.ITALIC);
 
             layoutParams = (LinearLayout.LayoutParams) holder.txtInfo.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
@@ -139,6 +141,7 @@ public class ChatAdapter extends BaseAdapter {
             layoutParams.gravity = Gravity.RIGHT;
             holder.txtMessage.setLayoutParams(layoutParams);
             holder.txtMessage.setTextColor(context.getResources().getColor(R.color.white));
+            holder.txtMessage.setTypeface(null, Typeface.ITALIC);
 
             layoutParams = (LinearLayout.LayoutParams) holder.txtInfo.getLayoutParams();
             layoutParams.gravity = Gravity.RIGHT;
