@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
 
+import com.android.formalchat.ApplicationOfficially;
 import com.android.formalchat.MainActivity;
 import com.android.formalchat.R;
 import com.parse.ParseUser;
@@ -144,8 +145,13 @@ public class QuestionaryActivity extends AppCompatActivity {
     }
 
     private void startMainActivity() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else {
+            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+        }
     }
 }
