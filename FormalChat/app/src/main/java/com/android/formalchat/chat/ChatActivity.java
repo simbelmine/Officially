@@ -72,6 +72,7 @@ public class ChatActivity extends DrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ((ApplicationOfficially) getApplication()).subscribeToMessagingChannel();
+        getWindow().setBackgroundDrawableResource(R.drawable.chat_bg_tile);
 
         super.onCreate(savedInstanceState);
 
@@ -99,6 +100,10 @@ public class ChatActivity extends DrawerActivity {
         //setChatIdsByUser();
         setOnClickListeners();
         setOnMessageContainerScrollListener();
+
+        if(!((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+        }
     }
 
     private BroadcastReceiver onIncomingMessage = new BroadcastReceiver() {
@@ -225,19 +230,24 @@ public class ChatActivity extends DrawerActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
+                if (((ApplicationOfficially) getApplication()).isNetworkAvailable()) {
+                    ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
 
-                if (!isMessageEmpty()) {
-                    if (senderId != null && remoteUserName == null) {
-                        friendQuery.whereEqualTo("objectId", senderId);
-                        findHistoryInBackground(friendQuery);
-                    } else if (senderId == null && remoteUserName != null) {
-                        friendQuery.whereEqualTo("username", remoteUserName);
-                        findHistoryInBackground(friendQuery);
-                    } else if (senderId != null && remoteUserName != null) {
-                        friendQuery.whereEqualTo("username", remoteUserName);
-                        findHistoryInBackground(friendQuery);
+                    if (!isMessageEmpty()) {
+                        if (senderId != null && remoteUserName == null) {
+                            friendQuery.whereEqualTo("objectId", senderId);
+                            findHistoryInBackground(friendQuery);
+                        } else if (senderId == null && remoteUserName != null) {
+                            friendQuery.whereEqualTo("username", remoteUserName);
+                            findHistoryInBackground(friendQuery);
+                        } else if (senderId != null && remoteUserName != null) {
+                            friendQuery.whereEqualTo("username", remoteUserName);
+                            findHistoryInBackground(friendQuery);
+                        }
                     }
+                }
+                else {
+                    ((ApplicationOfficially)getApplication()).getSnackbar(ChatActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
         });
