@@ -3,12 +3,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/chat_bckgrnd">
+    >
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp">
+        >
 
         <ProgressBar
             android:id="@+id/chat_progress_bar"
@@ -22,8 +22,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
             android:layout_toLeftOf="@+id/chatSendButton"
             android:autoText="true"
+            android:textColor="@color/material_gray"
+            android:textStyle="italic"
             android:hint="Write something ..."/>
 
         <Button
@@ -32,6 +35,8 @@
             android:layout_height="30dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/background_purple"
             android:text="Send"
             android:textColor="@color/white"
@@ -43,9 +48,9 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="false"
             android:layout_alignParentTop="false"
-            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_above="@+id/messageEdit"
-            android:layout_marginTop="10dp"
             android:listSelector="@color/transp_white"
             android:divider="@null"
             android:transcriptMode="normal"
