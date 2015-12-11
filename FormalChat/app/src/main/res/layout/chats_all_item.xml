@@ -24,12 +24,15 @@
                 android:id="@+id/chat_prof_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Danail Delchev"
+                android:text="Your Name"
+                android:textColor="@color/white"
                 android:textStyle="bold"/>
             <TextView
                 android:id="@+id/chat_prof_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textStyle="italic"
                 android:text="This is my Dummy Message"/>
 
         </LinearLayout>

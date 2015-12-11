@@ -3,6 +3,7 @@
     android:id="@+id/swipeContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/material_gray"
     >
 
     <ScrollView
@@ -21,6 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:textColor="@color/white"
                 android:text="All Chats"/>
             <com.android.formalchat.ScrollableListView
                 android:id="@+id/chats_listview"
