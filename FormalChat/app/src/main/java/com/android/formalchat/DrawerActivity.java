@@ -1,15 +1,20 @@
 package com.android.formalchat;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +23,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -40,7 +46,7 @@ import java.util.List;
 /**
  * Created by Sve on 3/26/15.
  */
-public class DrawerActivity extends AppCompatActivity {
+public class DrawerActivity extends BaseActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
     public static final int PROFILE_ID = 202;
@@ -268,7 +274,6 @@ public class DrawerActivity extends AppCompatActivity {
             }
         }
     }
-
 
     private class CustomActionBarToggle extends android.support.v7.app.ActionBarDrawerToggle {
         public CustomActionBarToggle(Activity activity, DrawerLayout drawerLayout) {

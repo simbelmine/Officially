@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -13,6 +14,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +23,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
 
 import com.android.formalchat.ApplicationOfficially;
+import com.android.formalchat.BaseActivity;
 import com.android.formalchat.MainActivity;
 import com.android.formalchat.R;
 import com.parse.ParseUser;
@@ -29,7 +33,7 @@ import java.lang.reflect.Field;
 /**
  * Created by Sve on 3/12/15.
  */
-public class QuestionaryActivity extends AppCompatActivity {
+public class QuestionaryActivity extends BaseActivity {
     private static final String PREFS_NAME = "FormalChatPrefs";
     private static final String PREFS_NAME_ANSWERS = "FormalChatQuestionAnswers";
     private QuestionaryPagerAdapter questionaryPagerAdapter;
@@ -97,7 +101,8 @@ public class QuestionaryActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.questionary_menu, menu);
-        setDoneBtnVisibility(menu);
+
+        //setDoneBtnVisibility(menu);
         super.onCreateOptionsMenu(menu);
         this.menu = menu;
         return true;
@@ -105,6 +110,7 @@ public class QuestionaryActivity extends AppCompatActivity {
 
     private void setDoneBtnVisibility(Menu menu) {
         MenuItem item = menu.findItem(R.id.done_questionary);
+
         if(isDoneBtnVisible) {
             item.setVisible(true);
         }
@@ -145,13 +151,13 @@ public class QuestionaryActivity extends AppCompatActivity {
     }
 
     private void startMainActivity() {
-        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+        if(isNetworkAvailable()) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         else {
-            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+            getSnackbar(this, R.string.no_network, R.color.alert_red).show();
         }
     }
 }

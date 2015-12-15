@@ -117,11 +117,11 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
             createAppDir();
         }
 
-        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+        if(isNetworkAvailable()) {
             loadDataAccordingUser();
         }
         else {
-            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+            getSnackbar(this, R.string.no_network, R.color.alert_red).show();
         }
 
 //        setZodiacalSign();
@@ -309,12 +309,12 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+                if(isNetworkAvailable()) {
                     loadDataAccordingUser();
                 }
                 else {
                     swipeContainer.setRefreshing(false);
-                    ((ApplicationOfficially)getApplication()).getSnackbar(ProfileBaseActivity.this, R.string.no_network, R.color.alert_red).show();
+                    getSnackbar(ProfileBaseActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
         });
@@ -557,13 +557,6 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         }
 
         return profileImgPath;
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private void loadBigProfilePic() {

@@ -28,7 +28,7 @@ public class ProfileActivityRemote extends ProfileBaseActivity {
 
     @Override
     public void onClick(View v) {
-        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+        if(isNetworkAvailable()) {
             super.onClick(v);
             switch (v.getId()) {
                 case R.id.play_profile_video_btn:
@@ -45,7 +45,7 @@ public class ProfileActivityRemote extends ProfileBaseActivity {
             }
         }
         else {
-            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+           getSnackbar(this, R.string.no_network, R.color.alert_red).show();
         }
     }
 }

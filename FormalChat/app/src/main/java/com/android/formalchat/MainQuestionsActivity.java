@@ -47,7 +47,7 @@ import java.util.Locale;
 /**
  * Created by Sve on 2/19/15.
  */
-public class MainQuestionsActivity extends AppCompatActivity {
+public class MainQuestionsActivity extends BaseActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     private static final String EXTRA_ABOUT_ME = "aboutMeText";
     private static final int INIT_YEAR = 1980;
@@ -148,12 +148,12 @@ public class MainQuestionsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (verifyVariables()) {
-                    if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+                    if(isNetworkAvailable()) {
                         saveVariablesToParse();
                         startQuestionaryActivity();
                     }
                     else {
-                        ((ApplicationOfficially)getApplication()).getSnackbar(MainQuestionsActivity.this, R.string.no_network, R.color.alert_red).show();
+                        getSnackbar(MainQuestionsActivity.this, R.string.no_network, R.color.alert_red).show();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "You missed something. Check again.", Toast.LENGTH_SHORT).show();

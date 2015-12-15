@@ -84,12 +84,12 @@ public class MainActivity extends DrawerActivity {
         setOnClickListeners();
         setOnRefreshListener();
 
-        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+        if(isNetworkAvailable()) {
             setOnSpinnerItemSelected();
             setSpinnerPosition();
         }
         else {
-            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+            getSnackbar(this, R.string.no_network, R.color.alert_red).show();
         }
 
 //        getGridListResults(); // not Needed ,it's called because Spinner position 1 is selected with this
@@ -358,12 +358,12 @@ public class MainActivity extends DrawerActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+                if(isNetworkAvailable()) {
                     setSpinnerPosition();
                 }
                 else {
                     swipeContainer.setRefreshing(false);
-                    ((ApplicationOfficially)getApplication()).getSnackbar(MainActivity.this, R.string.no_network, R.color.alert_red).show();
+                    getSnackbar(MainActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
         });

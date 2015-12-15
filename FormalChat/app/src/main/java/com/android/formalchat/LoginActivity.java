@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -288,12 +288,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView.requestFocus();
         }
         else {
-            if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+            if(isNetworkAvailable()) {
                 startFirstTimeUser(userName, email, password);
             }
             else {
 //                showAlertMsg(R.string.no_network, R.color.alert_red);
-                ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+                getSnackbar(this, R.string.no_network, R.color.alert_red).show();
             }
         }
     }
@@ -308,7 +308,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null || parseObject != null) {
 //                    showAlertMsg(R.string.already_exists, R.color.alert_red);
-                    ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.already_exists, R.color.alert_red).show();
+                    getSnackbar(LoginActivity.this, R.string.already_exists, R.color.alert_red).show();
                 } else {
                     Log.e("formalchat", e.getMessage());
 
@@ -353,7 +353,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //                    Toast.makeText(getApplicationContext(),
 //                            getString(R.string.sign_up_success),
 //                            Toast.LENGTH_LONG).show();
-                    ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.sign_up_success, R.color.alert_green_80).show();
+                    getSnackbar(LoginActivity.this, R.string.sign_up_success, R.color.alert_green_80).show();
 
                     setLogedInSharedPrefs();
                     startActivityByClassName(MainQuestionsActivity.class);
@@ -362,7 +362,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     // to figure out what went wrong
                     Log.v(TAG, "Nope :(    Error is: " + e);
 //                    showAlertMsg(R.string.something_wrong, R.color.alert_red);
-                    ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.no_network, R.color.alert_red).show();
+                    getSnackbar(LoginActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
         });
@@ -413,12 +413,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
 
-            if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+            if(isNetworkAvailable()) {
                 loginInBackground(userName, password);
             }
             else {
 //                showAlertMsg(R.string.no_network, R.color.alert_red);
-                ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+                getSnackbar(this, R.string.no_network, R.color.alert_red).show();
             }
 
 //            mAuthTask = new UserLoginTask(email, password);
@@ -438,11 +438,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         logInWithCorrectActivity();
                     } else {
 //                        showAlertMsg(R.string.confirm_email, R.color.alert_green);
-                        ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.confirm_email, R.color.alert_green_80).show();
+                        getSnackbar(LoginActivity.this, R.string.confirm_email, R.color.alert_green_80).show();
                     }
                 } else {
 //                    showAlertMsg(R.string.no_such_user, R.color.alert_red);
-                    ((ApplicationOfficially) getApplication()).getSnackbar(LoginActivity.this, R.string.no_such_user, R.color.alert_red).show();
+                    getSnackbar(LoginActivity.this, R.string.no_such_user, R.color.alert_red).show();
                 }
             }
         });

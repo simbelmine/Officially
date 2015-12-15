@@ -52,11 +52,11 @@ public class AllChatsActivity extends DrawerActivity {
 //        allChatsAdapter = new AllChatsAdapter(AllChatsActivity.this, new ArrayList<ParseObject>());
 //        conversationsListLayout.setAdapter(allChatsAdapter);
 
-        if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+        if(isNetworkAvailable()) {
             getUserChatFriendsList();
         }
         else {
-            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+            getSnackbar(this, R.string.no_network, R.color.alert_red).show();
         }
     }
 
@@ -100,12 +100,12 @@ public class AllChatsActivity extends DrawerActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
+                if(isNetworkAvailable()) {
                     getUserChatFriendsList();
                 }
                 else {
                     swipeContainer.setRefreshing(false);
-                    ((ApplicationOfficially)getApplication()).getSnackbar(AllChatsActivity.this, R.string.no_network, R.color.alert_red).show();
+                    getSnackbar(AllChatsActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
         });
@@ -187,7 +187,7 @@ public class AllChatsActivity extends DrawerActivity {
                 }
                 else {
                     swipeContainer.setRefreshing(false);
-                    ((ApplicationOfficially)getApplication()).getSnackbar(AllChatsActivity.this, R.string.something_wrong, R.color.alert_red).show();
+                    getSnackbar(AllChatsActivity.this, R.string.something_wrong, R.color.alert_red).show();
                 }
             }
         });

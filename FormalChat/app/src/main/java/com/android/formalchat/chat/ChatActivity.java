@@ -101,8 +101,8 @@ public class ChatActivity extends DrawerActivity {
         setOnClickListeners();
         setOnMessageContainerScrollListener();
 
-        if(!((ApplicationOfficially)getApplication()).isNetworkAvailable()) {
-            ((ApplicationOfficially)getApplication()).getSnackbar(this, R.string.no_network, R.color.alert_red).show();
+        if(!isNetworkAvailable()) {
+            getSnackbar(this, R.string.no_network, R.color.alert_red).show();
         }
     }
 
@@ -230,7 +230,7 @@ public class ChatActivity extends DrawerActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (((ApplicationOfficially) getApplication()).isNetworkAvailable()) {
+                if (isNetworkAvailable()) {
                     ParseQuery<ParseUser> friendQuery = ParseUser.getQuery();
 
                     if (!isMessageEmpty()) {
@@ -247,7 +247,7 @@ public class ChatActivity extends DrawerActivity {
                     }
                 }
                 else {
-                    ((ApplicationOfficially)getApplication()).getSnackbar(ChatActivity.this, R.string.no_network, R.color.alert_red).show();
+                    getSnackbar(ChatActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
         });

@@ -449,13 +449,6 @@ public class ProfileGallery extends DrawerActivity {
         return paths;
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
     public String getParseImgNameFromUri(String name) {
         return name.substring(name.lastIndexOf("/")+1);
     }
