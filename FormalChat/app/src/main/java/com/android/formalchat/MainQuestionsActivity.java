@@ -14,7 +14,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -84,7 +83,6 @@ public class MainQuestionsActivity extends BaseActivity {
         init();
         initGenderButtons();
         initDatePickerDialog();
-        Log.v("formalchat", "Location: " + getCurrentLocation());
         setOnClickListeners();
         onDoneBtnPressed();
     }
@@ -155,7 +153,8 @@ public class MainQuestionsActivity extends BaseActivity {
                     else {
                         getSnackbar(MainQuestionsActivity.this, R.string.no_network, R.color.alert_red).show();
                     }
-                } else {
+                }
+                else {
                     Toast.makeText(getApplicationContext(), "You missed something. Check again.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -170,7 +169,7 @@ public class MainQuestionsActivity extends BaseActivity {
 
 
     private boolean verifyVariables() {
-        if(!TextUtils.isEmpty(name.getText()) && !TextUtils.isEmpty(age.getText())) {
+        if(!TextUtils.isEmpty(name.getText()) && !TextUtils.isEmpty(age.getText()) && !getResources().getString(R.string.choice_txt).equals(age.getText())) {
             return true;
         }
         updateChecks();
@@ -280,7 +279,7 @@ public class MainQuestionsActivity extends BaseActivity {
             return calendar.get(Calendar.YEAR);
         }
         catch (ParseException ex) {
-            Log.v("formalchat", ex.getMessage());
+            Log.v("formalchat", "Main Questions Activity: " + ex.getMessage());
         }
         return 0;
     }
@@ -295,7 +294,7 @@ public class MainQuestionsActivity extends BaseActivity {
 
     private String getCurrentLocation() {
         if(Geocoder.isPresent()) {
-            Log.v(ApplicationOfficially.TAG, "is Geocodet present ? => " + Geocoder.isPresent());
+            Log.v(ApplicationOfficially.TAG, "is Geocoder present ? => " + Geocoder.isPresent());
             try {
                 Location lastLoc = getLastLocation();
 

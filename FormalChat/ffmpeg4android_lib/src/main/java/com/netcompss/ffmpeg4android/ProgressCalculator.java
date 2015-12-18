@@ -27,7 +27,7 @@ public class ProgressCalculator {
 			ref.setYear(112);
 			_timeRef = ref.getTime();
 		} catch (ParseException e) {
-			Log.w(Prefs.TAG, "failed to set _timeRef");
+			Log.w(Prefs.TAG, "Progress Calculator: failed to set _timeRef");
 		}
 	}
 	
@@ -129,7 +129,7 @@ public class ProgressCalculator {
 
 				
 			} catch (ParseException e) {
-				Log.w(Prefs.TAG, e.getMessage());
+				Log.w(Prefs.TAG, "Progress Calculator: " + e.getMessage());
 			}
 		}
 		

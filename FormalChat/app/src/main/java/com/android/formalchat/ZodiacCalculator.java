@@ -65,7 +65,7 @@ public class ZodiacCalculator {
                     }
                 }
                 catch (ParseException ex) {
-                    Log.e("formalchat", ex.getMessage());
+                    Log.e("formalchat", "Zodiac Calculator: " +  ex.getMessage());
                 }
             }
         }
@@ -85,7 +85,7 @@ public class ZodiacCalculator {
             }
         }
         catch (ParseException ex) {
-            Log.e("formalchat", ex.getMessage());
+            Log.e("formalchat", "ZOdiac Calculator : " + ex.getMessage());
         }
         return null;
     }

@@ -33,7 +33,7 @@ public class PermissionsHelper {
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE
             };
     private Activity activity;
-    public boolean isAllPermissionsGranted = false;
+    public static boolean isAllPermissionsGranted = false;
 
     public PermissionsHelper(Activity activity) {
         this.activity = activity;
