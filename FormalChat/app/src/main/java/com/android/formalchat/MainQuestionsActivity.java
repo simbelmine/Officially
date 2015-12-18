@@ -1,6 +1,5 @@
 package com.android.formalchat;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.formalchat.questionary.QuestionaryActivity;
+import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -68,6 +69,7 @@ public class MainQuestionsActivity extends BaseActivity {
     private TextView userEmail;
     private ParseUser parseUser;
     private PermissionsHelper permissionsHelper;
+    private TextView cancelUserCreationBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +114,7 @@ public class MainQuestionsActivity extends BaseActivity {
         name.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(name.getWindowToken(), 0);
                     updateFields();
@@ -124,7 +126,7 @@ public class MainQuestionsActivity extends BaseActivity {
         name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
+                if (hasFocus) {
                     name_check.setVisibility(View.INVISIBLE);
                 }
             }
@@ -139,6 +141,32 @@ public class MainQuestionsActivity extends BaseActivity {
             }
         });
 
+        cancelUserCreationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (parseUser != null) {
+                    deleteUser();
+                }
+            }
+        });
+
+    }
+
+    private void deleteUser() {
+        parseUser.deleteInBackground(new DeleteCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if(e == null) {
+                    parseUser.logOut();
+                    startActivity(LoginActivity.class);
+                }
+            }
+        });
+    }
+
+    private void startActivity(Class<?> className) {
+        Intent intent = new Intent(this, className);
+        startActivity(intent);
     }
 
     private void onDoneBtnPressed() {
@@ -146,15 +174,13 @@ public class MainQuestionsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (verifyVariables()) {
-                    if(isNetworkAvailable()) {
+                    if (isNetworkAvailable()) {
                         saveVariablesToParse();
-                        startQuestionaryActivity();
-                    }
-                    else {
+                        startActivity(QuestionaryActivity.class);
+                    } else {
                         getSnackbar(MainQuestionsActivity.this, R.string.no_network, R.color.alert_red).show();
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(getApplicationContext(), "You missed something. Check again.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -187,10 +213,6 @@ public class MainQuestionsActivity extends BaseActivity {
         }
     }
 
-    private void startQuestionaryActivity() {
-        Intent intent = new Intent(this, QuestionaryActivity.class);
-        startActivity(intent);
-    }
 
     private void saveVariablesToParse() {
         final String userName = parseUser.getUsername();
@@ -396,6 +418,7 @@ public class MainQuestionsActivity extends BaseActivity {
         age_check = (ImageView) findViewById(R.id.age_check);
         done_btn = (Button) findViewById(R.id.done_btn);
         userEmail = (TextView) findViewById(R.id.user_email);
+        cancelUserCreationBtn = (TextView) findViewById(R.id.cancel_user_creation_btn);
     }
 
     private void init() {
@@ -450,23 +473,26 @@ public class MainQuestionsActivity extends BaseActivity {
 
     private boolean verifyYear(int year) {
         if(year >= Calendar.getInstance().get(Calendar.YEAR)) {
-            showAlertDialog();
+            showAlertDialog(R.string.alert_title, R.string.alert_text);
             return false;
         }
         return true;
     }
 
-    private void showAlertDialog() {
+    private void showAlertDialog(int titleId, final int messageId) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 this);
-        alertDialogBuilder.setTitle(getResources().getString(R.string.alert_title));
+        alertDialogBuilder.setTitle(getResources().getString(titleId));
         alertDialogBuilder
-                .setMessage(getResources().getString(R.string.alert_text))
-                .setCancelable(false)
+                .setMessage(getResources().getString(messageId))
+                .setCancelable(true)
                 .setPositiveButton(getResources().getString(R.string.alert_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // if this button is clicked, close
-                        // current activity
+                        if(getResources().getString(R.string.cancel_user_alert_msg).equals(getResources().getString(messageId))) {
+                            if(parseUser != null) {
+                                deleteUser();
+                            }
+                        }
                         return;
                     }
                 });
@@ -478,5 +504,10 @@ public class MainQuestionsActivity extends BaseActivity {
         if(Integer.valueOf(Build.VERSION.SDK_INT) < 21)
             return true;
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        showAlertDialog(R.string.cancel_user_creation, R.string.cancel_user_alert_msg);
     }
 }

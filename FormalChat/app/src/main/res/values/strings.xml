@@ -52,6 +52,8 @@
     <string name="main_details_lbl">Details</string>
     <string name="main_birthday_lbl">Birthday</string>
     <string name="main_location_lbl">Location</string>
+    <string name="cancel_user_creation">Cancel user creation</string>
+    <string name="cancel_user_alert_msg">You\'re going to loose all information till now. Do you really want it?</string>
     
 
 
