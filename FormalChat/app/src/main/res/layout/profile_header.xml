@@ -50,7 +50,7 @@
                 android:id="@+id/online_dot"
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:background="@drawable/oval_btn"
+                android:background="@drawable/oval_btn_gray"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
                 />

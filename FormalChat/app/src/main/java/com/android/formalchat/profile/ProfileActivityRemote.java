@@ -3,9 +3,7 @@ package com.android.formalchat.profile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
 
-import com.android.formalchat.ApplicationOfficially;
 import com.android.formalchat.R;
 import com.android.formalchat.chat.ChatActivity;
 

@@ -73,6 +73,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private String shortName;
     private ImageView zodiacSign;
     private SwipeRefreshLayout swipeContainer;
+    private ImageView onlineDot;
 
     protected ImageView got_it_img;                     // Remote Profile
     //    protected RelativeLayout help_video_layout;         // Remote Profile
@@ -271,6 +272,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         zodiacSign = (ImageView) findViewById(R.id.zodiac_sign);
         initSwipeContainer();
         chat_feb_button = (ImageButton) findViewById(R.id.feb_chat_button);
+        onlineDot = (ImageView) findViewById(R.id.online_dot);
 
         // *** Footer
         motto = (TextView) findViewById(R.id.motto);
@@ -654,6 +656,16 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         if(user != null) {
             populateFromUserInfo(user.getUsername());
             populateFromQuestionary(user.getUsername());
+            updateOnlineDot();
+        }
+    }
+
+    private void updateOnlineDot() {
+        if(isUserOnline(user)) {
+            onlineDot.setImageDrawable(getResources().getDrawable(R.drawable.oval_btn));
+        }
+        else {
+            onlineDot.setImageDrawable(getResources().getDrawable(R.drawable.oval_btn_gray));
         }
     }
 

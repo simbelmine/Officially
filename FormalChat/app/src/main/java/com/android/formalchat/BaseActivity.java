@@ -92,7 +92,6 @@ public class BaseActivity extends AppCompatActivity {
 
     private boolean isTimeForUpdate(long lastSeenInMillis) {
         long updateIn = MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES;
-        Log.v(ApplicationOfficially.TAG, "Updating last seen : " + Math.abs(lastSeenInMillis - System.currentTimeMillis()) + " > " + updateIn);
 
         if(Math.abs(lastSeenInMillis - System.currentTimeMillis()) > updateIn) {
             return true;
@@ -111,5 +110,22 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         return 0;
+    }
+
+    public boolean isUserOnline(ParseUser remoteUser) {
+        long onlineProbability = MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES;
+        String lastSeenString = (String)remoteUser.get("lastSeen");
+
+        if(lastSeenString != null) {
+            long remoteUserTimeStamp = getLastSeenInMillis(lastSeenString);
+
+            if (remoteUserTimeStamp != 0) {
+                if (Math.abs(System.currentTimeMillis() - remoteUserTimeStamp) <= onlineProbability) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -1,8 +1,10 @@
 package com.android.formalchat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +26,12 @@ import java.util.List;
  * Created by Sve on 3/26/15.
  */
 public class PeopleGridViewAdapter extends BaseAdapter {
+    private BaseActivity activity;
     private Context context;
     private List<ParseUser> usersList;
 
-    public PeopleGridViewAdapter(Context context, List<ParseUser> usersList) {
+    public PeopleGridViewAdapter(BaseActivity activity, Context context, List<ParseUser> usersList) {
+        this.activity = activity;
         this.context = context;
         this.usersList = usersList;
     }
@@ -87,7 +91,7 @@ public class PeopleGridViewAdapter extends BaseAdapter {
 //        }
 
         new DownloadProfileGridImage(context, viewHolder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        new DownloadProfileInfo(context, viewHolder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new DownloadProfileInfo(activity, context, viewHolder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return convertView;
     }
@@ -132,12 +136,14 @@ public class PeopleGridViewAdapter extends BaseAdapter {
     }
 
     private static class DownloadProfileInfo extends AsyncTask<ParseUser, Void, String> {
+        private BaseActivity activity;
         private Context context;
         private ViewHolder viewHolder;
         private List<ParseUser> usersList;
         private int position;
 
-        public DownloadProfileInfo(Context context, ViewHolder viewHolder,List<ParseUser> usersList, int position) {
+        public DownloadProfileInfo(BaseActivity activity, Context context, ViewHolder viewHolder,List<ParseUser> usersList, int position) {
+            this.activity = activity;
             this.context = context;
             this.viewHolder = viewHolder;
             this.usersList = usersList;
@@ -147,6 +153,7 @@ public class PeopleGridViewAdapter extends BaseAdapter {
         @Override
         protected String doInBackground(ParseUser... params) {
             ParseUser user = usersList.get(position);
+            updateUserOnlineDot(activity, user);
 
             ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
             parseQuery.whereEqualTo("loginName", user.getUsername());
@@ -174,7 +181,19 @@ public class PeopleGridViewAdapter extends BaseAdapter {
             return "Success";
         }
 
+        private void updateUserOnlineDot(BaseActivity activity, ParseUser user) {
+            if((activity).isUserOnline(user)) {
+                viewHolder.onlineDot.setImageDrawable(context.getResources().getDrawable(R.drawable.oval_btn));
+            }
+            else {
+                viewHolder.onlineDot.setImageDrawable(context.getResources().getDrawable(R.drawable.oval_btn_gray));
+            }
+        }
+
         private String getShortLocationTxt(String userLocation) {
+            if(userLocation == null || userLocation.length() <= 0){
+                return "";
+            }
             return "@"+userLocation.substring(userLocation.lastIndexOf(",") + 2, userLocation.length());
         }
 

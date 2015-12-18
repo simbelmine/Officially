@@ -253,12 +253,12 @@ public class MainActivity extends DrawerActivity {
         // *** Grig View *** //
         if(view == people_GridView)  {
             setNoSearchResultTxtVisibility(list.size(), R.id.no_result_all);
-            peopleGridViewAdapter = new PeopleGridViewAdapter(getApplicationContext(), list);
+            peopleGridViewAdapter = new PeopleGridViewAdapter(MainActivity.this, getApplicationContext(), list);
             ((ScrollableGridView) view).setAdapter(peopleGridViewAdapter);
         }
         else if(view == people_GridView_Matches) {
             setNoSearchResultTxtVisibility(list.size(), R.id.no_result_matches);
-            peopleGridViewAdapterMatches = new PeopleGridViewAdapter(getApplicationContext(), list);
+            peopleGridViewAdapterMatches = new PeopleGridViewAdapter(MainActivity.this, getApplicationContext(), list);
             ((ScrollableGridView)view).setAdapter(peopleGridViewAdapterMatches);
         }
 

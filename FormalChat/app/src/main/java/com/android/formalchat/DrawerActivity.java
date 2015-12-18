@@ -1,36 +1,24 @@
 package com.android.formalchat;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.formalchat.chat.AllChatsActivity;
-import com.android.formalchat.chat.ChatActivity;
 import com.android.formalchat.profile.ProfileActivityCurrent;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -62,7 +50,7 @@ public class DrawerActivity extends BaseActivity {
     private CharSequence drawerTitle;
     private ParseUser user;
     private Toolbar toolbar;
-
+    private ImageView onlineDot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,18 +68,30 @@ public class DrawerActivity extends BaseActivity {
         profilePic = (RoundedImageView) findViewById(R.id.profile_img);
         profileName = (TextView) findViewById(R.id.profile_name);
         email = (TextView) findViewById(R.id.email);
+        onlineDot = (ImageView) findViewById(R.id.online_dot);
+
         initDrawableToggle();
         initActionBar();
         setPic();
-        setPicOnClickListenre();
+        setPicOnClickListener();
         ParseUser user = ParseUser.getCurrentUser();
         setProfileName(user);
         setProfileEmail(user);
+        updateOnlineDot();
 
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         drawerLayout.setDrawerListener(drawerToggle);
         leftDrawerList.setAdapter(new DrawerListAdapter(this));
         setListOnClickItemListener();
+    }
+
+    private void updateOnlineDot() {
+        if(user != null && isUserOnline(user)) {
+            onlineDot.setImageDrawable(getResources().getDrawable(R.drawable.oval_btn));
+        }
+        else {
+            onlineDot.setImageDrawable(getResources().getDrawable(R.drawable.oval_btn_gray));
+        }
     }
 
     private void initToolbar() {
@@ -129,7 +129,7 @@ public class DrawerActivity extends BaseActivity {
         return null;
     }
 
-    private void setPicOnClickListenre() {
+    private void setPicOnClickListener() {
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
