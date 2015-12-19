@@ -19,6 +19,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -70,6 +72,7 @@ public class MainQuestionsActivity extends BaseActivity {
     private ParseUser parseUser;
     private PermissionsHelper permissionsHelper;
     private TextView cancelUserCreationBtn;
+    private ImageView refreshLocationBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +150,31 @@ public class MainQuestionsActivity extends BaseActivity {
                 if (parseUser != null) {
                     deleteUser();
                 }
+            }
+        });
+
+        refreshLocationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Animation rotationAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.spin_clockwise);
+                rotationAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        location.setText(getCurrentLocation());
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                rotationAnimation.setRepeatCount(Animation.INFINITE);
+                view.startAnimation(rotationAnimation);
             }
         });
 
@@ -330,15 +358,21 @@ public class MainQuestionsActivity extends BaseActivity {
                         String message = String.format("%s, %s",
                                 address.getCountryCode(), address.getLocality());
                         Log.v("formalchat", "***********************  " + message);
+
+                        refreshLocationBtn.clearAnimation();
                         return message;
                     }
                     else {
+                        refreshLocationBtn.clearAnimation();
                         return "Waiting for location...";
                     }
                 }
                 else {
+                    refreshLocationBtn.clearAnimation();
                     return "Waiting for location...";
                 }
+
+
             } catch (IOException e) {
                 Log.e("formalchat", "Error message: " + e.getMessage());
             }
@@ -419,6 +453,7 @@ public class MainQuestionsActivity extends BaseActivity {
         done_btn = (Button) findViewById(R.id.done_btn);
         userEmail = (TextView) findViewById(R.id.user_email);
         cancelUserCreationBtn = (TextView) findViewById(R.id.cancel_user_creation_btn);
+        refreshLocationBtn = (ImageView) findViewById(R.id.refresh_location_btn);
     }
 
     private void init() {
