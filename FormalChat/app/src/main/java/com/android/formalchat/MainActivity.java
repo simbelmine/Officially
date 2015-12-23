@@ -59,7 +59,7 @@ public class MainActivity extends DrawerActivity {
 
     private Spinner searchSpinner;
     private LinearLayout matchesLayout;
-    private SwipeRefreshLayout swipeContainer;
+//    private SwipeRefreshLayout swipeContainer;
     private TextView noSearchResultText;
 
     @Override
@@ -130,19 +130,19 @@ public class MainActivity extends DrawerActivity {
         grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
     }
 
-    private void initSwipeContainer() {
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        setSwipeAppearance();
-    }
-
-    private void setSwipeAppearance() {
-        swipeContainer.setColorSchemeResources(
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_green_dark,
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_green_dark
-        );
-    }
+//    private void initSwipeContainer() {
+//        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+//        setSwipeAppearance();
+//    }
+//
+//    private void setSwipeAppearance() {
+//        swipeContainer.setColorSchemeResources(
+//                android.R.color.holo_blue_dark,
+//                android.R.color.holo_green_dark,
+//                android.R.color.holo_blue_dark,
+//                android.R.color.holo_green_dark
+//        );
+//    }
 
     private void setSpinnerPosition() {
         if(sharedPreferences.contains("spinner_position")) {
@@ -200,7 +200,7 @@ public class MainActivity extends DrawerActivity {
                     }
                 }
 
-                swipeContainer.setRefreshing(false);
+                getSwipeContainer().setRefreshing(false);
             }
         });
     }
@@ -240,7 +240,7 @@ public class MainActivity extends DrawerActivity {
                         initAdapter(view, usersListMatches);
                     }
 
-                    swipeContainer.setRefreshing(false);
+                    getSwipeContainer().setRefreshing(false);
                 } else {
 
                 }
@@ -355,14 +355,14 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void setOnRefreshListener() {
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        getSwipeContainer().setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if(isNetworkAvailable()) {
                     setSpinnerPosition();
                 }
                 else {
-                    swipeContainer.setRefreshing(false);
+                    getSwipeContainer().setRefreshing(false);
                     getSnackbar(MainActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
@@ -504,7 +504,7 @@ public class MainActivity extends DrawerActivity {
                         }
                     }
 
-                    swipeContainer.setRefreshing(false);
+                    getSwipeContainer().setRefreshing(false);
                 } else {
                     Log.v("formalchat", "----- NONE");
                 }

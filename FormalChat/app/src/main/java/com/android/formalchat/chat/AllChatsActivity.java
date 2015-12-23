@@ -36,7 +36,7 @@ public class AllChatsActivity extends DrawerActivity {
     private AllChatsAdapter allChatsAdapter;
     private ScrollableListView conversationsListLayout;
     private ArrayList<String> senderIds;
-    private SwipeRefreshLayout swipeContainer;
+//    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,19 +65,19 @@ public class AllChatsActivity extends DrawerActivity {
         initSwipeContainer();
     }
 
-    private void initSwipeContainer() {
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        setSwipeAppearance();
-    }
-
-    private void setSwipeAppearance() {
-        swipeContainer.setColorSchemeResources(
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_green_dark,
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_green_dark
-        );
-    }
+//    private void initSwipeContainer() {
+//        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+//        setSwipeAppearance();
+//    }
+//
+//    private void setSwipeAppearance() {
+//        swipeContainer.setColorSchemeResources(
+//                android.R.color.holo_blue_dark,
+//                android.R.color.holo_green_dark,
+//                android.R.color.holo_blue_dark,
+//                android.R.color.holo_green_dark
+//        );
+//    }
 
     private void inflateDrawerLayout() {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -97,14 +97,14 @@ public class AllChatsActivity extends DrawerActivity {
     }
 
     private void setOnRefreshListener() {
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        getSwipeContainer().setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if(isNetworkAvailable()) {
                     getUserChatFriendsList();
                 }
                 else {
-                    swipeContainer.setRefreshing(false);
+                    getSwipeContainer().setRefreshing(false);
                     getSnackbar(AllChatsActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
@@ -183,10 +183,10 @@ public class AllChatsActivity extends DrawerActivity {
                     }
 
                     initAdapter(conversations);
-                    swipeContainer.setRefreshing(false);
+                    getSwipeContainer().setRefreshing(false);
                 }
                 else {
-                    swipeContainer.setRefreshing(false);
+                    getSwipeContainer().setRefreshing(false);
                     getSnackbar(AllChatsActivity.this, R.string.something_wrong, R.color.alert_red).show();
                 }
             }

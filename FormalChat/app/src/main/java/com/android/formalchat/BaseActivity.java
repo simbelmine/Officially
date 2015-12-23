@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -30,6 +31,17 @@ public class BaseActivity extends AppCompatActivity {
     private static final int MINUTES = 5; // minutes in which to update last seen
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private ParseUser currentUser;
+    private SwipeRefreshLayout swipeContainer;
+
+
+    public SwipeRefreshLayout getSwipeContainer() {
+        return swipeContainer;
+    }
+
+    public void setSwipeContainer(SwipeRefreshLayout swipeContainer) {
+        this.swipeContainer = swipeContainer;
+    }
+
 
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -136,5 +148,20 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    public void initSwipeContainer() {
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        setSwipeAppearance();
+        setSwipeContainer(swipeContainer);
+    }
+
+    private void setSwipeAppearance() {
+        getSwipeContainer().setColorSchemeResources(
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_green_dark
+        );
     }
 }

@@ -72,7 +72,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     private  boolean isMale;
     private String shortName;
     private ImageView zodiacSign;
-    private SwipeRefreshLayout swipeContainer;
+//    private SwipeRefreshLayout swipeContainer;
     private ImageView onlineDot;
 
     protected ImageView got_it_img;                     // Remote Profile
@@ -113,6 +113,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         setTitle();
         initView();
         init();
+        setOnRefreshListener();
 
         if(!isAppDirExists()) {
             createAppDir();
@@ -292,30 +293,29 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         interests = (TextView) findViewById(R.id.interests_edit);
     }
 
-    private void initSwipeContainer() {
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        setSwipeAppearance();
-        setOnRefreshListener();
-    }
-
-    private void setSwipeAppearance() {
-        swipeContainer.setColorSchemeResources(
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_green_dark,
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_green_dark
-        );
-    }
+//    private void initSwipeContainer() {
+//        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+//        setSwipeAppearance();
+//        setOnRefreshListener();
+//    }
+//
+//    private void setSwipeAppearance() {
+//        swipeContainer.setColorSchemeResources(
+//                android.R.color.holo_blue_dark,
+//                android.R.color.holo_green_dark,
+//                android.R.color.holo_blue_dark,
+//                android.R.color.holo_green_dark
+//        );
+//    }
 
     private void setOnRefreshListener() {
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        getSwipeContainer().setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(isNetworkAvailable()) {
+                if (isNetworkAvailable()) {
                     loadDataAccordingUser();
-                }
-                else {
-                    swipeContainer.setRefreshing(false);
+                } else {
+                    getSwipeContainer().setRefreshing(false);
                     getSnackbar(ProfileBaseActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
@@ -567,7 +567,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
     }
 
     private void retrieveBlurredImageFromParse() {
-        if(swipeContainer.isRefreshing()) {
+        if(getSwipeContainer().isRefreshing()) {
             profileProgressBar.setVisibility(View.INVISIBLE);
             progressLayout.setVisibility(View.INVISIBLE);
         }
@@ -637,7 +637,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
         else {
             profilePic.setImageDrawable(getResources().getDrawable(R.drawable.background_dark));
         }
-        swipeContainer.setRefreshing(false);
+        getSwipeContainer().setRefreshing(false);
         profileProgressBar.setVisibility(View.GONE);
     }
 
@@ -751,7 +751,7 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
                         }
 
                         setSexIcon(gender_p);
-                        swipeContainer.setRefreshing(false);
+                        getSwipeContainer().setRefreshing(false);
                     }
                 } else {
                     Log.e("formalchat", "Error: " + e.getMessage());

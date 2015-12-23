@@ -59,7 +59,7 @@ public class ProfileGallery extends DrawerActivity {
     private ProfileAddImageDialog addImgWithDialog;
     private DrawerLayout drawerLayout;
     private ListView leftDrawerList;
-    private SwipeRefreshLayout swipeContainer;
+//    private SwipeRefreshLayout swipeContainer;
     private Menu menu;
 
     @Override
@@ -79,27 +79,28 @@ public class ProfileGallery extends DrawerActivity {
         gridView = (GridView) findViewById(R.id.grid_layout_profile);
         imagePaths = new ArrayList<>();
         initSwipeContainer();
+        setOnRefreshListener();
 
         loadDataAccordingUser();
     }
 
-    private void initSwipeContainer() {
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        setSwipeAppearance();
-        setOnRefreshListener();
-    }
-
-    private void setSwipeAppearance() {
-        swipeContainer.setColorSchemeResources(
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_green_dark,
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_green_dark
-        );
-    }
+//    private void initSwipeContainer() {
+//        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+//        setSwipeAppearance();
+//        setOnRefreshListener();
+//    }
+//
+//    private void setSwipeAppearance() {
+//        swipeContainer.setColorSchemeResources(
+//                android.R.color.holo_blue_dark,
+//                android.R.color.holo_green_dark,
+//                android.R.color.holo_blue_dark,
+//                android.R.color.holo_green_dark
+//        );
+//    }
 
     private void setOnRefreshListener() {
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        getSwipeContainer().setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadDataAccordingUser();
@@ -131,7 +132,7 @@ public class ProfileGallery extends DrawerActivity {
             loadPicturesFromParse();
         }
 
-        swipeContainer.setRefreshing(false);
+        getSwipeContainer().setRefreshing(false);
     }
 
     private void loadPicturesFromParse() {
