@@ -11,6 +11,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
@@ -50,6 +52,13 @@ public class BaseActivity extends AppCompatActivity {
 //        tv.setTextColor(ContextCompat.getColor(activity.getApplicationContext(), colorId));
         tv.setTextSize(16);
         return snackbar;
+    }
+
+    public void hideSoftKeyBoard() {
+        if(getCurrentFocus()!=null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        }
     }
 
     @Override

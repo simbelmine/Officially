@@ -262,6 +262,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     attemptLogin();
+                    return true;
                 }
                 return false;
             }
@@ -293,6 +294,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
             else {
 //                showAlertMsg(R.string.no_network, R.color.alert_red);
+                hideSoftKeyBoard();
                 getSnackbar(this, R.string.no_network, R.color.alert_red).show();
             }
         }
@@ -308,6 +310,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null || parseObject != null) {
 //                    showAlertMsg(R.string.already_exists, R.color.alert_red);
+                    hideSoftKeyBoard();
                     getSnackbar(LoginActivity.this, R.string.already_exists, R.color.alert_red).show();
                 } else {
                     Log.e("formalchat", e.getMessage());
@@ -353,6 +356,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 //                    Toast.makeText(getApplicationContext(),
 //                            getString(R.string.sign_up_success),
 //                            Toast.LENGTH_LONG).show();
+                    hideSoftKeyBoard();
                     getSnackbar(LoginActivity.this, R.string.sign_up_success, R.color.alert_green_80).show();
 
                     setLogedInSharedPrefs();
@@ -362,6 +366,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     // to figure out what went wrong
                     Log.v(TAG, "Nope :(    Error is: " + e);
 //                    showAlertMsg(R.string.something_wrong, R.color.alert_red);
+                    hideSoftKeyBoard();
                     getSnackbar(LoginActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
             }
@@ -418,6 +423,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
             else {
 //                showAlertMsg(R.string.no_network, R.color.alert_red);
+                hideSoftKeyBoard();
                 getSnackbar(this, R.string.no_network, R.color.alert_red).show();
             }
 
@@ -438,11 +444,14 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                         logInWithCorrectActivity();
                     } else {
 //                        showAlertMsg(R.string.confirm_email, R.color.alert_green);
+                        hideSoftKeyBoard();
                         getSnackbar(LoginActivity.this, R.string.confirm_email, R.color.alert_green_80).show();
                     }
-                } else {
+                }
+                else {
 //                    showAlertMsg(R.string.no_such_user, R.color.alert_red);
                     getSnackbar(LoginActivity.this, R.string.no_such_user, R.color.alert_red).show();
+                    hideSoftKeyBoard();
                 }
             }
         });
