@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +38,7 @@ import java.util.List;
 public class MainActivity extends DrawerActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
+    private static final int DEFAULT_SPINNER_POSITION = 1;
     private SharedPreferences sharedPreferences;
     private ParseUser currentUser;
     private Boolean exit;
@@ -59,7 +59,6 @@ public class MainActivity extends DrawerActivity {
 
     private Spinner searchSpinner;
     private LinearLayout matchesLayout;
-//    private SwipeRefreshLayout swipeContainer;
     private TextView noSearchResultText;
 
     @Override
@@ -130,28 +129,15 @@ public class MainActivity extends DrawerActivity {
         grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
     }
 
-//    private void initSwipeContainer() {
-//        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-//        setSwipeAppearance();
-//    }
-//
-//    private void setSwipeAppearance() {
-//        swipeContainer.setColorSchemeResources(
-//                android.R.color.holo_blue_dark,
-//                android.R.color.holo_green_dark,
-//                android.R.color.holo_blue_dark,
-//                android.R.color.holo_green_dark
-//        );
-//    }
-
     private void setSpinnerPosition() {
         if(sharedPreferences.contains("spinner_position")) {
-            int position = sharedPreferences.getInt("spinner_position", 1);
+            int position = sharedPreferences.getInt("spinner_position", DEFAULT_SPINNER_POSITION);
             searchSpinner.setSelection(position);
             performFilterByPosition(position);
         }
         else {
-            searchSpinner.setSelection(1);
+            searchSpinner.setSelection(DEFAULT_SPINNER_POSITION);
+            performFilterByPosition(DEFAULT_SPINNER_POSITION);
         }
     }
 
