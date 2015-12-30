@@ -126,11 +126,20 @@ Parse.Cloud.define("clientRequest", function(request, response) {
 	var yourReligionCriteria = request.params.religionCriteria;
 	var yourEthnicityCriteria = request.params.ethnicityCriteria;
 	var excludeCriteriaFromAllUsers = request.params.excludeCriteriaFromAllUsers;
+	var rowsToSkip = request.params.rowsToSkip;
+	var rowsLimit = request.params.rowsLimit;
 
-			alert("OUTside yourReligionCriteria: " + yourReligionCriteria);
+	alert("Skip number of Rows: " + rowsToSkip);
+			// alert("OUTside yourReligionCriteria: " + yourReligionCriteria);
 
 	if(drinkingCriteria == 0 && religionCriteria == 0 && smokingCriteria == 0 && ethnicityCriteria == 0) {
-		Parse.Cloud.run("getAllUsers", {userName:userName}, {
+		Parse.Cloud.run("getAllUsers", 
+			{
+				userName:userName,
+				rowsToSkip:rowsToSkip,
+				rowsLimit:rowsLimit
+			}, 
+			{
 			success: function(results) {
 				response.success(results);
 			},
@@ -143,6 +152,7 @@ Parse.Cloud.define("clientRequest", function(request, response) {
 	else if(excludeCriteriaFromAllUsers !=null && 
 			excludeCriteriaFromAllUsers == true) 
 	{
+		// Get All results witch are not fitting the search filter (ALL RESULTS)
 		alert("excludeCriteriaFromAllUsers IN if: " + excludeCriteriaFromAllUsers);
 			Parse.Cloud.run("getAllUsersExcludeCriteria", {
 				userName:userName,
@@ -153,7 +163,9 @@ Parse.Cloud.define("clientRequest", function(request, response) {
 				yourReligionCriteria:yourReligionCriteria,
 				yourEthnicityCriteria:yourEthnicityCriteria,
 				criteriaSign:criteriaSign,
-				excludeCriteriaFromAllUsers:excludeCriteriaFromAllUsers
+				excludeCriteriaFromAllUsers:excludeCriteriaFromAllUsers,
+				rowsToSkip:rowsToSkip,
+				rowsLimit:rowsLimit
 			},
 			{
 			success: function(results) {
@@ -166,6 +178,7 @@ Parse.Cloud.define("clientRequest", function(request, response) {
 		});
 	}
 	else {
+		// Get all users fitting the search filter (MATCHES)
 		Parse.Cloud.run("getByCriteria", {
 			userName:userName,
 			drinkingCriteria:drinkingCriteria,
@@ -174,7 +187,10 @@ Parse.Cloud.define("clientRequest", function(request, response) {
 			ethnicityCriteria:ethnicityCriteria,
 			yourReligionCriteria:yourReligionCriteria,
 			yourEthnicityCriteria:yourEthnicityCriteria,
-			criteriaSign:criteriaSign }, 
+			criteriaSign:criteriaSign,
+			rowsToSkip:rowsToSkip,
+			rowsLimit:rowsLimit
+			}, 
 			{
 			success: function(results) {
 				response.success(results);
@@ -201,8 +217,21 @@ Parse.Cloud.define("getByCriteria", function(request, response) {
 	var ethnicityCriteria = request.params.ethnicityCriteria;
 	var yourReligionCriteria = request.params.yourReligionCriteria;
 	var yourEthnicityCriteria = request.params.yourEthnicityCriteria;
+	var rowsToSkip = request.params.rowsToSkip;
+	var rowsLimit = request.params.rowsLimit;
 
-			matchingQuery.notEqualTo("loginName", userName);
+	matchingQuery.notEqualTo("loginName", userName);
+	matchingQuery.descending("lastSeen");
+
+	if(rowsToSkip == null) {
+		rowsToSkip = 0;
+	}
+	matchingQuery.skip(rowsToSkip);
+	if(rowsLimit != null) {
+		alert("getByCriteria: Limit of Rows: " + rowsLimit);
+		matchingQuery.limit(rowsLimit);
+	}
+
 	if(criteriaSign != null) {
 		if(drinkingCriteria != null && criteriaSign == ">=") {
 			// matchingQuery.notEqualTo("loginName", userName);
@@ -273,8 +302,20 @@ Parse.Cloud.define("getByCriteria", function(request, response) {
 
 
 Parse.Cloud.define("getAllUsers", function(request, response) {
+	var rowsToSkip = request.params.rowsToSkip;
+	var rowsLimit = request.params.rowsLimit;
 	var getUsersQuery = new Parse.Query(Parse.User);
 	getUsersQuery.notEqualTo("username", request.params.userName);
+	getUsersQuery.descending("lastSeen");
+	if(rowsToSkip == null) {
+		rowsToSkip = 0;
+	}
+	getUsersQuery.skip(rowsToSkip);
+	if(rowsLimit != null) {
+		alert("getAllUsers: Limit of Rows: " + rowsLimit);
+		getUsersQuery.limit(rowsLimit);
+	}
+
 	getUsersQuery.find({
 		success: function(listResults) {
 				var list = [];
@@ -302,8 +343,15 @@ Parse.Cloud.define("getAllUsersExcludeCriteria", function(request, response) {
 	var yourReligionCriteria = request.params.yourReligionCriteria;
 	var yourEthnicityCriteria = request.params.yourEthnicityCriteria;
 	var excludeCriteriaFromAllUsers = request.params.excludeCriteriaFromAllUsers;
+	var rowsToSkip = request.params.rowsToSkip;
+	var rowsLimit = request.params.rowsLimit;
 
 	alert("criteriaSign: " + criteriaSign); 
+	matchingQuery.descending("lastSeen");
+	if(rowsToSkip == null) {
+		rowsToSkip = 0;
+	}
+
 	if(criteriaSign == null) {
 		//matchingQuery.notEqualTo("loginName", userName);
 		matchingQuery.equalTo("yourSmoking", smokingCriteria);
@@ -316,6 +364,13 @@ Parse.Cloud.define("getAllUsersExcludeCriteria", function(request, response) {
 			matchingQuery.equalTo("yourEthnicity", yourEthnicityCriteria)
 		}
 
+
+		matchingQuery.skip(rowsToSkip);
+		if(rowsLimit != null) {
+			alert("getAllUsersExcludeCriteria: Limit of Rows: " + rowsLimit);	
+			getUsersQuery.limit(rowsLimit);
+		}
+
 		getUsersQuery.doesNotMatchKeyInQuery("username", "loginName", matchingQuery);
 		getUsersQuery.find({
 		success: function(listResults) {
@@ -324,6 +379,8 @@ Parse.Cloud.define("getAllUsersExcludeCriteria", function(request, response) {
 			listBool.push(excludeCriteriaFromAllUsers);
 			list.push(listResults);
 			list.push(listBool);
+
+			alert("listResults, criteriaSign is Null ==== " + listResults.length); 
 
 			response.success(list);
 		},
@@ -364,6 +421,12 @@ Parse.Cloud.define("getAllUsersExcludeCriteria", function(request, response) {
 			}
 		}
 
+	matchingQuery.skip(rowsToSkip);
+	if(rowsLimit != null) {
+		alert("getAllUsersExcludeCriteria: Limit of Rows: " + rowsLimit);	
+		getUsersQuery.limit(rowsLimit);
+	}
+
 		getUsersQuery.matchesKeyInQuery("username", "loginName", matchingQuery);
 		getUsersQuery.find({
 		success: function(listResults) {
@@ -372,6 +435,8 @@ Parse.Cloud.define("getAllUsersExcludeCriteria", function(request, response) {
 			listBool.push(excludeCriteriaFromAllUsers);
 			list.push(listResults);
 			list.push(listBool);
+			alert("listResults, criteriaSign is NOT Null ==== " + listResults.length); 
+
 
 			response.success(list);
 		},

@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -39,6 +40,7 @@ public class MainActivity extends DrawerActivity {
     public static final String PREFS_NAME = "FormalChatPrefs";
     public static final int NONE = 101;
     private static final int DEFAULT_SPINNER_POSITION = 1;
+    private static final int DISPLAY_LIMIT = 4; // 20
     private SharedPreferences sharedPreferences;
     private ParseUser currentUser;
     private Boolean exit;
@@ -60,6 +62,8 @@ public class MainActivity extends DrawerActivity {
     private Spinner searchSpinner;
     private LinearLayout matchesLayout;
     private TextView noSearchResultText;
+
+    private int pageCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,7 @@ public class MainActivity extends DrawerActivity {
         if(isNetworkAvailable()) {
             setOnSpinnerItemSelected();
             setSpinnerPosition();
+//            people_GridView.setOnScrollListener(onScrollListener());
         }
         else {
             getSnackbar(this, R.string.no_network, R.color.alert_red).show();
@@ -169,7 +174,8 @@ public class MainActivity extends DrawerActivity {
                         getResultsFromParseCloud(people_GridView, drinkingCriteria,
                                 smokingCriteria, religionCriteria, ethnicityCriteria,
                                 yourReligionCriteria, yourEthnicityCriteria);
-                    } else {
+                    }
+                    else {
                         getResultsFromParseCloud(people_ListView_Matches, drinkingCriteria,
                                 smokingCriteria, religionCriteria, ethnicityCriteria,
                                 yourReligionCriteria, yourEthnicityCriteria);
@@ -205,6 +211,9 @@ public class MainActivity extends DrawerActivity {
         if(view == people_GridView || view == people_ListView) {
             params.put("excludeCriteriaFromAllUsers", true);
         }
+        params.put("rowsToSkip", (pageCount * DISPLAY_LIMIT));
+//        params.put("rowsLimit", DISPLAY_LIMIT);
+//        Log.e(ApplicationOfficially.TAG, "Rows to Skip .... = " + pageCount + "*" + DISPLAY_LIMIT + " = " + pageCount*DISPLAY_LIMIT);
 
         ParseCloud.callFunctionInBackground("clientRequest", params, new FunctionCallback<ArrayList<ArrayList>>() {
             @Override
@@ -451,6 +460,9 @@ public class MainActivity extends DrawerActivity {
         params.put(criteriaName, criteriaValue);
         params.put("criteriaSign", criteriaSign);
         params.put("excludeCriteriaFromAllUsers", excludeCriteriaFromAllUsers);
+        params.put("rowsToSkip", (pageCount*DISPLAY_LIMIT));
+        params.put("rowsLimit", DISPLAY_LIMIT);
+//        Log.e(ApplicationOfficially.TAG, "Rows to Skip .... = " + pageCount + "*" + DISPLAY_LIMIT + " = " + pageCount * DISPLAY_LIMIT);
 
         callParseCloudFunction(params);
     }
@@ -573,4 +585,26 @@ public class MainActivity extends DrawerActivity {
         super.onDestroy();
         sharedPreferences.edit().remove("spinner_position").commit();
     }
+
+//    private AbsListView.OnScrollListener onScrollListener () {
+//        return new AbsListView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(AbsListView listView, int scrollState) {
+//                int treshold = 1;
+//                int count = people_GridView.getCount();
+//
+//                if(scrollState == SCROLL_STATE_IDLE) {
+//                    if(people_GridView.getLastVisiblePosition() >= count - treshold && pageCount < 2) {
+////                        Log.i(ApplicationOfficially.TAG, "loading more data....");
+//                        Toast.makeText(getApplicationContext(), "Loading more data...", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView listView, int i, int i1, int i2) {
+//
+//            }
+//        };
+//    }
 }
