@@ -153,7 +153,6 @@ public class PeopleGridViewAdapter extends BaseAdapter {
         @Override
         protected String doInBackground(ParseUser... params) {
             ParseUser user = usersList.get(position);
-            updateUserOnlineDot(activity, user);
 
             ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
             parseQuery.whereEqualTo("loginName", user.getUsername());
@@ -179,6 +178,13 @@ public class PeopleGridViewAdapter extends BaseAdapter {
 
 
             return "Success";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            ParseUser user = usersList.get(position);
+            updateUserOnlineDot(activity, user);
         }
 
         private void updateUserOnlineDot(BaseActivity activity, ParseUser user) {
