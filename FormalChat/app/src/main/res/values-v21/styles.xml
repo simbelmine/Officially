@@ -36,6 +36,7 @@
         <item name="android:textAppearanceSmallPopupMenu">@style/myPopupMenuTextAppearanceSmall</item>
         <item name="android:spinnerDropDownItemStyle">@style/mySpinnerItemStyle</item>
         <item name="android:spinnerItemStyle">@style/MySpinnerItem</item>
+        <item name="android:spinnerStyle">@style/mySpinnerStyle</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="android:datePickerDialogTheme">@style/DatePickerTheme</item>
 
@@ -117,6 +118,9 @@
     </style>
 
 
+    <style name="mySpinnerStyle" parent="@style/Base.Widget.AppCompat.Spinner">
+
+    </style>
 
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
         <item name="android:textColor">@color/action_bar</item>

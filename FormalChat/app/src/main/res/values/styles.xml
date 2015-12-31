@@ -101,6 +101,10 @@
 
 
     <!-- Spinner Styles -->
+    <style name="mySpinnerStyle" parent="@style/Base.Widget.AppCompat.Spinner">
+
+    </style>
+
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
         <item name="android:textColor">@color/action_bar</item>
     </style>
