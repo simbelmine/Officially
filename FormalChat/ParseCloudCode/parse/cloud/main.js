@@ -370,13 +370,14 @@ Parse.Cloud.define("getAllUsersExcludeCriteria", function(request, response) {
 		}
 
 
-		matchingQuery.skip(rowsToSkip);
+		// matchingQuery.skip(rowsToSkip);
 		if(rowsLimit != null) {
 			alert("getAllUsersExcludeCriteria: Limit of Rows: " + rowsLimit);	
 			getUsersQuery.limit(rowsLimit);
 		}
 
 		getUsersQuery.doesNotMatchKeyInQuery("username", "loginName", matchingQuery);
+		getUsersQuery.skip(rowsToSkip);
 		getUsersQuery.find({
 		success: function(listResults) {
 			var list = [];
@@ -426,13 +427,14 @@ Parse.Cloud.define("getAllUsersExcludeCriteria", function(request, response) {
 			}
 		}
 
-	matchingQuery.skip(rowsToSkip);
+	// matchingQuery.skip(rowsToSkip);
 	if(rowsLimit != null) {
 		alert("getAllUsersExcludeCriteria: Limit of Rows: " + rowsLimit);	
 		getUsersQuery.limit(rowsLimit);
 	}
 
 		getUsersQuery.matchesKeyInQuery("username", "loginName", matchingQuery);
+		getUsersQuery.skip(rowsToSkip);
 		getUsersQuery.find({
 		success: function(listResults) {
 			var list = [];

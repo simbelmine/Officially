@@ -234,6 +234,12 @@ public class MainActivity extends DrawerActivity {
                     ArrayList<ParseUser> users = listResults.get(0);
 
 //                    if (view == people_GridView || view == people_ListView) {
+                    if(isMatches && users.size() == 0) {
+                        setPageCount(0);
+                        isMatches = false;
+                        getGridListResults();
+                    }
+
                     if(!isMatches) {
                         usersList = new ArrayList<>();
                         for (ParseUser user : users) {
@@ -340,6 +346,7 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void initValues() {
+        isMatches = true;
         peopleGridViewAdapter = null;
         setPageCount(0);
     }
@@ -370,11 +377,10 @@ public class MainActivity extends DrawerActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.e(ApplicationOfficially.TAG, "setOnSpinnerItemSelectedListener: calls performFilterByPosition   pos = " + position + "    id= " + id);
-                if(!isSpinnerFirstCall) {
+                if (!isSpinnerFirstCall) {
                     initValues();
                     performFilterByPosition(position);
-                }
-                else {
+                } else {
                     isSpinnerFirstCall = false;
                 }
             }
@@ -423,7 +429,7 @@ public class MainActivity extends DrawerActivity {
             public void onScroll(AbsListView absListView, int i, int i1, int i2) {
                 boolean enable;
 
-                if(people_GridView != null && people_GridView.getChildCount() > 0) {
+                if (people_GridView != null && people_GridView.getChildCount() > 0) {
                     // check if the first item ofthe grid is visible
                     boolean firstItemVisible = people_GridView.getFirstVisiblePosition() == 0;
                     //check if the top of the first item is visible
@@ -551,9 +557,17 @@ public class MainActivity extends DrawerActivity {
 
                     Log.v(ApplicationOfficially.TAG, "clientRequest RESULT === " + users.size());
 
+                    if(users.size() == 0) {
+                        isMatches = false;
+                        setPageCount(0);
+                        setSpinnerPosition();
+                    }
+
                     if(listResults.size() >= 2) {
+                        Lo g.v(ApplicationOfficially.TAG, "LIST RESULT IS >= 2");
+
                         Boolean excludeCriteria = (Boolean)listResults.get(1).get(0);
-                        if(excludeCriteria) {
+                        if(excludeCriteria || !isMatches) {
                             usersList = new ArrayList<>();
                             for (ParseUser user : users) {
                                 usersList.add(user);
