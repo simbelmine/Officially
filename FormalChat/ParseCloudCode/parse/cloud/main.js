@@ -226,11 +226,11 @@ Parse.Cloud.define("getByCriteria", function(request, response) {
 	if(rowsToSkip == null) {
 		rowsToSkip = 0;
 	}
-	matchingQuery.skip(rowsToSkip);
-	if(rowsLimit != null) {
-		alert("getByCriteria: Limit of Rows: " + rowsLimit);
-		matchingQuery.limit(rowsLimit);
-	}
+	// matchingQuery.skip(rowsToSkip);
+	// if(rowsLimit != null) {
+	// 	alert("getByCriteria: Limit of Rows: " + rowsLimit);
+	// 	matchingQuery.limit(rowsLimit);
+	// }
 
 	if(criteriaSign != null) {
 		if(drinkingCriteria != null && criteriaSign == ">=") {
@@ -287,6 +287,11 @@ Parse.Cloud.define("getByCriteria", function(request, response) {
 	}
 
 	getUsersQuery.matchesKeyInQuery("username", "loginName", matchingQuery);
+	getUsersQuery.skip(rowsToSkip);
+	if(rowsLimit != null) {
+		alert("getByCriteria: Limit of Rows: " + rowsLimit);
+		getUsersQuery.limit(rowsLimit);
+	}
 	getUsersQuery.find({
 		success: function(listResults) {
 			var list = [];

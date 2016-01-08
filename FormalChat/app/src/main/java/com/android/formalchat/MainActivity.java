@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -45,7 +46,7 @@ public class MainActivity extends DrawerActivity {
     private ParseUser currentUser;
     private Boolean exit;
     private DrawerLayout drawerLayout;
-    private ScrollableGridView people_GridView;
+    private GridView people_GridView;
     private ScrollableGridView people_GridView_Matches;
     private PeopleGridViewAdapter peopleGridViewAdapter;
     private PeopleGridViewAdapter peopleGridViewAdapterMatches;
@@ -62,8 +63,18 @@ public class MainActivity extends DrawerActivity {
     private Spinner searchSpinner;
     private LinearLayout matchesLayout;
     private TextView noSearchResultText;
+    public int pageCount;
+    private boolean isMatches;
+    private boolean isSpinnerFirstCall;
 
-    private int pageCount = 0;
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +86,8 @@ public class MainActivity extends DrawerActivity {
         drawerLayout.addView(contentView, 0);
         exit = false;
         isListButtonVisible = true; // Start always with grid view
+        isMatches = true; // Start always with matches if any
+        isSpinnerFirstCall = true;
 
 
         setTitle();
@@ -82,13 +95,15 @@ public class MainActivity extends DrawerActivity {
 
         init();
         initGridListBtn();
+        initValues();
 
         setUpParsePushNotifications();
         setOnClickListeners();
         setOnRefreshListener();
 
         if(isNetworkAvailable()) {
-            setOnSpinnerItemSelected();
+            setOnSpinnerItemSelectedListener();
+            setOnScrollListener();
             setSpinnerPosition();
 //            people_GridView.setOnScrollListener(onScrollListener());
         }
@@ -122,8 +137,8 @@ public class MainActivity extends DrawerActivity {
         initSwipeContainer();
         people_GridView_Matches = (ScrollableGridView) findViewById(R.id.people_gridview_matches);
         people_GridView_Matches.setExpanded(true);
-        people_GridView = (ScrollableGridView) findViewById(R.id.people_gridview);
-        people_GridView.setExpanded(true);
+        people_GridView = (GridView) findViewById(R.id.people_gridview);
+//        people_GridView.setExpanded(true);
 
         people_ListView_Matches = (ScrollableListView) findViewById(R.id.people_listview_matches);
         people_ListView = (ScrollableListView) findViewById(R.id.people_listview);
@@ -135,15 +150,11 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void setSpinnerPosition() {
-        if(sharedPreferences.contains("spinner_position")) {
-            int position = sharedPreferences.getInt("spinner_position", DEFAULT_SPINNER_POSITION);
-            searchSpinner.setSelection(position);
-            performFilterByPosition(position);
-        }
-        else {
-            searchSpinner.setSelection(DEFAULT_SPINNER_POSITION);
-            performFilterByPosition(DEFAULT_SPINNER_POSITION);
-        }
+        int position = sharedPreferences.getInt("spinner_position", DEFAULT_SPINNER_POSITION);
+        searchSpinner.setSelection(position);
+
+        Log.e(ApplicationOfficially.TAG, "setSpinnerPosition: calls performFilterByPosition");
+        performFilterByPosition(position);
     }
 
     private void startLoginIfNoUser() {
@@ -159,7 +170,7 @@ public class MainActivity extends DrawerActivity {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
-                    matchesLayout.setVisibility(View.VISIBLE);
+//                    matchesLayout.setVisibility(View.VISIBLE);
                     int drinkingCriteria = parseObject.getInt("matchDrinking");
                     int smokingCriteria = parseObject.getInt("matchSmoking");
                     int religionCriteria = parseObject.getInt("matchReligion");
@@ -168,9 +179,9 @@ public class MainActivity extends DrawerActivity {
                     int yourEthnicityCriteria = parseObject.getInt("yourEthnicity");
 
                     if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                        getResultsFromParseCloud(people_GridView_Matches, drinkingCriteria,
-                                smokingCriteria, religionCriteria, ethnicityCriteria,
-                                yourReligionCriteria, yourEthnicityCriteria);
+//                        getResultsFromParseCloud(people_GridView_Matches, drinkingCriteria,
+//                                smokingCriteria, religionCriteria, ethnicityCriteria,
+//                                yourReligionCriteria, yourEthnicityCriteria);
                         getResultsFromParseCloud(people_GridView, drinkingCriteria,
                                 smokingCriteria, religionCriteria, ethnicityCriteria,
                                 yourReligionCriteria, yourEthnicityCriteria);
@@ -184,7 +195,7 @@ public class MainActivity extends DrawerActivity {
                                 yourReligionCriteria, yourEthnicityCriteria);
                     }
                 } else {
-                    matchesLayout.setVisibility(View.GONE);
+//                    matchesLayout.setVisibility(View.GONE);
                     if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
                         getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0);
                     } else {
@@ -208,11 +219,12 @@ public class MainActivity extends DrawerActivity {
         params.put("ethnicityCriteria", ethnicityCriteria);
         params.put("yourReligionCriteria", yourReligionCriteria);
         params.put("yourEthnicityCriteria", yourEthnicityCriteria);
-        if(view == people_GridView || view == people_ListView) {
+//        if(view == people_GridView || view == people_ListView) {
+        if(!isMatches) {
             params.put("excludeCriteriaFromAllUsers", true);
         }
-        params.put("rowsToSkip", (pageCount * DISPLAY_LIMIT));
-//        params.put("rowsLimit", DISPLAY_LIMIT);
+        params.put("rowsToSkip", (getPageCount() * DISPLAY_LIMIT));
+        params.put("rowsLimit", DISPLAY_LIMIT);
 //        Log.e(ApplicationOfficially.TAG, "Rows to Skip .... = " + pageCount + "*" + DISPLAY_LIMIT + " = " + pageCount*DISPLAY_LIMIT);
 
         ParseCloud.callFunctionInBackground("clientRequest", params, new FunctionCallback<ArrayList<ArrayList>>() {
@@ -221,13 +233,16 @@ public class MainActivity extends DrawerActivity {
                 if (e == null && listResults != null) {
                     ArrayList<ParseUser> users = listResults.get(0);
 
-                    if (view == people_GridView || view == people_ListView) {
+//                    if (view == people_GridView || view == people_ListView) {
+                    if(!isMatches) {
                         usersList = new ArrayList<>();
                         for (ParseUser user : users) {
                             usersList.add(user);
                         }
                         initAdapter(view, usersList);
-                    } else if (view == people_GridView_Matches || view == people_ListView_Matches) {
+                    }
+//                    else if (view == people_GridView_Matches || view == people_ListView_Matches) {
+                    else {
                         usersListMatches = new ArrayList<>();
                         for (ParseUser user : users) {
                             usersListMatches.add(user);
@@ -246,27 +261,37 @@ public class MainActivity extends DrawerActivity {
 
     private void initAdapter(View view, List<ParseUser> list){
         // *** Grig View *** //
-        if(view == people_GridView)  {
-            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_all);
-            peopleGridViewAdapter = new PeopleGridViewAdapter(MainActivity.this, getApplicationContext(), list);
-            ((ScrollableGridView) view).setAdapter(peopleGridViewAdapter);
-        }
-        else if(view == people_GridView_Matches) {
-            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_matches);
-            peopleGridViewAdapterMatches = new PeopleGridViewAdapter(MainActivity.this, getApplicationContext(), list);
-            ((ScrollableGridView)view).setAdapter(peopleGridViewAdapterMatches);
-        }
+////        if(view == people_GridView)  {
+//        if(!isMatches) {
+//            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_all);
+//            peopleGridViewAdapter = new PeopleGridViewAdapter(MainActivity.this, getApplicationContext(), list, isMatches);
+//            ((ScrollableGridView) view).setAdapter(peopleGridViewAdapter);
+//        }
+////        else if(view == people_GridView_Matches) {
+//        else if(isMatches){
+//            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_matches);
+//            peopleGridViewAdapterMatches = new PeopleGridViewAdapter(MainActivity.this, getApplicationContext(), list, isMatches);
+//            ((GridView)view).setAdapter(peopleGridViewAdapterMatches);
+//        }
+//
+//        // *** List View *** //
+//        else if(view == people_ListView) {
+//            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_all);
+//            peopleListViewAdapter = new PeopleListViewAdapter(getApplicationContext(), list);
+//            ((ScrollableListView)view).setAdapter(peopleListViewAdapter);
+//        }
+//        else if(view == people_ListView_Matches) {
+//            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_matches);
+//            peopleListViewAdapterMatches = new PeopleListViewAdapter(getApplicationContext(), list);
+//            ((ScrollableListView)view).setAdapter(peopleListViewAdapterMatches);
+//        }
 
-        // *** List View *** //
-        else if(view == people_ListView) {
-            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_all);
-            peopleListViewAdapter = new PeopleListViewAdapter(getApplicationContext(), list);
-            ((ScrollableListView)view).setAdapter(peopleListViewAdapter);
+        if(peopleGridViewAdapter == null) {
+            peopleGridViewAdapter = new PeopleGridViewAdapter(MainActivity.this, getApplicationContext(), list, isMatches);
+            ((GridView) view).setAdapter(peopleGridViewAdapter);
         }
-        else if(view == people_ListView_Matches) {
-            setNoSearchResultTxtVisibility(list.size(), R.id.no_result_matches);
-            peopleListViewAdapterMatches = new PeopleListViewAdapter(getApplicationContext(), list);
-            ((ScrollableListView)view).setAdapter(peopleListViewAdapterMatches);
+        else {
+            peopleGridViewAdapter.updateUsersList(list);
         }
     }
 
@@ -314,6 +339,11 @@ public class MainActivity extends DrawerActivity {
         }
     }
 
+    private void initValues() {
+        peopleGridViewAdapter = null;
+        setPageCount(0);
+    }
+
     private void setOnClickListeners() {
         grid_list_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -335,11 +365,18 @@ public class MainActivity extends DrawerActivity {
         });
     }
 
-    private void setOnSpinnerItemSelected() {
+    private void setOnSpinnerItemSelectedListener() {
         searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                performFilterByPosition(position);
+                Log.e(ApplicationOfficially.TAG, "setOnSpinnerItemSelectedListener: calls performFilterByPosition   pos = " + position + "    id= " + id);
+                if(!isSpinnerFirstCall) {
+                    initValues();
+                    performFilterByPosition(position);
+                }
+                else {
+                    isSpinnerFirstCall = false;
+                }
             }
 
             @Override
@@ -353,10 +390,10 @@ public class MainActivity extends DrawerActivity {
         getSwipeContainer().setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(isNetworkAvailable()) {
+                if (isNetworkAvailable()) {
+                    initValues();
                     setSpinnerPosition();
-                }
-                else {
+                } else {
                     getSwipeContainer().setRefreshing(false);
                     getSnackbar(MainActivity.this, R.string.no_network, R.color.alert_red).show();
                 }
@@ -364,7 +401,44 @@ public class MainActivity extends DrawerActivity {
         });
     }
 
+    private void setOnScrollListener() {
+        people_GridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                int threshold = 1;
+                int count = people_GridView.getCount();
+
+                if (scrollState == SCROLL_STATE_IDLE) {
+                    if (people_GridView.getLastVisiblePosition() >= count - threshold && getPageCount() < 2) {
+                        Log.e(ApplicationOfficially.TAG, "Loading data...");
+                        int pageCount = getPageCount();
+                        pageCount++;
+                        setPageCount(pageCount);
+                        setSpinnerPosition();
+                    }
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+                boolean enable;
+
+                if(people_GridView != null && people_GridView.getChildCount() > 0) {
+                    // check if the first item ofthe grid is visible
+                    boolean firstItemVisible = people_GridView.getFirstVisiblePosition() == 0;
+                    //check if the top of the first item is visible
+                    boolean firstItemTopVisible = people_GridView.getChildAt(0).getTop() == 0;
+
+                    enable = firstItemVisible && firstItemTopVisible;
+                    getSwipeContainer().setEnabled(enable);
+                }
+            }
+        });
+    }
+
     private void performFilterByPosition(int position) {
+        Log.v(ApplicationOfficially.TAG, "performFilterByPosition: pageCount = " + getPageCount());
+
         switch (position) {
             case 0:
                 // Show me All
@@ -384,25 +458,25 @@ public class MainActivity extends DrawerActivity {
             case 2:
                 // Match is Drinking
                 startSearch("drinkingCriteria", 2, ">=", false);
-                startSearch("drinkingCriteria", 2, ">=", true);
+//                startSearch("drinkingCriteria", 2, ">=", true);
                 saveSpinnerPosition(position);
                 break;
             case 3:
                 // Match is Not Drinking
                 startSearch("drinkingCriteria", 1, "<=", false);
-                startSearch("drinkingCriteria", 1, "<=", true);
+//                startSearch("drinkingCriteria", 1, "<=", true);
                 saveSpinnerPosition(position);
                 break;
             case 4:
                 // Match is Smoking
                 startSearch("smokingCriteria", 2, ">=", false);
-                startSearch("smokingCriteria", 2, ">=", true);
+//                startSearch("smokingCriteria", 2, ">=", true);
                 saveSpinnerPosition(position);
                 break;
             case 5:
                 // Match is Not Smoking
                 startSearch("smokingCriteria", 1, "<=", false);
-                startSearch("smokingCriteria", 1, "<=", true);
+//                startSearch("smokingCriteria", 1, "<=", true);
                 saveSpinnerPosition(position);
                 break;
             case 6:
@@ -460,9 +534,9 @@ public class MainActivity extends DrawerActivity {
         params.put(criteriaName, criteriaValue);
         params.put("criteriaSign", criteriaSign);
         params.put("excludeCriteriaFromAllUsers", excludeCriteriaFromAllUsers);
-        params.put("rowsToSkip", (pageCount*DISPLAY_LIMIT));
+        params.put("rowsToSkip", (getPageCount() * DISPLAY_LIMIT));
         params.put("rowsLimit", DISPLAY_LIMIT);
-//        Log.e(ApplicationOfficially.TAG, "Rows to Skip .... = " + pageCount + "*" + DISPLAY_LIMIT + " = " + pageCount * DISPLAY_LIMIT);
+        Log.e(ApplicationOfficially.TAG, "Rows to Skip .... = " + getPageCount() + "*" + DISPLAY_LIMIT + " = " + pageCount * DISPLAY_LIMIT);
 
         callParseCloudFunction(params);
     }
@@ -473,7 +547,9 @@ public class MainActivity extends DrawerActivity {
             public void done(ArrayList<ArrayList> listResults, ParseException e) {
                 if (e == null) {
                     ArrayList<ParseUser> users = listResults.get(0);
-                    matchesLayout.setVisibility(View.VISIBLE);
+//                    matchesLayout.setVisibility(View.VISIBLE);
+
+                    Log.v(ApplicationOfficially.TAG, "clientRequest RESULT === " + users.size());
 
                     if(listResults.size() >= 2) {
                         Boolean excludeCriteria = (Boolean)listResults.get(1).get(0);
@@ -495,10 +571,11 @@ public class MainActivity extends DrawerActivity {
                             usersListMatches.add(user);
                         }
                         if(sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                            initAdapter(people_GridView_Matches, usersListMatches);
+//                            initAdapter(people_GridView_Matches, usersListMatches);
+                            initAdapter(people_GridView, usersListMatches);
                         }
                         else {
-                            initAdapter(people_ListView_Matches, usersListMatches);
+
                         }
                     }
 

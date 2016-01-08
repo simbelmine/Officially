@@ -29,16 +29,23 @@ public class PeopleGridViewAdapter extends BaseAdapter {
     private BaseActivity activity;
     private Context context;
     private List<ParseUser> usersList;
+    private boolean isMatches;
 
-    public PeopleGridViewAdapter(BaseActivity activity, Context context, List<ParseUser> usersList) {
+    public PeopleGridViewAdapter(BaseActivity activity, Context context, List<ParseUser> usersList, boolean isMatches) {
         this.activity = activity;
         this.context = context;
         this.usersList = usersList;
+        this.isMatches = isMatches;
     }
 
     public void updateUsers(List<ParseUser> users) {
         this.usersList = users;
         this.notifyDataSetChanged();
+    }
+
+    public void updateUsersList(List<ParseUser> usersList) {
+        this.usersList.addAll(usersList);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -126,12 +133,15 @@ public class PeopleGridViewAdapter extends BaseAdapter {
 
         @Override
         protected void onPostExecute(ParseUser user) {
-            if(viewHolder.position == position) {
+//            if(viewHolder.position == position) {
 //                viewHolder.userName.setText(user.get("username").toString());
                 if(user.containsKey("profileImg") && user.getParseFile("profileImg") != null) {
                     Picasso.with(context).load(user.getParseFile("profileImg").getUrl()).into(viewHolder.profileImg);
                 }
-            }
+                else {
+                    Picasso.with(context).load(R.drawable.profile_img).into(viewHolder.profileImg);
+                }
+//            }
         }
     }
 
