@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    card_view:cardUseCompatPadding="true"
+    card_view:cardCornerRadius="2dp"
+    android:layout_marginBottom="16dp"
+    card_view:cardBackgroundColor="@color/material_transp60_black"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        >
+
+    <com.android.formalchat.RoundedImageView
+        android:id="@+id/picture"
+        android:layout_width="@dimen/grid_img_size"
+        android:layout_height="@dimen/grid_img_size"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/profile_img"
+        android:scaleType="centerInside"
+        />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginBottom="16dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_below="@id/picture"
+        android:textColor="@color/white"
+        android:background="@color/items_new"
+        android:text="User's Name"
+        />
+
+    <ImageView
+        android:id="@+id/zodiac_sign"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/text"
+        android:layout_marginBottom="3dp"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/zodiac_sign"
+        android:layout_marginBottom="3dp"
+        />
+
+    <TextView
+        android:id="@+id/age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/location"
+        android:layout_marginBottom="16dp"
+        />
+
+    <ImageView
+        android:id="@+id/online_dot"
+        android:layout_width="7dp"
+        android:layout_height="7dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/age"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/oval_btn_gray"
+        />
+    </RelativeLayout>
+
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/country_photo"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="80dp"-->
+            <!--android:contentDescription="Settings"-->
+            <!--android:src="@drawable/profile_img"-->
+            <!--android:scaleType="centerCrop" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/country_name"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="13sp"-->
+            <!--android:text="Country Name"-->
+            <!--android:textColor="@color/material_gray"-->
+            <!--android:gravity="center"-->
+            <!--android:layout_below="@+id/country_photo"-->
+            <!--android:paddingBottom="8dp"-->
+            <!--android:paddingTop="8dp"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:background="@color/gray_green"/>-->
+    <!--</RelativeLayout>-->
+
+</android.support.v7.widget.CardView>
+
