@@ -2,6 +2,7 @@ package com.android.formalchat;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.formalchat.profile.ProfileActivityRemote;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -98,8 +100,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerViewHolders holder, int position) {
-//        Log.v(ApplicationOfficially.TAG, "onBindViewHolder....");
-//        Log.v(ApplicationOfficially.TAG, "onBindViewHolder : position = " + position + "  isHeader(position) = " + isHeader(position));
+        setViewOnClickListener(holder.itemView, position);
 
         if(!isHeader(position)) {
             new DownloadProfileGridImage(context, holder, usersList, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -231,5 +232,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                 viewHolder.zodiacSign.setBackgroundResource(zodiacSignEnum.getImageId());
             }
         }
+    }
+
+    private void setViewOnClickListener(View convertView, final int position) {
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser user = usersList.get(position);
+                Intent intent = new Intent(context, ProfileActivityRemote.class);
+                intent.putExtra("userNameMain", user.getUsername());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
     }
 }
