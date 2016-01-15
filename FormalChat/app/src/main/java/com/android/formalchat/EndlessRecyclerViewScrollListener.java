@@ -21,6 +21,11 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         this.gridLayoutManager = gridLayoutManager;
     }
 
+    public void resetCounter() {
+        previousTotalItemCount = 0;
+        currentPage = 0;
+    }
+
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         int lastVisibleItemPosition = gridLayoutManager.findLastVisibleItemPosition();
@@ -49,20 +54,18 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         // If we do need to reload some more data, we execute onLoadMore to fetch the data.
         if (!loading && (lastVisibleItemPosition + MainActivity.DISPLAY_LIMIT) >= totalItemCount) {
             currentPage++;
+            Log.e(ApplicationOfficially.TAG, "### currentPage AFTER  === " + currentPage);
             onLoadMore(currentPage, totalItemCount);
-            Log.e(ApplicationOfficially.TAG, " Loading more....");
             loading = true;
         }
 
 
         if(dy > 0) {
             // Scrolling Up
-            Log.v(ApplicationOfficially.TAG, "UP ....  " + dy);
             onScrolledUp(dy, true);
         }
         else if (dy < 0){
             // Scrolling Down
-            Log.v(ApplicationOfficially.TAG, "DOWN ....  " + dy);
             onScrolledUp(dy, false);
         }
 

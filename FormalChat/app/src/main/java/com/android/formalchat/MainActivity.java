@@ -69,6 +69,7 @@ public class MainActivity extends DrawerActivity {
     private boolean isMatches;
     private boolean isSpinnerFirstCall;
     private LinearLayout searchToolbar;
+    private EndlessRecyclerViewScrollListener endlessScrollListener;
 
 
     public int getPageCount() {
@@ -114,7 +115,7 @@ public class MainActivity extends DrawerActivity {
         mainLayout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                return rcAdapter.isHeader(position) ? mainLayout.getSpanCount() : 1;
+                return rcAdapter!= null && rcAdapter.isHeader(position) ? mainLayout.getSpanCount() : 1;
             }
         });
         recyclerMainView.setHasFixedSize(true);
@@ -267,6 +268,8 @@ public class MainActivity extends DrawerActivity {
                     }
 
                     initAdapter(view, usersList, isMatches);
+
+                    getSwipeContainer().setRefreshing(false);
                 }
             }
         });
@@ -362,6 +365,9 @@ public class MainActivity extends DrawerActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (!isSpinnerFirstCall) {
                     initValues();
+                    if(endlessScrollListener != null) {
+                        endlessScrollListener.resetCounter();
+                    }
                     performFilterByPosition(position);
                 } else {
                     isSpinnerFirstCall = false;
@@ -381,6 +387,10 @@ public class MainActivity extends DrawerActivity {
             public void onRefresh() {
                 if (isNetworkAvailable()) {
                     initValues();
+                    Log.e(ApplicationOfficially.TAG, "INIT VALUES");
+                    if(endlessScrollListener != null) {
+                        endlessScrollListener.resetCounter();
+                    }
                     setSpinnerPosition();
                 } else {
                     getSwipeContainer().setRefreshing(false);
@@ -391,7 +401,7 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void setOnScrollListener() {
-        recyclerMainView.addOnScrollListener(new EndlessRecyclerViewScrollListener(mainLayout) {
+        endlessScrollListener = new EndlessRecyclerViewScrollListener(mainLayout) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 setPageCount(page);
@@ -400,18 +410,16 @@ public class MainActivity extends DrawerActivity {
 
             @Override
             public void onScrolledUp(int dy, boolean isUp) {
-
                 if(isUp) {
                     searchToolbar.setVisibility(View.GONE);
                 }
                 else {
-                    if(dy == 0) {
-                        getSwipeContainer().setEnabled(true);
-                    }
                     searchToolbar.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        };
+
+        recyclerMainView.addOnScrollListener(endlessScrollListener);
     }
 
     private void performFilterByPosition(int position) {
