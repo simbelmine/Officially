@@ -7,156 +7,158 @@
     android:layout_height="match_parent">
 
     <!--<ScrollView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:fillViewport="true"-->
-        <!-->-->
-        <LinearLayout
-            android:orientation="vertical"
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:fillViewport="true"-->
+    <!-->-->
+    <FrameLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/material_gray"
+        >
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/material_gray"
-            >
 
-            <LinearLayout
+            tools:context=".MainActivity">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/header_height"
-                android:orientation="horizontal"
-                android:layout_margin="@dimen/header_margin"
-                android:gravity="bottom"
-                android:focusableInTouchMode="true"
-                android:weightSum="7">
-                <Spinner
-                    android:id="@+id/search_for"
-                    android:layout_width="@dimen/header_element_width"
-                    android:layout_height="match_parent"
-                    android:entries="@array/search_by_criteria"
-                    android:layout_weight="6"
-                    android:layout_gravity="bottom"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/search_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/header_height"
+            android:orientation="horizontal"
+            android:background="@color/material_transp_darker_gray"
+            >
+            <Spinner
+                android:id="@+id/search_for"
+                android:layout_width="@dimen/header_element_width"
+                android:layout_height="match_parent"
+                android:entries="@array/search_by_criteria"
+                android:layout_weight="6"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="16dp"
+                />
+            <ImageButton
+                android:id="@+id/grid_list_btn"
+                android:layout_width="@dimen/header_element_width"
+                android:layout_height="match_parent"
+                android:background="@color/transp_white"
+                android:src="@drawable/grid"
+                android:scaleType="centerCrop"
+                android:layout_gravity="bottom"
+                android:padding="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            >
+            <LinearLayout
+                android:id="@+id/matches"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/match_results_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textColor="@color/items"
+                    android:text="MATCHES"/>
+                <TextView
+                    android:id="@+id/no_result_matches"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="@string/no_search_result"
+                    android:visibility="gone"
                     />
-                <ImageButton
-                    android:id="@+id/grid_list_btn"
-                    android:layout_width="@dimen/header_element_width"
+                <com.android.formalchat.ScrollableGridView
+                    android:id="@+id/people_gridview_matches"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnWidth="@dimen/grid_column_width"
+                    android:numColumns="2"
+                    android:layout_margin="@dimen/grid_margin"
+                    android:verticalSpacing="@dimen/grid_margin"
+                    android:horizontalSpacing="@dimen/grid_margin"
+                    android:stretchMode="columnWidth"
+                    android:gravity="center"
+                    android:visibility="visible"
+                    />
+                <com.android.formalchat.ScrollableListView
+                    android:id="@+id/people_listview_matches"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/transp_white"
-                    android:src="@drawable/grid"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="bottom"
-                    android:padding="8dp"
-                    android:layout_weight="1"
+                    android:layout_margin="@dimen/list_margin"
+                    android:dividerHeight="@dimen/list_margin"
+                    android:divider="@color/transp"
+                    android:visibility="visible"
                     />
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/all"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="8dp"
-                tools:context=".MainActivity">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="vertical" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/matches"
                 android:visibility="gone"
                 >
-                <LinearLayout
-                    android:id="@+id/matches"
+                <!--<TextView-->
+                <!--android:id="@+id/all_results_txt"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:padding="10dp"-->
+                <!--android:textColor="@color/items"-->
+                <!--android:text="ALL RESULTS"/>-->
+                <TextView
+                    android:id="@+id/no_result_all"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-                    <TextView
-                        android:id="@+id/match_results_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:textColor="@color/items"
-                        android:text="MATCHES"/>
-                    <TextView
-                        android:id="@+id/no_result_matches"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
-                        android:text="@string/no_search_result"
-                        android:visibility="gone"
-                        />
-                    <com.android.formalchat.ScrollableGridView
-                        android:id="@+id/people_gridview_matches"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:columnWidth="@dimen/grid_column_width"
-                        android:numColumns="2"
-                        android:layout_margin="@dimen/grid_margin"
-                        android:verticalSpacing="@dimen/grid_margin"
-                        android:horizontalSpacing="@dimen/grid_margin"
-                        android:stretchMode="columnWidth"
-                        android:gravity="center"
-                        android:visibility="visible"
-                        />
-                    <com.android.formalchat.ScrollableListView
-                        android:id="@+id/people_listview_matches"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="@dimen/list_margin"
-                        android:dividerHeight="@dimen/list_margin"
-                        android:divider="@color/transp"
-                        android:visibility="visible"
-                        />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/all"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/matches"
+                    android:paddingLeft="10dp"
+                    android:text="@string/no_search_result"
                     android:visibility="gone"
-                    >
-                    <!--<TextView-->
-                        <!--android:id="@+id/all_results_txt"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:padding="10dp"-->
-                        <!--android:textColor="@color/items"-->
-                        <!--android:text="ALL RESULTS"/>-->
-                    <TextView
-                        android:id="@+id/no_result_all"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
-                        android:text="@string/no_search_result"
-                        android:visibility="gone"
-                        />
-                    <GridView
-                        android:id="@+id/people_gridview"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:columnWidth="@dimen/grid_column_width"
-                        android:numColumns="2"
-                        android:layout_margin="@dimen/grid_margin"
-                        android:verticalSpacing="@dimen/grid_margin"
-                        android:horizontalSpacing="@dimen/grid_margin"
-                        android:stretchMode="columnWidth"
-                        android:gravity="center"
-                        android:visibility="visible"
-                        />
-                    <com.android.formalchat.ScrollableListView
-                        android:id="@+id/people_listview"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="@dimen/list_margin"
-                        android:dividerHeight="@dimen/list_margin"
-                        android:divider="@color/transp"
-                        />
-                </LinearLayout>
-            </RelativeLayout>
-        </LinearLayout>
+                    />
+                <GridView
+                    android:id="@+id/people_gridview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnWidth="@dimen/grid_column_width"
+                    android:numColumns="2"
+                    android:layout_margin="@dimen/grid_margin"
+                    android:verticalSpacing="@dimen/grid_margin"
+                    android:horizontalSpacing="@dimen/grid_margin"
+                    android:stretchMode="columnWidth"
+                    android:gravity="center"
+                    android:visibility="visible"
+                    />
+                <com.android.formalchat.ScrollableListView
+                    android:id="@+id/people_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/list_margin"
+                    android:dividerHeight="@dimen/list_margin"
+                    android:divider="@color/transp"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
     <!--</ScrollView>-->
 </android.support.v4.widget.SwipeRefreshLayout>

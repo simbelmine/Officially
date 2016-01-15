@@ -1,13 +1,13 @@
 package com.android.formalchat;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +45,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
 
     public void updateUsersList(BaseActivity activity, Context context, List<ParseUser> usersList, boolean isMatches) {
-//        Log.e(ApplicationOfficially.TAG, "*** updateUsersList ***");
-
         this.activity = activity;
         this.context = context;
 
@@ -59,8 +57,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     @Override
     public int getItemCount() {
-//        Log.v(ApplicationOfficially.TAG, "getItemCount : usersList = " + this.usersList);
-
         if(this.usersList == null) {
             return 0;
         }
@@ -69,29 +65,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     @Override
     public int getItemViewType(int position) {
-//        Log.v(ApplicationOfficially.TAG, "getItemViewType : position = " + position);
-
         return isHeader(position) ?
                 ITEM_VIEW_TYPE_HEADER : ITEM_VIEW_TYPE_ITEM;
     }
 
     @Override
     public RecyclerViewHolders onCreateViewHolder(ViewGroup parent, int viewType) {
-//        Log.v(ApplicationOfficially.TAG, "onCreateViewHolder...   viewType = " + viewType);
-
         if (viewType == ITEM_VIEW_TYPE_HEADER) {
-            TextView txtView = new TextView(context);
-            if(isMatches) {
-                txtView.setText("MATCHES");
-            }
-            else {
-                txtView.setText("ALL PPL");
-            }
-            txtView.setTypeface(Typeface.DEFAULT_BOLD);
-            txtView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            return new RecyclerViewHolders(txtView);
+//            CardView cardView = getCardView();
+            return new RecyclerViewHolders(getHeader());
         }
-
 
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_list, null);
         RecyclerViewHolders rcv = new RecyclerViewHolders(layoutView);
@@ -239,11 +222,48 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             @Override
             public void onClick(View v) {
                 ParseUser user = usersList.get(position);
-                Intent intent = new Intent(context, ProfileActivityRemote.class);
-                intent.putExtra("userNameMain", user.getUsername());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                if(user != null) {
+                    Intent intent = new Intent(context, ProfileActivityRemote.class);
+                    intent.putExtra("userNameMain", user.getUsername());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
             }
         });
+    }
+
+    private TextView getHeader() {
+        ViewGroup.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150);
+
+        TextView txtView = new TextView(context);
+//        if(isMatches) {
+//            txtView.setText("MATCHES");
+//        }
+//        else {
+//            txtView.setText("ALL PPL");
+//        }
+        txtView.setGravity(Gravity.CENTER);
+        txtView.setTypeface(Typeface.DEFAULT_BOLD);
+        txtView.setLayoutParams(params);
+        return txtView;
+    }
+
+    private CardView getCardView() {
+        CardView cardView = new CardView(context);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                120
+        );
+        int margin = 16;
+        params.setMargins(0, margin, 0, margin);
+
+        cardView.setRadius(9);
+        cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.material_gray));
+        cardView.setUseCompatPadding(true);
+        cardView.setLayoutParams(params);
+
+//        cardView.addView(getHeader());
+
+        return cardView;
     }
 }

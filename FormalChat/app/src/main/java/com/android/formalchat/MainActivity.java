@@ -68,6 +68,7 @@ public class MainActivity extends DrawerActivity {
     public int pageCount;
     private boolean isMatches;
     private boolean isSpinnerFirstCall;
+    private LinearLayout searchToolbar;
 
 
     public int getPageCount() {
@@ -109,6 +110,7 @@ public class MainActivity extends DrawerActivity {
         setOnRefreshListener();
 
         mainLayout = new GridLayoutManager(MainActivity.this, 3);
+        // If you wanna Header
         mainLayout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -168,6 +170,7 @@ public class MainActivity extends DrawerActivity {
         grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
 
         recyclerMainView = (RecyclerView)findViewById(R.id.recycler_view);
+        searchToolbar = (LinearLayout)findViewById(R.id.search_toolbar);
     }
 
     private void setSpinnerPosition() {
@@ -255,6 +258,7 @@ public class MainActivity extends DrawerActivity {
                     ArrayList<ParseUser> users = listResults.get(0);
 
                     usersList = new ArrayList<>();
+                    // If you Wanna have a Header
                     if(getPageCount() == 0) {
                         usersList.add(null);
                     }
@@ -393,6 +397,20 @@ public class MainActivity extends DrawerActivity {
                 setPageCount(page);
                 setSpinnerPosition();
             }
+
+            @Override
+            public void onScrolledUp(int dy, boolean isUp) {
+
+                if(isUp) {
+                    searchToolbar.setVisibility(View.GONE);
+                }
+                else {
+                    if(dy == 0) {
+                        getSwipeContainer().setEnabled(true);
+                    }
+                    searchToolbar.setVisibility(View.VISIBLE);
+                }
+            }
         });
     }
 
@@ -526,6 +544,7 @@ public class MainActivity extends DrawerActivity {
                         Boolean excludeCriteria = (Boolean)listResults.get(1).get(0);
                         if(excludeCriteria || !isMatches) {
                             usersList = new ArrayList<>();
+                            // If you Wanna have a Header
                             if(getPageCount() == 0) {
                                 usersList.add(null);
                             }

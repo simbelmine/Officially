@@ -13,6 +13,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     private int previousTotalItemCount = 0; // The total number of items in the dataset after the last load
     private boolean loading = true;         // True if we are still waiting for the last set of data to load.
     private int startingPageIndex = 0;      // Sets the starting page index
+    private int old_dy = 0;
 
     private GridLayoutManager gridLayoutManager;
 
@@ -49,10 +50,28 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         if (!loading && (lastVisibleItemPosition + MainActivity.DISPLAY_LIMIT) >= totalItemCount) {
             currentPage++;
             onLoadMore(currentPage, totalItemCount);
+            Log.e(ApplicationOfficially.TAG, " Loading more....");
             loading = true;
         }
+
+
+        if(dy > 0) {
+            // Scrolling Up
+            Log.v(ApplicationOfficially.TAG, "UP ....  " + dy);
+            onScrolledUp(dy, true);
+        }
+        else if (dy < 0){
+            // Scrolling Down
+            Log.v(ApplicationOfficially.TAG, "DOWN ....  " + dy);
+            onScrolledUp(dy, false);
+        }
+
+        old_dy = dy;
     }
 
     // Defines the process for actually loading more data based on page
     public abstract void onLoadMore(int page, int totalItemsCount);
+
+    // Defines what to do when recyclerview has been scrolled up/down
+    public abstract void onScrolledUp(int dy, boolean isUp);
 }
