@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -366,7 +367,7 @@ public class MainActivity extends DrawerActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (!isSpinnerFirstCall) {
                     initValues();
-                    if(endlessScrollListener != null) {
+                    if (endlessScrollListener != null) {
                         endlessScrollListener.resetCounter();
                     }
                     performFilterByPosition(position);
@@ -389,7 +390,7 @@ public class MainActivity extends DrawerActivity {
                 if (isNetworkAvailable()) {
                     initValues();
                     Log.e(ApplicationOfficially.TAG, "INIT VALUES");
-                    if(endlessScrollListener != null) {
+                    if (endlessScrollListener != null) {
                         endlessScrollListener.resetCounter();
                     }
                     setSpinnerPosition();
@@ -541,41 +542,40 @@ public class MainActivity extends DrawerActivity {
                 if (e == null) {
                     ArrayList<ParseUser> users = listResults.get(0);
 
-                    if(users.size() == 0) {
+                    if (users.size() == 0) {
                         isMatches = false;
                     }
 
                     Log.v(ApplicationOfficially.TAG, "clientRequest RESULT === " + users.size() + "   isMatches === " + isMatches);
 
-                    if(listResults.size() >= 2) {
+                    if (listResults.size() >= 2) {
                         Log.v(ApplicationOfficially.TAG, "LIST RESULT IS >= 2");
 
-                        Boolean excludeCriteria = (Boolean)listResults.get(1).get(0);
-                        if(excludeCriteria || !isMatches) {
+                        Boolean excludeCriteria = (Boolean) listResults.get(1).get(0);
+                        if (excludeCriteria || !isMatches) {
                             usersList = new ArrayList<>();
                             // If you Wanna have a Header
-                            if(getPageCount() == 0) {
+                            if (getPageCount() == 0) {
                                 usersList.add(null);
                             }
                             for (ParseUser user : users) {
                                 usersList.add(user);
                             }
-                            if(sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
+                            if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
                                 initAdapter(people_GridView, usersList, isMatches);
-                            }
-                            else {
+                            } else {
                                 initAdapter(people_ListView, usersList, isMatches);
                             }
                         }
                     } else {
                         usersListMatches = new ArrayList<>();
-                        if(getPageCount() == 0) {
+                        if (getPageCount() == 0) {
                             usersListMatches.add(null);
                         }
                         for (ParseUser user : users) {
                             usersListMatches.add(user);
                         }
-                        if(sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
+                        if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
                             initAdapter(recyclerMainView, usersListMatches, isMatches);
                         }
 

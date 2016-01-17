@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.parse.ParseUser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,9 +37,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     private Context context;
     private List<ParseUser> usersList;
     private boolean isMatches;
+    private static List<UserInfoObj> usersInfoList;
 
     public RecyclerViewAdapter(BaseActivity activity, Context context, List<ParseUser> usersList, boolean isMatches) {
 //        Log.e(ApplicationOfficially.TAG, "*** RecyclerViewAdapter COnstructor ***");
+        usersInfoList = new ArrayList<>();
 
         this.activity = activity;
         this.context = context;
@@ -173,45 +177,77 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
         @Override
         protected String doInBackground(ParseUser... params) {
-            ParseUser user = usersList.get(position);
+            if(position > (usersInfoList.size()-1)) {
+                ParseUser user = usersList.get(position);
+                if (user != null) {
+                    ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
+                    parseQuery.whereEqualTo("loginName", user.getUsername());
+                    parseQuery.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> list, ParseException e) {
+                            if (e == null && list.size() > 0) {
+                                ParseObject userInfo = list.get(0);
+                                String userName = userInfo.get("loginName").toString();
+                                String userLocation = userInfo.get("location").toString();
+                                String userAge = userInfo.get("age").toString();
 
-            if(user != null) {
-                ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
-                parseQuery.whereEqualTo("loginName", user.getUsername());
-                parseQuery.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> list, ParseException e) {
-                        if (e == null && list.size() > 0) {
-                            ParseObject userInfo = list.get(0);
-                            String userName = userInfo.get("loginName").toString();
-                            String userLocation = userInfo.get("location").toString();
-                            String userAge = userInfo.get("age").toString();
+                                storeUserInfoToList(userInfo);
 
-                            viewHolder.userName.setText(userName);
-                            viewHolder.userLocation.setText(getShortLocationTxt(userLocation));
-                            viewHolder.userAge.setText(getFullAgeTxt(userAge));
-                            setZodiacalSign(userInfo.get("birthday").toString());
-                        } else {
-                            viewHolder.onlineDot.setVisibility(View.INVISIBLE);
+                                viewHolder.userName.setText(userName);
+                                viewHolder.userLocation.setText(getShortLocationTxt(userLocation));
+                                viewHolder.userAge.setText(getFullAgeTxt(userAge));
+                                setZodiacalSign(getCalculatedZodiacSign(context, userInfo.get("birthday").toString()));
+                            } else {
+                                viewHolder.onlineDot.setVisibility(View.INVISIBLE);
+                            }
                         }
-                    }
-                });
-                return  "Success";
+                    });
+                    return "Success";
+                }
             }
 
             return "UnSuccess";
+        }
+
+        private void storeUserInfoToList(ParseObject userInfo) {
+            UserInfoObj userInfoObj = new UserInfoObj();
+
+            userInfoObj.setUserName(userInfo.get("loginName").toString());
+            String userLocation = userInfo.get("location").toString();
+            userInfoObj.setLocation(getShortLocationTxt(userLocation));
+            userInfoObj.setAge(userInfo.get("age").toString());
+            userInfoObj.setZodiacSign(getCalculatedZodiacSign(context, userInfo.get("birthday").toString()));
+
+            usersInfoList.add(userInfoObj);
+        }
+
+        private ZodiacSign getCalculatedZodiacSign(Context context, String birthdayValue) {
+            ZodiacCalculator zodiacCalculator = new ZodiacCalculator(context);
+            ZodiacSign zodiacSignEnum = zodiacCalculator.calculateZodiacSign(birthdayValue);
+
+            return zodiacSignEnum;
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if("Success".equals(s)) {
-                ParseUser user = usersList.get(position);
-                updateUserOnlineDot(activity, user);
+                updateUserOnlineDot(activity);
+            }
+            else {
+                UserInfoObj currentUserInfo = usersInfoList.get(position);
+                viewHolder.userName.setText(currentUserInfo.getUserName());
+                viewHolder.userLocation.setText(getShortLocationTxt(currentUserInfo.getLocation()));
+                viewHolder.userAge.setText(getFullAgeTxt(currentUserInfo.getAge()));
+                setZodiacalSign(currentUserInfo.getZodiacSign());
+
+                updateUserOnlineDot(activity);
             }
         }
 
-        private void updateUserOnlineDot(BaseActivity activity, ParseUser user) {
+        private void updateUserOnlineDot(BaseActivity activity) {
+            ParseUser user = usersList.get(position);
+
             if((activity).isUserOnline(user)) {
                 viewHolder.onlineDot.setImageDrawable(context.getResources().getDrawable(R.drawable.oval_btn));
             }
@@ -231,13 +267,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             return userAge + " years";
         }
 
-        private void setZodiacalSign(String birthdayValue) {
-            ZodiacCalculator zodiacCalculator = new ZodiacCalculator(context);
-            ZodiacSign zodiacSignEnum = zodiacCalculator.calculateZodiacSign(birthdayValue);
+        private void setZodiacalSign(ZodiacSign zodiacalSign) {
+//            ZodiacCalculator zodiacCalculator = new ZodiacCalculator(context);
+//            ZodiacSign zodiacSignEnum = zodiacCalculator.calculateZodiacSign(birthdayValue);
 
-            if(zodiacSignEnum != null) {
+            if(zodiacalSign != null) {
                 viewHolder.zodiacSign.setVisibility(View.VISIBLE);
-                viewHolder.zodiacSign.setBackgroundResource(zodiacSignEnum.getImageId());
+                viewHolder.zodiacSign.setBackgroundResource(zodiacalSign.getImageId());
             }
         }
     }
