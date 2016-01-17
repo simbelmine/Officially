@@ -20,6 +20,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -61,6 +62,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             return 0;
         }
         return this.usersList.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
@@ -117,12 +123,31 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         }
 
         @Override
-        protected void onPostExecute(ParseUser user) {
+        protected void onPostExecute(final ParseUser user) {
 //            if(viewHolder.position == position) {
 //                viewHolder.userName.setText(user.get("username").toString());
             if(user != null) {
                 if (user.containsKey("profileImg") && user.getParseFile("profileImg") != null) {
-                    Picasso.with(context).load(user.getParseFile("profileImg").getUrl()).into(viewHolder.profileImg);
+                    Picasso.with(context)
+                            .load(user.getParseFile("profileImg").getUrl())
+                            .placeholder(R.drawable.profile_img)
+                            .resize(50,50)
+                            .tag(context)
+                            .into(viewHolder.profileImg, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    Picasso.with(context)
+                                            .load(user.getParseFile("profileImg").getUrl())
+                                            .placeholder(R.drawable.profile_img)
+                                            .tag(context)
+                                            .into(viewHolder.profileImg);
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                }
+                            });
                 } else {
                     Picasso.with(context).load(R.drawable.profile_img).into(viewHolder.profileImg);
                 }

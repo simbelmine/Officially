@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,7 +116,7 @@ public class MainActivity extends DrawerActivity {
         mainLayout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                return rcAdapter!= null && rcAdapter.isHeader(position) ? mainLayout.getSpanCount() : 1;
+                return rcAdapter != null && rcAdapter.isHeader(position) ? mainLayout.getSpanCount() : 1;
             }
         });
         recyclerMainView.setHasFixedSize(true);
@@ -280,9 +281,9 @@ public class MainActivity extends DrawerActivity {
         // *** Grig View *** //
         if(rcAdapter == null) {
             rcAdapter = new RecyclerViewAdapter(MainActivity.this, getApplicationContext(), list, isMatches);
+            rcAdapter.setHasStableIds(true);
             recyclerMainView.setAdapter(rcAdapter);
-        }
-        else {
+        } else {
             rcAdapter.updateUsersList(MainActivity.this, getApplicationContext(), list, isMatches);
         }
     }
@@ -297,12 +298,12 @@ public class MainActivity extends DrawerActivity {
     }
 
     private void showNoSearchResultText(int textViewId) {
-        noSearchResultText = (TextView)findViewById(textViewId);
+        noSearchResultText = (TextView) findViewById(textViewId);
         noSearchResultText.setVisibility(View.VISIBLE);
     }
 
     private void hideNoSearchResultText(int textViewId) {
-        noSearchResultText = (TextView)findViewById(textViewId);
+        noSearchResultText = (TextView) findViewById(textViewId);
         noSearchResultText.setVisibility(View.GONE);
     }
 
