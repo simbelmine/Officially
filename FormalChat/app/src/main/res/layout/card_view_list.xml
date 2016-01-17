@@ -35,11 +35,13 @@
         android:layout_marginLeft="7dp"
         android:layout_marginRight="7dp"
         android:layout_marginBottom="16dp"
-        android:layout_centerHorizontal="true"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:layout_centerInParent="true"
         android:gravity="center"
         android:layout_below="@id/picture"
         android:textColor="@color/white"
-        android:background="@color/items_new"
+        android:background="@drawable/rounded_card_usr_name_bg"
         android:text="User's Name"
         />
 
