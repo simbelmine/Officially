@@ -161,23 +161,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                     Picasso.with(context)
                             .load(user.getParseFile("profileImg").getUrl())
                             .placeholder(R.drawable.profile_img)
-                            .resize(50,50)
                             .tag(context)
-                            .into(viewHolder.profileImg, new Callback() {
-                                @Override
-                                public void onSuccess() {
-                                    Picasso.with(context)
-                                            .load(user.getParseFile("profileImg").getUrl())
-                                            .placeholder(R.drawable.profile_img)
-                                            .tag(context)
-                                            .into(viewHolder.profileImg);
-                                }
-
-                                @Override
-                                public void onError() {
-
-                                }
-                            });
+                            .into(viewHolder.profileImg);
+//                            .into(viewHolder.profileImg, new Callback() {
+//                                @Override
+//                                public void onSuccess() {
+//                                    Picasso.with(context)
+//                                            .load(user.getParseFile("profileImg").getUrl())
+//                                            .placeholder(R.drawable.profile_img)
+//                                            .tag(context)
+//                                            .into(viewHolder.profileImg);
+//                                }
+//
+//                                @Override
+//                                public void onError() {
+//
+//                                }
+//                            });
                 } else {
                     Picasso.with(context).load(R.drawable.profile_img).into(viewHolder.profileImg);
                 }
@@ -229,11 +229,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                                         String userAge = po.get("age").toString();
 
                                         storeUserInfoToList(po);
-
-                                        viewHolder.userName.setText(userName);
-                                        viewHolder.userLocation.setText(getShortLocationTxt(userLocation));
-                                        viewHolder.userAge.setText(getFullAgeTxt(userAge));
-                                        setZodiacalSign(getCalculatedZodiacSign(context, po.get("birthday").toString()));
+                                        populateUserInformationFromList();
                                     }
                                 }
                                 else {
@@ -259,18 +255,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                 updateUserOnlineDot(activity);
             }
             else {
-                if (usersInfoMap != null && usersInfoMap.size() > 0) {
-                    String name = allUserNamesMap.get(position);
+               populateUserInformationFromList();
+            }
+        }
 
-                    UserInfoObj currentUserInfo = usersInfoMap.get(name);
-                    if (currentUserInfo != null) {
-                        viewHolder.userName.setText(currentUserInfo.getUserName());
-                        viewHolder.userLocation.setText(getShortLocationTxt(currentUserInfo.getLocation()));
-                        viewHolder.userAge.setText(getFullAgeTxt(currentUserInfo.getAge()));
-                        setZodiacalSign(currentUserInfo.getZodiacSign());
+        private void populateUserInformationFromList() {
+            if (usersInfoMap != null && usersInfoMap.size() > 0) {
+                String name = allUserNamesMap.get(position);
 
-                        updateUserOnlineDot(activity);
-                    }
+                UserInfoObj currentUserInfo = usersInfoMap.get(name);
+                if (currentUserInfo != null) {
+                    viewHolder.userName.setText(currentUserInfo.getUserName());
+                    viewHolder.userLocation.setText(getShortLocationTxt(currentUserInfo.getLocation()));
+                    viewHolder.userAge.setText(getFullAgeTxt(currentUserInfo.getAge()));
+                    setZodiacalSign(currentUserInfo.getZodiacSign());
+
+                    updateUserOnlineDot(activity);
                 }
             }
         }
@@ -324,6 +324,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             if(zodiacalSign != null) {
                 viewHolder.zodiacSign.setVisibility(View.VISIBLE);
                 viewHolder.zodiacSign.setBackgroundResource(zodiacalSign.getImageId());
+            }
+            else {
+                viewHolder.zodiacSign.setVisibility(View.INVISIBLE);
             }
         }
     }

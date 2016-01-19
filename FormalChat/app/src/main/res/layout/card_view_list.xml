@@ -51,7 +51,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/text"
         android:layout_marginBottom="3dp"
-        android:visibility="gone"
+        android:visibility="invisible"
         />
 
     <TextView
