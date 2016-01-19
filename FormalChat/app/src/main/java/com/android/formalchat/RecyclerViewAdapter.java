@@ -25,7 +25,9 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Sve on 1/8/16.
@@ -37,11 +39,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     private Context context;
     private List<ParseUser> usersList;
     private boolean isMatches;
-    private static List<UserInfoObj> usersInfoList;
+    private static HashMap<String, UserInfoObj> usersInfoMap;
+    private static HashMap<Integer, String> allUserNamesMap;
 
     public RecyclerViewAdapter(BaseActivity activity, Context context, List<ParseUser> usersList, boolean isMatches) {
-//        Log.e(ApplicationOfficially.TAG, "*** RecyclerViewAdapter COnstructor ***");
-        usersInfoList = new ArrayList<>();
+        usersInfoMap = new HashMap<>();
+        allUserNamesMap = new HashMap<>();
+        if(usersList.size() > 0) {
+            addToMap(usersList);
+        }
 
         this.activity = activity;
         this.context = context;
@@ -54,9 +60,29 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         this.context = context;
 
         if(this.usersList != null && usersList != null) {
+            if(usersList.size() > 0) {
+                addToMap(usersList);
+            }
+
             this.usersList.addAll(usersList);
             this.isMatches = isMatches;
             notifyDataSetChanged();
+        }
+    }
+
+    private void addToMap(List<ParseUser> usersList) {
+        int lastPosition;
+        if(allUserNamesMap.size() == 0) {
+            lastPosition = 0;
+        }
+        else {
+            lastPosition = allUserNamesMap.size()+1;
+        }
+
+        for(int i = lastPosition, k = 0; k < usersList.size(); i++, k++) {
+            if(usersList.get(k) != null) {
+                allUserNamesMap.put(i, usersList.get(k).getUsername());
+            }
         }
     }
 
@@ -70,7 +96,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return position+1;
     }
 
     @Override
@@ -160,6 +186,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         }
     }
 
+
+    // ****************** Download Profile Info *********************** //
+
     private static class DownloadProfileInfo extends AsyncTask<ParseUser, Void, String> {
         private BaseActivity activity;
         private Context context;
@@ -177,55 +206,50 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
         @Override
         protected String doInBackground(ParseUser... params) {
-            if(position > (usersInfoList.size()-1)) {
-                ParseUser user = usersList.get(position);
-                if (user != null) {
+            if(position > (usersInfoMap.size())) {
+                if(usersList.size() > 0) {
+                    ArrayList<String> userNames = new ArrayList<>();
+                    for(int i = 0; i < usersList.size(); i++) {
+                        if(usersList.get(i) != null) {
+                            userNames.add(usersList.get(i).getUsername());
+                        }
+                    }
+
                     ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("UserInfo");
-                    parseQuery.whereEqualTo("loginName", user.getUsername());
+                    parseQuery.whereContainedIn("loginName", userNames);
                     parseQuery.findInBackground(new FindCallback<ParseObject>() {
                         @Override
-                        public void done(List<ParseObject> list, ParseException e) {
-                            if (e == null && list.size() > 0) {
-                                ParseObject userInfo = list.get(0);
-                                String userName = userInfo.get("loginName").toString();
-                                String userLocation = userInfo.get("location").toString();
-                                String userAge = userInfo.get("age").toString();
+                        public void done(List<ParseObject> resultList, ParseException e) {
+                            if(e == null) {
+                                if(resultList != null && resultList.size() > 0) {
 
-                                storeUserInfoToList(userInfo);
+                                    for(ParseObject po : resultList) {
+                                        String userName = po.get("loginName").toString();
+                                        String userLocation = po.get("location").toString();
+                                        String userAge = po.get("age").toString();
 
-                                viewHolder.userName.setText(userName);
-                                viewHolder.userLocation.setText(getShortLocationTxt(userLocation));
-                                viewHolder.userAge.setText(getFullAgeTxt(userAge));
-                                setZodiacalSign(getCalculatedZodiacSign(context, userInfo.get("birthday").toString()));
-                            } else {
-                                viewHolder.onlineDot.setVisibility(View.INVISIBLE);
+                                        storeUserInfoToList(po);
+
+                                        viewHolder.userName.setText(userName);
+                                        viewHolder.userLocation.setText(getShortLocationTxt(userLocation));
+                                        viewHolder.userAge.setText(getFullAgeTxt(userAge));
+                                        setZodiacalSign(getCalculatedZodiacSign(context, po.get("birthday").toString()));
+                                    }
+                                }
+                                else {
+                                    viewHolder.onlineDot.setVisibility(View.INVISIBLE);
+                                }
                             }
                         }
                     });
                     return "Success";
                 }
+                else {
+                    Log.v(ApplicationOfficially.TAG, "RESULT LIST NONE ");
+                }
             }
 
             return "UnSuccess";
-        }
-
-        private void storeUserInfoToList(ParseObject userInfo) {
-            UserInfoObj userInfoObj = new UserInfoObj();
-
-            userInfoObj.setUserName(userInfo.get("loginName").toString());
-            String userLocation = userInfo.get("location").toString();
-            userInfoObj.setLocation(getShortLocationTxt(userLocation));
-            userInfoObj.setAge(userInfo.get("age").toString());
-            userInfoObj.setZodiacSign(getCalculatedZodiacSign(context, userInfo.get("birthday").toString()));
-
-            usersInfoList.add(userInfoObj);
-        }
-
-        private ZodiacSign getCalculatedZodiacSign(Context context, String birthdayValue) {
-            ZodiacCalculator zodiacCalculator = new ZodiacCalculator(context);
-            ZodiacSign zodiacSignEnum = zodiacCalculator.calculateZodiacSign(birthdayValue);
-
-            return zodiacSignEnum;
         }
 
         @Override
@@ -235,14 +259,40 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                 updateUserOnlineDot(activity);
             }
             else {
-                UserInfoObj currentUserInfo = usersInfoList.get(position);
-                viewHolder.userName.setText(currentUserInfo.getUserName());
-                viewHolder.userLocation.setText(getShortLocationTxt(currentUserInfo.getLocation()));
-                viewHolder.userAge.setText(getFullAgeTxt(currentUserInfo.getAge()));
-                setZodiacalSign(currentUserInfo.getZodiacSign());
+                if (usersInfoMap != null && usersInfoMap.size() > 0) {
+                    String name = allUserNamesMap.get(position);
 
-                updateUserOnlineDot(activity);
+                    UserInfoObj currentUserInfo = usersInfoMap.get(name);
+                    if (currentUserInfo != null) {
+                        viewHolder.userName.setText(currentUserInfo.getUserName());
+                        viewHolder.userLocation.setText(getShortLocationTxt(currentUserInfo.getLocation()));
+                        viewHolder.userAge.setText(getFullAgeTxt(currentUserInfo.getAge()));
+                        setZodiacalSign(currentUserInfo.getZodiacSign());
+
+                        updateUserOnlineDot(activity);
+                    }
+                }
             }
+        }
+
+        private void storeUserInfoToList(ParseObject userInfoObj) {
+            UserInfoObj userInfo = new UserInfoObj();
+
+            String userName = userInfoObj.get("loginName").toString();
+            userInfo.setUserName(userName);
+            String userLocation = userInfoObj.get("location").toString();
+            userInfo.setLocation(getShortLocationTxt(userLocation));
+            userInfo.setAge(userInfoObj.get("age").toString());
+            userInfo.setZodiacSign(getCalculatedZodiacSign(context, userInfoObj.get("birthday").toString()));
+
+            usersInfoMap.put(userName, userInfo);
+        }
+
+        private ZodiacSign getCalculatedZodiacSign(Context context, String birthdayValue) {
+            ZodiacCalculator zodiacCalculator = new ZodiacCalculator(context);
+            ZodiacSign zodiacSignEnum = zodiacCalculator.calculateZodiacSign(birthdayValue);
+
+            return zodiacSignEnum;
         }
 
         private void updateUserOnlineDot(BaseActivity activity) {
@@ -277,6 +327,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             }
         }
     }
+
+    // ****************** Download Profile Info *********************** //
+    // ******************          END          *********************** //
 
     private void setViewOnClickListener(View convertView, final int position) {
         convertView.setOnClickListener(new View.OnClickListener() {

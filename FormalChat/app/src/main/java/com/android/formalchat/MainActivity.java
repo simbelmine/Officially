@@ -123,6 +123,7 @@ public class MainActivity extends DrawerActivity {
         recyclerMainView.setHasFixedSize(true);
         recyclerMainView.setLayoutManager(mainLayout);
 
+
         setOnScrollListener();
 
         if(isNetworkAvailable()) {
@@ -426,7 +427,7 @@ public class MainActivity extends DrawerActivity {
 
     private void performFilterByPosition(int position) {
 //        Log.v(ApplicationOfficially.TAG, "performFilterByPosition: pageCount = " + getPageCount());
-        Log.v(ApplicationOfficially.TAG, "performFilterByPosition: position = " + position);
+//        Log.v(ApplicationOfficially.TAG, "performFilterByPosition: position = " + position);
 
         switch (position) {
             case 0:
@@ -617,7 +618,7 @@ public class MainActivity extends DrawerActivity {
 
     private void setTitle() {
         int title_position = getIntent().getIntExtra("title_position", NONE);
-        if(title_position != NONE) {
+        if (title_position != NONE) {
             setTitle(getResources().getStringArray(R.array.menu_list)[title_position]);
         }
         else {

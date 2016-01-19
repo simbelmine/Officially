@@ -42,7 +42,6 @@
         android:layout_below="@id/picture"
         android:textColor="@color/white"
         android:background="@drawable/rounded_card_usr_name_bg"
-        android:text="User's Name"
         />
 
     <ImageView
