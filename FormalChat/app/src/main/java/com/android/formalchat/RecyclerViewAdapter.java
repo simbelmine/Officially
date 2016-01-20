@@ -162,24 +162,31 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                             .load(user.getParseFile("profileImg").getUrl())
                             .placeholder(R.drawable.profile_img)
                             .tag(context)
-                            .into(viewHolder.profileImg);
-//                            .into(viewHolder.profileImg, new Callback() {
-//                                @Override
-//                                public void onSuccess() {
-//                                    Picasso.with(context)
-//                                            .load(user.getParseFile("profileImg").getUrl())
-//                                            .placeholder(R.drawable.profile_img)
-//                                            .tag(context)
-//                                            .into(viewHolder.profileImg);
-//                                }
-//
-//                                @Override
-//                                public void onError() {
-//
-//                                }
-//                            });
+                            .resize(50,50)
+                            .centerInside()
+                            .into(viewHolder.profileImg, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    Picasso.with(context)
+                                            .load(user.getParseFile("profileImg").getUrl())
+                                            .placeholder(R.drawable.profile_img)
+                                            .tag(context)
+                                            .resize(150, 150)
+                                            .centerCrop()
+                                            .into(viewHolder.profileImg);
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                }
+                            });
                 } else {
-                    Picasso.with(context).load(R.drawable.profile_img).into(viewHolder.profileImg);
+                    Picasso.with(context)
+                            .load(R.drawable.profile_img)
+                            .resize(200,200)
+                            .centerCrop()
+                            .into(viewHolder.profileImg);
                 }
             }
 //            }

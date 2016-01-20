@@ -24,8 +24,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/profile_img"
-        android:scaleType="centerInside"
+        android:scaleType="centerCrop"
         />
 
     <TextView
