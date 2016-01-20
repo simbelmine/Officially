@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,6 +73,7 @@ public class MainActivity extends DrawerActivity {
     private boolean isSpinnerFirstCall;
     private LinearLayout searchToolbar;
     private EndlessRecyclerViewScrollListener endlessScrollListener;
+    private RelativeLayout loadMoreProgressLayout;
 
 
     public int getPageCount() {
@@ -122,7 +124,6 @@ public class MainActivity extends DrawerActivity {
         });
         recyclerMainView.setHasFixedSize(true);
         recyclerMainView.setLayoutManager(mainLayout);
-
 
         setOnScrollListener();
 
@@ -175,6 +176,7 @@ public class MainActivity extends DrawerActivity {
 
         recyclerMainView = (RecyclerView)findViewById(R.id.recycler_view);
         searchToolbar = (LinearLayout)findViewById(R.id.search_toolbar);
+        loadMoreProgressLayout = (RelativeLayout)findViewById(R.id.loadMore_progress);
     }
 
     private void setSpinnerPosition() {
@@ -273,6 +275,7 @@ public class MainActivity extends DrawerActivity {
                     initAdapter(view, usersList, isMatches);
 
                     getSwipeContainer().setRefreshing(false);
+                    loadMoreProgressLayout.setVisibility(View.GONE);
                 }
             }
         });
@@ -407,6 +410,7 @@ public class MainActivity extends DrawerActivity {
         endlessScrollListener = new EndlessRecyclerViewScrollListener(mainLayout) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
+                loadMoreProgressLayout.setVisibility(View.VISIBLE);
                 setPageCount(page);
                 setSpinnerPosition();
             }
@@ -531,7 +535,6 @@ public class MainActivity extends DrawerActivity {
         }
         params.put("rowsToSkip", (getPageCount() * DISPLAY_LIMIT));
         params.put("rowsLimit", DISPLAY_LIMIT);
-        Log.e(ApplicationOfficially.TAG, "Rows to Skip .... = " + getPageCount() + "*" + DISPLAY_LIMIT + " = " + pageCount * DISPLAY_LIMIT);
 
         callParseCloudFunction(params, isMatches);
     }
@@ -547,10 +550,7 @@ public class MainActivity extends DrawerActivity {
                         isMatches = false;
                     }
 
-                    Log.v(ApplicationOfficially.TAG, "clientRequest RESULT === " + users.size() + "   isMatches === " + isMatches);
-
                     if (listResults.size() >= 2) {
-                        Log.v(ApplicationOfficially.TAG, "LIST RESULT IS >= 2");
 
                         Boolean excludeCriteria = (Boolean) listResults.get(1).get(0);
                         if (excludeCriteria || !isMatches) {
@@ -568,7 +568,8 @@ public class MainActivity extends DrawerActivity {
                                 initAdapter(people_ListView, usersList, isMatches);
                             }
                         }
-                    } else {
+                    }
+                    else {
                         usersListMatches = new ArrayList<>();
                         if (getPageCount() == 0) {
                             usersListMatches.add(null);
@@ -583,6 +584,7 @@ public class MainActivity extends DrawerActivity {
                     }
 
                     getSwipeContainer().setRefreshing(false);
+                    loadMoreProgressLayout.setVisibility(View.GONE);
                 } else {
                     Log.v("formalchat", "----- NONE");
                 }
