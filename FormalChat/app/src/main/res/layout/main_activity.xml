@@ -52,18 +52,6 @@
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="16dp"
                 />
-            <ImageButton
-                android:id="@+id/grid_list_btn"
-                android:layout_width="@dimen/header_element_width"
-                android:layout_height="match_parent"
-                android:background="@color/transp_white"
-                android:src="@drawable/grid"
-                android:scaleType="centerCrop"
-                android:layout_gravity="bottom"
-                android:padding="8dp"
-                android:layout_marginRight="16dp"
-                android:layout_weight="1"
-                />
         </LinearLayout>
 
         <RelativeLayout

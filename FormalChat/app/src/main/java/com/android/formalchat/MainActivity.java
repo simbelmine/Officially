@@ -51,16 +51,7 @@ public class MainActivity extends DrawerActivity {
     private ParseUser currentUser;
     private Boolean exit;
     private DrawerLayout drawerLayout;
-    private GridView people_GridView;
-    private ScrollableGridView people_GridView_Matches;
-    private PeopleGridViewAdapter peopleGridViewAdapter;
-    private PeopleGridViewAdapter peopleGridViewAdapterMatches;
     private ImageButton grid_list_btn;
-    private boolean isListButtonVisible;
-    private ScrollableListView people_ListView;
-    private ScrollableListView people_ListView_Matches;
-    private PeopleListViewAdapter peopleListViewAdapter;
-    private PeopleListViewAdapter peopleListViewAdapterMatches;
 
     private List<ParseUser> usersList;
     private List<ParseUser> usersListMatches;
@@ -98,7 +89,6 @@ public class MainActivity extends DrawerActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.addView(contentView, 0);
         exit = false;
-        isListButtonVisible = true; // Start always with grid view
         isMatches = true; // Start always with matches if any
         isSpinnerFirstCall = true;
 
@@ -107,7 +97,6 @@ public class MainActivity extends DrawerActivity {
         initSharedPreferences();
 
         init();
-        initGridListBtn();
         initValues();
 
         setUpParsePushNotifications();
@@ -161,18 +150,10 @@ public class MainActivity extends DrawerActivity {
         currentUser = ParseUser.getCurrentUser();
         startLoginIfNoUser();
         initSwipeContainer();
-        people_GridView_Matches = (ScrollableGridView) findViewById(R.id.people_gridview_matches);
-        people_GridView_Matches.setExpanded(true);
-        people_GridView = (GridView) findViewById(R.id.people_gridview);
-//        people_GridView.setExpanded(true);
-
-        people_ListView_Matches = (ScrollableListView) findViewById(R.id.people_listview_matches);
-        people_ListView = (ScrollableListView) findViewById(R.id.people_listview);
 
         searchSpinner = (Spinner) findViewById(R.id.search_for);
 
         matchesLayout = (LinearLayout) findViewById(R.id.matches);
-        grid_list_btn = (ImageButton) findViewById(R.id.grid_list_btn);
 
         recyclerMainView = (RecyclerView)findViewById(R.id.recycler_view);
         searchToolbar = (LinearLayout)findViewById(R.id.search_toolbar);
@@ -207,30 +188,14 @@ public class MainActivity extends DrawerActivity {
                     int yourReligionCriteria = parseObject.getInt("yourReligion");
                     int yourEthnicityCriteria = parseObject.getInt("yourEthnicity");
 
-                    if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                        getResultsFromParseCloud(recyclerMainView, drinkingCriteria,
-                                smokingCriteria, religionCriteria, ethnicityCriteria,
-                                yourReligionCriteria, yourEthnicityCriteria, true);
+                    getResultsFromParseCloud(drinkingCriteria,
+                            smokingCriteria, religionCriteria, ethnicityCriteria,
+                            yourReligionCriteria, yourEthnicityCriteria, true);
 //                        getResultsFromParseCloud(recyclerMainView, drinkingCriteria,
 //                                smokingCriteria, religionCriteria, ethnicityCriteria,
 //                                yourReligionCriteria, yourEthnicityCriteria, false);
-
-                    }
-                    else {
-                        getResultsFromParseCloud(people_ListView_Matches, drinkingCriteria,
-                                smokingCriteria, religionCriteria, ethnicityCriteria,
-                                yourReligionCriteria, yourEthnicityCriteria, false);
-                        getResultsFromParseCloud(people_ListView, drinkingCriteria,
-                                smokingCriteria, religionCriteria, ethnicityCriteria,
-                                yourReligionCriteria, yourEthnicityCriteria, false);
-                    }
                 } else {
-//                    matchesLayout.setVisibility(View.GONE);
-                    if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                        getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0, false);
-                    } else {
-                        getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0, false);
-                    }
+                    getResultsFromParseCloud(0, 0, 0, 0, 0, 0, false);
                 }
 
                 getSwipeContainer().setRefreshing(false);
@@ -238,7 +203,7 @@ public class MainActivity extends DrawerActivity {
         });
     }
 
-    private void getResultsFromParseCloud(final View view, int drinkingCriteria,
+    private void getResultsFromParseCloud(int drinkingCriteria,
                                           int smokingCriteria, int religionCriteria, int ethnicityCriteria,
                                           int yourReligionCriteria, int yourEthnicityCriteria, final boolean isMatches) {
         final HashMap<String, Object> params = new HashMap<>();
@@ -272,7 +237,7 @@ public class MainActivity extends DrawerActivity {
                         usersList.add(user);
                     }
 
-                    initAdapter(view, usersList, isMatches);
+                    initAdapter(usersList, isMatches);
 
                     getSwipeContainer().setRefreshing(false);
                     loadMoreProgressLayout.setVisibility(View.GONE);
@@ -282,7 +247,7 @@ public class MainActivity extends DrawerActivity {
     }
 
 
-    private void initAdapter(View view, List<ParseUser> list, boolean isMatches){
+    private void initAdapter(List<ParseUser> list, boolean isMatches){
         // *** Grig View *** //
         if(rcAdapter == null) {
             rcAdapter = new RecyclerViewAdapter(MainActivity.this, getApplicationContext(), list, isMatches);
@@ -321,48 +286,14 @@ public class MainActivity extends DrawerActivity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, 0);
     }
 
-    private void initGridListBtn() {
-        if(!sharedPreferences.contains("isListButtonVisible")) {
-            grid_list_btn.setImageResource(R.drawable.list);
-            setPplGridView();
-        }
-        else {
-            if (sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                grid_list_btn.setImageResource(R.drawable.list);
-                setPplGridView();
-            } else {
-                grid_list_btn.setImageResource(R.drawable.grid);
-                setPplListView();
-            }
-        }
-    }
-
     private void initValues() {
         isMatches = true;
-        peopleGridViewAdapter = null;
         rcAdapter = null;
         setPageCount(0);
     }
 
     private void setOnClickListeners() {
-        grid_list_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                    isListButtonVisible = false;
-                    grid_list_btn.setImageResource(R.drawable.grid);
-                    setGridListStatus();
-                    setPplListView();
-                    setSpinnerPosition();
-                } else {
-                    isListButtonVisible = true;
-                    grid_list_btn.setImageResource(R.drawable.list);
-                    setGridListStatus();
-                    setPplGridView();
-                    setSpinnerPosition();
-                }
-            }
-        });
+
     }
 
     private void setOnSpinnerItemSelectedListener() {
@@ -436,12 +367,7 @@ public class MainActivity extends DrawerActivity {
         switch (position) {
             case 0:
                 // Show me All
-                matchesLayout.setVisibility(View.GONE);
-                if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                    getResultsFromParseCloud(people_GridView, 0, 0, 0, 0, 0, 0, false);
-                } else {
-                    getResultsFromParseCloud(people_ListView, 0, 0, 0, 0, 0, 0, false);
-                }
+                getResultsFromParseCloud(0, 0, 0, 0, 0, 0, false);
                 saveSpinnerPosition(position);
                 break;
             case 1:
@@ -562,11 +488,7 @@ public class MainActivity extends DrawerActivity {
                             for (ParseUser user : users) {
                                 usersList.add(user);
                             }
-                            if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                                initAdapter(people_GridView, usersList, isMatches);
-                            } else {
-                                initAdapter(people_ListView, usersList, isMatches);
-                            }
+                            initAdapter(usersList, isMatches);
                         }
                     }
                     else {
@@ -577,9 +499,7 @@ public class MainActivity extends DrawerActivity {
                         for (ParseUser user : users) {
                             usersListMatches.add(user);
                         }
-                        if (sharedPreferences.contains("isListButtonVisible") && sharedPreferences.getBoolean("isListButtonVisible", false)) {
-                            initAdapter(recyclerMainView, usersListMatches, isMatches);
-                        }
+                        initAdapter(usersListMatches, isMatches);
 
                     }
 
@@ -590,32 +510,6 @@ public class MainActivity extends DrawerActivity {
                 }
             }
         });
-    }
-
-    private void setPplListView() {
-        //people_ListView.setAdapter(new PeopleListViewAdapter(getApplicationContext()));
-        people_GridView.setVisibility(View.GONE);
-        people_GridView_Matches.setVisibility(View.GONE);
-        people_ListView.setVisibility(View.VISIBLE);
-        people_ListView_Matches.setVisibility(View.VISIBLE);
-        //getGridListResults();
-//        setSpinnerPosition();
-    }
-
-    private void setPplGridView() {
-        //people_GridView.setAdapter(new PeopleGridViewAdapter(getApplicationContext()));
-        people_ListView.setVisibility(View.GONE);
-        people_ListView_Matches.setVisibility(View.GONE);
-        people_GridView.setVisibility(View.VISIBLE );
-        people_GridView_Matches.setVisibility(View.VISIBLE);
-        // getGridListResults();
-//        setSpinnerPosition();
-    }
-
-    private void setGridListStatus() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isListButtonVisible", isListButtonVisible);
-        editor.commit();
     }
 
     private void setTitle() {
