@@ -22,8 +22,8 @@
         android:layout_width="@dimen/grid_img_size"
         android:layout_height="@dimen/grid_img_size"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:scaleType="centerCrop"
         />
 
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="7dp"
         android:layout_marginRight="7dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="5dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         android:layout_centerInParent="true"
@@ -70,7 +70,7 @@
         android:textColor="@color/white"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/location"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="10dp"
         />
 
     <ImageView
@@ -79,7 +79,7 @@
         android:layout_height="7dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/age"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="10dp"
         android:src="@drawable/oval_btn_gray"
         />
     </RelativeLayout>
