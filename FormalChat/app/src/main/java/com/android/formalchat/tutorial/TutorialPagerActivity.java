@@ -50,15 +50,10 @@ public class TutorialPagerActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 if(permissionsHelper.isBiggerOrEqualToAPI23()) {
-                    permissionsHelper.checkForPermissions();
+                    permissionsHelper.checkForPermissions(null);
                     if(permissionsHelper.isAllPermissionsGranted) {
                         saveToSharedPrefs();
                         launchLoginActivity();
-                    }
-                    else {
-                        if(permissionsHelper.isBiggerOrEqualToAPI23()) {
-                            permissionsHelper.checkForPermissions();
-                        }
                     }
                 }
                 else {

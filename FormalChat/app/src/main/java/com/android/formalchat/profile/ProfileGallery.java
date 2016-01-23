@@ -25,7 +25,9 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.formalchat.ApplicationOfficially;
 import com.android.formalchat.DrawerActivity;
+import com.android.formalchat.PermissionsHelper;
 import com.android.formalchat.R;
 import com.android.formalchat.VideoDownloadService;
 import com.android.formalchat.VideoRecordActivity;
@@ -219,7 +221,23 @@ public class ProfileGallery extends DrawerActivity {
                 }
                 return true;
             case R.id.record_video:
-                startActivity(new Intent(this, VideoRecordActivity.class));
+                PermissionsHelper permissionsHelper = new PermissionsHelper(activity);
+                if(permissionsHelper.isBiggerOrEqualToAPI23()) {
+                    String[] permissions = new String[]{
+                            android.Manifest.permission.CAMERA,
+                            android.Manifest.permission.RECORD_AUDIO
+                    };
+
+                    Log.v(ApplicationOfficially.TAG, "isAllPermissionsGranted ==> " + permissionsHelper.isAllPermissionsGranted);
+
+                    permissionsHelper.checkForPermissions(permissions);
+                    if(permissionsHelper.isAllPermissionsGranted) {
+                        startActivity(new Intent(this, VideoRecordActivity.class));
+                    }
+                }
+                else {
+                    startActivity(new Intent(this, VideoRecordActivity.class));
+                }
                 return true;
             case android.R.id.home:
                 if(drawerLayout.isDrawerOpen(GravityCompat.START)) {

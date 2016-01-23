@@ -413,7 +413,7 @@ public class MainQuestionsActivity extends BaseActivity {
             }
         }
         else {
-            permissionsHelper.checkForPermissions();
+            permissionsHelper.checkForPermissions(null);
         }
 
         return null;

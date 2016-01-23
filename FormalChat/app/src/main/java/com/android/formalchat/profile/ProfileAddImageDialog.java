@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NotificationCompat;
@@ -33,6 +34,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.formalchat.PermissionsHelper;
 import com.android.formalchat.R;
 import com.android.formalchat.UserImages;
 import com.parse.ParseException;
@@ -52,6 +54,7 @@ import java.util.Date;
  */
 public class ProfileAddImageDialog extends DialogFragment {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 0;
     private static final int ACTIVITY_SELECT_IMAGE = 321;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final String ACTION="PICTURE_UPLOAD_COMPLETE";
@@ -69,6 +72,8 @@ public class ProfileAddImageDialog extends DialogFragment {
     private NotificationCompat.Builder notificationBuilder;
     private int id = 1;
     private Activity activity;
+
+    private PermissionsHelper permissionsHelper;
 
     @Nullable
     @Override
@@ -160,6 +165,21 @@ public class ProfileAddImageDialog extends DialogFragment {
 //    }
 
     private void onClickTakePhoto() {
+        permissionsHelper = new PermissionsHelper(activity);
+        if(permissionsHelper.isBiggerOrEqualToAPI23()) {
+            String[] permissions = new String[]{android.Manifest.permission.CAMERA};
+
+            permissionsHelper.checkForPermissions(permissions);
+            if(permissionsHelper.isAllPermissionsGranted) {
+                takePhotoCamera();
+            }
+        }
+        else {
+            takePhotoCamera();
+        }
+    }
+
+    private void takePhotoCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
@@ -167,6 +187,24 @@ public class ProfileAddImageDialog extends DialogFragment {
     }
 
     private void onClickAttachPhoto() {
+        permissionsHelper = new PermissionsHelper(activity);
+        if(permissionsHelper.isBiggerOrEqualToAPI23()) {
+            String[] permissions = new String[]{
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            };
+
+            permissionsHelper.checkForPermissions(permissions);
+            if(permissionsHelper.isAllPermissionsGranted) {
+                takePhotoGallery();
+            }
+        }
+        else {
+            takePhotoGallery();
+        }
+    }
+
+    private void takePhotoGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(intent, ACTIVITY_SELECT_IMAGE);
     }
@@ -543,5 +581,24 @@ public class ProfileAddImageDialog extends DialogFragment {
 
     private static String getTimeStamp() {
         return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        int permission_denied = -1;
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS:
+            {
+                for(int result : grantResults) {
+                    if(result == permission_denied) {
+                        return;
+                    }
+                }
+                permissionsHelper.isAllPermissionsGranted = true;
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }
