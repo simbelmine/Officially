@@ -563,7 +563,6 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
 
     private void loadBigProfilePic() {
         retrieveBlurredImageFromParse();
-
     }
 
     private void retrieveBlurredImageFromParse() {
@@ -596,9 +595,9 @@ public class ProfileBaseActivity extends DrawerActivity implements View.OnClickL
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null && parseUser.has("profileBlurImg")) {
                     Picasso.with(getApplicationContext()).load(parseUser.getParseFile("profileBlurImg").getUrl()).into(profilePic);
-                    profileProgressBar.setVisibility(View.INVISIBLE);
-                    progressLayout.setVisibility(View.INVISIBLE);
                 }
+                profileProgressBar.setVisibility(View.INVISIBLE);
+                progressLayout.setVisibility(View.INVISIBLE);
             }
         });
     }
