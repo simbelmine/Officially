@@ -26,7 +26,6 @@ public class PermissionsHelper {
     private static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 0;
     private static final String[] PERMISSIONS =
             {
-                    android.Manifest.permission.READ_CONTACTS,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
 //                    android.Manifest.permission.CAMERA,
 //                    android.Manifest.permission.RECORD_AUDIO,
