@@ -26,11 +26,12 @@ public class PermissionsHelper {
     private static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 0;
     private static final String[] PERMISSIONS =
             {
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    android.Manifest.permission.READ_CONTACTS,
 //                    android.Manifest.permission.CAMERA,
 //                    android.Manifest.permission.RECORD_AUDIO,
-//                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
-//                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             };
     private Activity activity;
     public static boolean isAllPermissionsGranted;

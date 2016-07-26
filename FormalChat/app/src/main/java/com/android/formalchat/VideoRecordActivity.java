@@ -85,6 +85,20 @@ public class VideoRecordActivity extends AppCompatActivity implements View.OnCli
 
     private void initVideoUtils() {
         initialVideoFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/videokit/";
+        File dir = new File(initialVideoFolder);
+        if(!dir.exists()) {
+            try{
+                if(dir.mkdir()) {
+                    System.out.println("Directory created");
+                } else {
+                    System.out.println("Directory is not created");
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
         initialVideoPath = initialVideoFolder + "in" + VIDEO_EXTENSION;
         initialVideoPathOut = initialVideoFolder + "out" + VIDEO_EXTENSION;
 
@@ -118,8 +132,26 @@ public class VideoRecordActivity extends AppCompatActivity implements View.OnCli
         String destinationFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.formal_chat/video_in/";
         String videoName;
 
+        Log.v("formalchat", " ON Activity Result ...  " + requestCode + "    " + resultCode + "    " + data);
+
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+            Log.v("formalchat", "VIDEO CAPTURED ");
+
             Uri videoUri = data.getData();
+
+            File source = new File(videoUri.getPath());
+            File destination = new File(getMediaFileUri().getPath());
+            try
+            {
+                FileUtils.copyFile(source, destination);
+                Log.v("formalchat", "SUCCESS");
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            videoUri = Uri.fromFile(getMediaFileUri());
             videoName = getVideoName(videoUri);
             compressVideo(destinationFolder, videoName);
             showCompleteMessage();
@@ -161,7 +193,7 @@ public class VideoRecordActivity extends AppCompatActivity implements View.OnCli
             // using an intent that no app can handle, your app will crash.
             // So as long as the result is not null, it's safe to use the intent.
             Uri videoUri = Uri.fromFile(getMediaFileUri());
-            takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
+//            takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
     }
